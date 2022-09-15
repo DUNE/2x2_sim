@@ -1,0 +1,13 @@
+## Physics changes
+
+## Not everything is LAr
+/edep/phys/ionizationModel 0
+/edep/update
+
+/generator/kinematics/set rooTracker
+/generator/kinematics/rooTracker/input gntp.0.roo.cherry.root
+/generator/position/set free
+/generator/time/set free
+/generator/count/fixed/number 1
+/generator/count/set fixed
+/generator/add
