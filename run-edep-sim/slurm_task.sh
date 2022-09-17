@@ -2,6 +2,12 @@
 
 source /environment             # provided by the container
 
+# HACK: This will not wait for other tasks on the node to complete
+if [[ "$SLURM_LOCALID" == 0 ]]; then
+    monitorFile=monitor-$SLURM_JOBID.$SLURM_NODEID.txt
+    ./monitor.sh >logs/"$ARCUBE_OUT_NAME"/"$SLURM_JOBID"/"$monitorFile" &
+fi
+
 seed=$((RANDOM))
 echo "Seed is $seed"
 
@@ -18,7 +24,7 @@ echo "dk2nuFile is $dk2nuFile"
 outDir=output/$ARCUBE_OUT_NAME
 # Since each dk2nu file may be processed multiple times (with different seeds),
 # append an identifier
-outName=$(basename "$dk2nuFile" .dk2nu).$(printf "%03d" $((dk2nuIdx / dk2nuCount)))
+outName=$(basename "$dk2nuFile" .dk2nu).$(printf "%03d" $((globalIdx / dk2nuCount)))
 echo "outName is $outName"
 
 timeFile=$outDir/TIMING/$outName.time
@@ -62,7 +68,7 @@ auto t = (TTree*) _file0->Get("gRooTracker");
 std::cout << t->GetEntries() << std::endl;'
 nEvents=$(echo "$rootCode" | root -l -b "$genieFile" | tail -1)
 
-edepRootFile=$outDir/EDEPSIM/${outName}_EDEPSIM.root
+edepRootFile=$outDir/EDEPSIM/${outName}.EDEPSIM.root
 mkdir -p "$(dirname "$edepRootFile")"
 
 edepCode="/generator/kinematics/rooTracker/input $genieFile"
@@ -70,7 +76,9 @@ edepCode="/generator/kinematics/rooTracker/input $genieFile"
 run edep-sim -C -g "$ARCUBE_GEOM" -o "$edepRootFile" -e "$nEvents" \
     <(echo "$edepCode") "$ARCUBE_EDEP_MAC"
 
-edepH5File=$outDir/EDEPSIM_H5/${outName}_EDEPSIM.h5
+edepH5File=$outDir/EDEPSIM_H5/${outName}.EDEPSIM.h5
 mkdir -p "$(dirname "$edepH5File")"
 
-run venv/bin/python3 "$LARND_SIM"/cli/dumpTree.py "$edepRootFile" "$edepH5File"
+# run venv/bin/python3 "$LARND_SIM"/cli/dumpTree.py "$edepRootFile" "$edepH5File"
+# run venv/bin/python3 dumpTree.py "$edepRootFile" "$edepH5File"
+run python3 dumpTree.py "$edepRootFile" "$edepH5File"

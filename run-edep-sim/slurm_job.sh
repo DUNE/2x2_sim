@@ -18,7 +18,9 @@
 logDir=logs/$ARCUBE_OUT_NAME/$SLURM_JOBID
 mkdir -p "$logDir"
 
-srun --overlap --ntasks-per-node=1 --ntasks="$SLURM_NNODES" \
-    -o "$logDir"/monitor-%j.%t.out ./monitor.sh &
+# Couldn't get this to work, see top of slurm_task.sh instead
+# https://bugs.schedmd.com/show_bug.cgi?id=11863
+# srun --overlap --exact --ntasks-per-node=1 --ntasks="$SLURM_NNODES" \
+#     -o "$logDir"/monitor-%j.%t.out ./monitor.sh &
 
-srun -o "$logDir"/output-%j.%t.out shifter ./slurm_task.sh
+srun -o "$logDir"/output-%j.%t.txt shifter ./slurm_task.sh
