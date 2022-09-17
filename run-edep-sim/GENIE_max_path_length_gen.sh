@@ -1,17 +1,29 @@
 #!/bin/bash
 
-THIS_SEED=0
-NPOINTS=1000
-NRAYS=1000
+# Reload in Shifter if necessary
+image=docker:wilkinsonnu/nuisance_project:2x2_sim_prod
+if [[ "$SHIFTER_IMAGEREQUEST" != "$image" ]]; then
+	shifter --image=$image --module=none -- "$0" "$@"
+	exit
+fi
 
-GEOM_PATH=$1; shift
+geom=$1; shift
+tune=$1; shift
 
-MAXPATH_PATH=maxpath/$(basename $GEOM_PATH .gdml)_maxpath.xml
+seed=0
+npoints=1000
+nrays=1000
+
+maxpath=maxpath/$(basename "$geom" .gdml).$tune.maxpath.xml
+mkdir -p "$(dirname "$maxpath")"
+
+source /environment
 
 gmxpl \
-	-f ${GEOM_PATH} \
+	-f "$geom" \
 	-L cm -D g_cm3 \
-	-o ${MAXPATH_PATH} \
-	-n ${NPOINTS} \
-	-r ${NRAYS} \
-	--seed ${THIS_SEED}
+	-o "$maxpath" \
+	-n "$npoints" \
+	-r "$nrays" \
+	--tune "$tune" \
+	--seed "$seed"
