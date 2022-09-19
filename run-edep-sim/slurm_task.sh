@@ -21,7 +21,7 @@ dk2nuFile=${dk2nuAll[$dk2nuIdx]}
 echo "dk2nuIdx is $dk2nuIdx"
 echo "dk2nuFile is $dk2nuFile"
 
-outDir=output/$ARCUBE_OUT_NAME
+outDir=$PWD/output/$ARCUBE_OUT_NAME
 # Since each dk2nu file may be processed multiple times (with different seeds),
 # append an identifier
 outName=$(basename "$dk2nuFile" .dk2nu).$(printf "%03d" $((globalIdx / dk2nuCount)))
@@ -29,16 +29,27 @@ echo "outName is $outName"
 
 timeFile=$outDir/TIMING/$outName.time
 mkdir -p "$(dirname "$timeFile")"
+timeProg=$PWD/tmp_bin/time      # container is missing /usr/bin/time
 
 run() {
     echo RUNNING "$@"
-    tmp_bin/time --append -f "$1 %P %M %E" -o "$timeFile" "$@"
+    "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
-export GXMLPATH=flux            # contains GNuMIFlux.xml
-maxPathFile=maxpath/$(basename "$ARCUBE_GEOM" .gdml).$ARCUBE_TUNE.maxpath.xml
+export GXMLPATH=$PWD/flux            # contains GNuMIFlux.xml
+maxPathFile=$PWD/maxpath/$(basename "$ARCUBE_GEOM" .gdml).$ARCUBE_TUNE.maxpath.xml
 genieOutPrefix=$outDir/GENIE/$outName
 mkdir -p "$(dirname "$genieOutPrefix")"
+
+# HACK: gevgen_fnal hardcodes the name of the status file (unlike gevgen, which
+# respects -o), so run it in a temporary directory. Need to get absolute paths.
+
+dk2nuFile=$(realpath "$dk2nuFile")
+ARCUBE_GEOM=$(realpath "$ARCUBE_GEOM")
+ARCUBE_XSEC_FILE=$(realpath "$ARCUBE_XSEC_FILE")
+
+tmpDir=$(mktemp -d)
+pushd "$tmpDir"
 
 run gevgen_fnal \
     -e "$ARCUBE_EXPOSURE" \
@@ -50,6 +61,10 @@ run gevgen_fnal \
     --tune "$ARCUBE_TUNE" \
     --seed "$seed" \
     -o "$genieOutPrefix"
+
+mv genie-mcjob-0.status "$genieOutPrefix".status
+popd
+rmdir "$tmpDir"
 
 run gntpc -i "$genieOutPrefix".0.ghep.root -f rootracker \
     -o "$genieOutPrefix".0.roo.root

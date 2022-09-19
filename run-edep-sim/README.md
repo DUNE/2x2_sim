@@ -1,6 +1,6 @@
 # One-time overall setup
 
-Currently no need to install larnd-sim since we use Callum's modified
+Currently no need to install larnd-sim since we bundle Callum's modified
 dumpTree.py (different method of getting the TG4Event branch out of the tree).
 The version in larnd-sim crashes in this container.
 
@@ -18,6 +18,8 @@ Here the geometry and tune were taken from `submit_example.sh`.
 # export LARND_SIM=/path/to/larnd-sim     # currently not necessary
 ./submit_example.sh
 ```
+
+Output will be in `output`, logs will be in `logs`.
 
 # Ignore the following
 

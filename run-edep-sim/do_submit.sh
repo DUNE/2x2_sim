@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-if [[ -z "$LARND_SIM" ]]; then
-    echo 'Please set LARND_SIM to point to an installation of larnd-sim'
-    echo '(we just need cli/dumpTree.py)'
-    exit 1
-fi
+# if [[ -z "$LARND_SIM" ]]; then
+#     echo 'Please set LARND_SIM to point to an installation of larnd-sim'
+#     echo '(we just need cli/dumpTree.py)'
+#     exit 1
+# fi
 
 # The container is missing /usr/bin/time, which we use for outputting timing diagnostics
 mkdir -p tmp_bin

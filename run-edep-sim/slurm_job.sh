@@ -23,4 +23,5 @@ mkdir -p "$logDir"
 # srun --overlap --exact --ntasks-per-node=1 --ntasks="$SLURM_NNODES" \
 #     -o "$logDir"/monitor-%j.%t.out ./monitor.sh &
 
+# try --cpu-bind=cores?
 srun -o "$logDir"/output-%j.%t.txt shifter ./slurm_task.sh
