@@ -3,3 +3,5 @@
 /maxpath
 /venv
 /logs
+gfx
+__pycache__
