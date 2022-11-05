@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from subprocess import Popen
+from subprocess import call
 
 from fireworks.core.firework import FiretaskBase, FWAction
 
@@ -12,10 +12,8 @@ class EdepSimTask(FiretaskBase):
         env = os.environ | {k: str(v) for k, v in fw_spec.items()
                             if k.startswith('ARCUBE_')}
 
-        # XXX run the script in Shifter
-
-        print(f'hello python {fw_spec["ARCUBE_BASE"]}')
-
-        Popen('./fw_edep_sim.sh', cwd=fw_spec['ARCUBE_BASE'], env=env)
+        shifter = 'shifter --image=docker:wilkinsonnu/nuisance_project:2x2_sim_prod'
+        call(f'{shifter} -- ./fw_edep_sim.sh', shell=True,
+             cwd=fw_spec['ARCUBE_BASE'], env=env)
 
         return FWAction()

@@ -17,3 +17,6 @@ pip install fabric  # (only needed if using daemon mode of qlaunch!)
 pip install requests  # (only needed if you want to use the NEWT queue adapter!)
 # follow instructions to install argcomplete library if you want auto-complete of FWS commands
 pip install argcomplete
+
+cd fw_venv/lib/python3.*/site-packages
+ln -s ../../../../arcube_tasks .

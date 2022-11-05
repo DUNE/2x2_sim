@@ -1,1 +1,2 @@
 Need to add this directory to PYTHONPATH in order for FW to find the arcube_tasks module
+(Note: Now we symlink arcube_tasks into the site-packages of the venv; see install_fireworks.sh)
