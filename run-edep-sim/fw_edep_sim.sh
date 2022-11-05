@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+echo hello bash
+
+echo $ARCUBE_BASE
+echo $ARCUBE_CHERRYPICK
+echo $ARCUBE_DET_LOCATION
+echo $ARCUBE_DK2NU_DIR
+echo $ARCUBE_EDEP_MAC
+echo $ARCUBE_EXPOSURE
+echo $ARCUBE_GEOM
+echo $ARCUBE_TUNE
+echo $ARCUBE_XSEC_FILE
+echo $ARCUBE_OUT_NAME
+echo $ARCUBE_DK2NU_INDEX
+echo $ARCUBE_SEED

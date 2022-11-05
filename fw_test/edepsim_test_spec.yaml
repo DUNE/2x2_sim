@@ -1,0 +1,15 @@
+spec:
+  _tasks:
+    - _fw_name: Edep-sim task
+  ARCUBE_BASE: /global/cfs/cdirs/dune/users/mkramer/mywork/2x2_sim/run-edep-sim
+  ARCUBE_CHERRYPICK: 1
+  ARCUBE_DET_LOCATION: ProtoDUNE-ND
+  ARCUBE_DK2NU_DIR: /global/cfs/cdirs/dune/users/2x2EventGeneration/NuMI_dk2nu/newtarget-200kA_20220409
+  ARCUBE_EDEP_MAC: macros/2x2_beam.mac
+  ARCUBE_EXPOSURE: 1E16
+  ARCUBE_GEOM: geometry/Merged2x2MINERvA_noRock.gdml
+  ARCUBE_TUNE: G18_10a_02_11a
+  ARCUBE_XSEC_FILE: /global/cfs/cdirs/dune/users/2x2EventGeneration/inputs/NuMI/G18_10a_02_11a_FNALsmall.xml
+  ARCUBE_OUT_NAME: FW_NuMI_RHC_CHERRY
+  ARCUBE_DK2NU_INDEX: 0
+  ARCUBE_SEED: 0
