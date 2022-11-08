@@ -3,9 +3,9 @@
 import argparse
 import ruamel.yaml as yaml
 
-from fireworks import Firework, LaunchPad
+from fireworks import Firework, LaunchPad, Workflow
 
-from arcube_tasks import EdepSimTask
+from arcube_tasks import EdepSimTask, LArNDSimTask
 
 
 def main():
@@ -26,8 +26,12 @@ def main():
         for seed in range(args.seed_min, args.seed_max+1):
             spec = base_spec | {'ARCUBE_DK2NU_INDEX': dk2nu,
                                 'ARCUBE_SEED': seed}
-            fw = Firework(EdepSimTask(), spec=spec, name='Edep-sim XP')
-            lpad.add_wf(fw)
+            fw1 = Firework(EdepSimTask(), name='edep-sim',
+                           spec=(spec | {'_fworker': 'fworker_edep_sim'}))
+            fw2 = Firework(LArNDSimTask(), name='larnd-sim'
+                           spec=(spec | {'_fworker': 'fworker_larnd_sim'}))
+            wf = Workflow([fw1, fw2], {fw1: [fw2]})
+            lpad.add_wf(wf)
 
 
 if __name__ == '__main__':
