@@ -1,0 +1,29 @@
+* Measuring the muon distribution
+** TODO Produce a GDML file containing /just/ the rock
+** TODO Run =gevgen_fnal= on it to get interactions in the rock
+** TODO Run =edep-sim= on those GENIE files to transport muons out of the rock
+- Place a sensitive volume on the edge of the rock (cubical shell)
+- Ensure volume is thick enough to record at least one deposit from each muon
+** TODO Run script to analyze deposits in that sensitive volume
+*** Extract energy, position, elevation, azimuth of each outgoing muon
+- Include floor, ceiling, 4 walls
+
+* Sampling the distribution (1 spill)
+** Scale total # muons based on POT of this spill vs. POT in dedicated sim above
+** Compute fraction from each of the 6 sides
+** For each side:
+*** Sample position distribution, energy distribution, angle distribution
+*** Verify that energy/angle are uncorrelated from position
+*** Investigate degree of correlation between energy and angle
+*** Consider modeling and fitting these distributions; complexity depends on whether energy and angle are correlated, etc.
+** Assign a random time (uniform within the spill?) to each muon
+*** Verify that distributions are independent of time since start-of-spill?
+*** Otherwise use spill structure histogram?
+
+* Merging rock muons into primary data stream
+** Do it at the edep-sim level, before running larnd-sim
+
+* Misc questions
+** Cosmic rays
+*** How many cosmic muons do we expect in a single spill? How does this compare to the number of rock muons from the beam?
+*** If cosmic muons are significant, do we need to run e.g. MUSIC?
