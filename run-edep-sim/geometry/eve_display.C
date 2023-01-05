@@ -42,6 +42,11 @@ void eve_display(const char* geomfile)
   l->SetLineColor(kRed);
   gEve->AddElement(l);
 
+  auto* cathode = gGeoManager->FindVolumeFast("volLArCathode");
+  if (cathode) {
+    cathode->SetTransparency(0);
+  }
+
   gEve->FullRedraw3D(true);
 
   TGLViewer* v = gEve->GetDefaultGLViewer();
