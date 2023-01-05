@@ -1,11 +1,13 @@
 // NOTE: .L inspectgeom.C first!
 
-// void RecursiveTransparency(TGeoVolume *vol, Int_t transp);
+// void RecursiveInvisible(TGeoVolume *vol, Int_t transp);
 // void RecursiveVisible(TGeoVolume *vol);
 // void RecursiveTransparency(TGeoVolume *vol, Int_t transp);
 
 void eve_display(const char* geomfile)
 {
+  // gROOT->ProcessLine(".L inspectgeom.C");
+
   TEveManager::Create();
 
   // gGeoManager = gEve->GetGeometry(geomfile);
@@ -33,6 +35,13 @@ void eve_display(const char* geomfile)
   node->SetVisLevel(30);
   gEve->AddGlobalElement(node);
 
+  // auto l = new TEveLine(2);
+  // l->SetPoint(0, 0, 0, 20);
+  // l->SetPoint(1, 100, 0, 20);
+  // l->SetLineWidth(20);
+  // l->SetLineColor(kRed);
+  // gEve->AddElement(l);
+
   gEve->FullRedraw3D(true);
 
   TGLViewer* v = gEve->GetDefaultGLViewer();
@@ -41,6 +50,7 @@ void eve_display(const char* geomfile)
   v->GetClipSet()->SetClipType(TGLClip::kClipNone);
   v->RefreshPadEditor(v);
   // v->CurrentCamera().RotateRad(-.7, 0.5);
+
   v->DoDraw();
 }
 
