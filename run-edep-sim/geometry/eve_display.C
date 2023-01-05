@@ -15,7 +15,7 @@ void eve_display(const char* geomfile)
   gGeoManager->SetTopVisible(true);
   gGeoManager->DefaultColors();
   // gGeoManager->SetVisLevel(30);
-  RecursiveTransparency(gGeoManager->GetTopVolume(), 30);
+  RecursiveTransparency(gGeoManager->GetTopVolume(), 10);
 
   // Print the list of volumes in the geometry
   // geom->GetListOfVolumes()->Print();
@@ -35,12 +35,12 @@ void eve_display(const char* geomfile)
   node->SetVisLevel(30);
   gEve->AddGlobalElement(node);
 
-  // auto l = new TEveLine(2);
-  // l->SetPoint(0, 0, 0, 20);
-  // l->SetPoint(1, 100, 0, 20);
-  // l->SetLineWidth(20);
-  // l->SetLineColor(kRed);
-  // gEve->AddElement(l);
+  auto l = new TEveLine(2);
+  l->SetPoint(0, 0, 0, 20);
+  l->SetPoint(1, 100, 200, 200);
+  l->SetLineWidth(2);
+  l->SetLineColor(kRed);
+  gEve->AddElement(l);
 
   gEve->FullRedraw3D(true);
 
