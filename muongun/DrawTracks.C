@@ -100,3 +100,35 @@ void DrawGenieTracks(const char* gfile="gntp.0.gtrac.root")
     // return;
   }
 }
+
+void HistEnergies(int pdgCode=-14, int status=-1, const char* gfile="gntp.0.gtrac.root")
+{
+  TTreeReader r("gRooTracker", new TFile(gfile));
+  TTreeReaderValue<Int_t> StdHepN(r, "StdHepN");
+  TTreeReaderArray<Int_t> StdHepPdg(r, "StdHepPdg");
+  TTreeReaderArray<Int_t> StdHepStatus(r, "StdHepStatus");
+  // TTreeReaderArray<Double_t> EvtVtx(r, "EvtVtx");
+  // TTreeReaderArray<Double_t> StdHepX4(r, "StdHepX4");
+  TTreeReaderArray<Double_t> StdHepP4(r, "StdHepP4");
+
+  std::set<double> energies;
+  while (r.Next()) {
+    for (int i = 0; i < *StdHepN; ++i) {
+      if (StdHepPdg[i] != pdgCode)
+        continue;
+      if (status != -1 && StdHepStatus[i] != status)
+        continue;
+      double* p4 = &StdHepP4[4*i];
+      energies.insert(p4[3]);
+    }
+  }
+
+  const double minE = *energies.begin();
+  const double maxE = *energies.rbegin();
+  auto* h = new TH1F("h", "h", 20, floor(minE), ceil(maxE));
+  for (auto e : energies)
+    h->Fill(e);
+
+  h->Draw();
+  return h;
+}
