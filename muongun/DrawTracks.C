@@ -54,7 +54,8 @@ void DrawGenieTracks(const char* gfile="gntp.0.gtrac.root")
   TTreeReaderValue<Int_t> StdHepN(r, "StdHepN");
   TTreeReaderArray<Int_t> StdHepPdg(r, "StdHepPdg");
   TTreeReaderArray<Int_t> StdHepStatus(r, "StdHepStatus");
-  TTreeReaderArray<Double_t> StdHepX4(r, "StdHepX4");
+  TTreeReaderArray<Double_t> StdHepVtx(r, "StdHepX4");
+  // TTreeReaderArray<Double_t> StdHepX4(r, "StdHepX4");
   TTreeReaderArray<Double_t> StdHepP4(r, "StdHepP4");
 
   // r.Next();
@@ -71,12 +72,20 @@ void DrawGenieTracks(const char* gfile="gntp.0.gtrac.root")
   while (r.Next()) {
     for (int i = 0; i < *StdHepN; ++i) {
       if (abs(StdHepPdg[i]) == 13 && StdHepStatus[i] == 1) {
-        double* x4 = &StdHepX4[4*i];
+        // double* x4 = &StdHepX4[4*i];
+        double* x4 = &StdHepVtx[0];
         double* p4 = &StdHepP4[4*i];
 
         cout << x4[0] << " " << x4[1] << " " << x4[2] << " " << x4[3] << endl;
         cout << p4[0] << " " << p4[1] << " " << p4[2] << " " << p4[3] << endl;
         cout << endl;
+
+        auto l = new TEveLine(2);
+        l->SetPoint(0, 100*x4[0], 100*x4[1], 100*x4[2]);
+        l->SetPoint(1, 100*x4[0], 100*x4[1] + 100, 100*x4[2]);
+        l->SetLineWidth(2);
+        l->SetLineColor(kRed);
+        gEve->AddElement(l);
       }
     }
     // return;
