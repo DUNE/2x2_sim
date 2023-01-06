@@ -9,5 +9,6 @@ export ARCUBE_DK2NU_DIR=/global/cfs/cdirs/dune/users/2x2EventGeneration/NuMI_dk2
 export ARCUBE_GEOM=$PWD/../run-edep-sim/geometry/Merged2x2MINERvA_justRock_sensShell.gdml
 export ARCUBE_TUNE=G18_10a_02_11a
 export ARCUBE_XSEC_FILE=/global/cfs/cdirs/dune/users/2x2EventGeneration/inputs/NuMI/${ARCUBE_TUNE}_FNALsmall.xml
+export ARCUBE_EDEP_MAC=$PWD/../run-edep-sim/macros/2x2_beam.mac
 
 export GXMLPATH=$PWD/../run-edep-sim/flux            # contains GNuMIFlux.xml
