@@ -82,9 +82,17 @@ void DrawGenieTracks(const char* gfile="gntp.0.gtrac.root")
 
         auto l = new TEveLine(2);
         l->SetPoint(0, 100*x4[0], 100*x4[1], 100*x4[2]);
-        l->SetPoint(1, 100*x4[0], 100*x4[1] + 100, 100*x4[2]);
-        l->SetLineWidth(2);
-        l->SetLineColor(kRed);
+        // l->SetPoint(1, 100*x4[0], 100*x4[1] + 100, 100*x4[2]);
+        const bool downward = p4[1] < 0;
+        l->SetLineColor(downward ? kRed : kBlue);
+        double pmag = sqrt(p4[0]*p4[0] + p4[1]*p4[1] + p4[2]*p4[2]);
+        double trklen = p4[3]; // 1 GeV ~ 1 M
+        double dx = trklen * p4[0]/pmag;
+        double dy = trklen * p4[1]/pmag;
+        double dz = trklen * p4[2]/pmag;
+        // l->SetLineWidth(2);
+        l->SetPoint(1, 100*(x4[0]+dx), 100*(x4[1]+dy), 100*(x4[2]+dz));
+        // l->SetLineColor(kRed);
         gEve->AddElement(l);
       }
     }
