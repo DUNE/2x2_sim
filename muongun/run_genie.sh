@@ -22,3 +22,5 @@ time gevgen_fnal \
     --tune "$ARCUBE_TUNE" \
     --seed "$seed" # \
     # -o "$genieOutPrefix"
+
+gntpc -i gntp.0.ghep.root -f rootracker -o gntp.0.gtrac.root

@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-export ARCUBE_EXPOSURE=1E14
-export ARCUBE_DET_LOCATION=ProtoDUNE-ND
+# 1E14 POT ~ 750 events (for DET_NAME ProtoDUNE-ND, not -Rock)
+# export ARCUBE_EXPOSURE=1E14
+# 2E13 POT ~ 600 events (for ProtoDUNE-ND-Rock)
+export ARCUBE_EXPOSURE=2E13
+export ARCUBE_DET_LOCATION=ProtoDUNE-ND-Rock
 export ARCUBE_DK2NU_DIR=/global/cfs/cdirs/dune/users/2x2EventGeneration/NuMI_dk2nu/newtarget-200kA_20220409
 export ARCUBE_GEOM=$PWD/../run-edep-sim/geometry/Merged2x2MINERvA_justRock_sensShell.gdml
 export ARCUBE_TUNE=G18_10a_02_11a
