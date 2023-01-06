@@ -80,7 +80,7 @@ void DrawGenieTracks(const char* gfile="gntp.0.gtrac.root")
         cout << p4[0] << " " << p4[1] << " " << p4[2] << " " << p4[3] << endl;
         cout << endl;
 
-        const double scale = 100;
+        const double scale = 100; // GENIE uses m; TGeo uses cm
         auto l = new TEveLine(2);
         l->SetPoint(0, scale*x4[0], scale*x4[1], scale*x4[2]);
         // l->SetPoint(1, 100*x4[0], 100*x4[1] + 100, 100*x4[2]);
@@ -131,4 +131,38 @@ void HistEnergies(int pdgCode=-14, int status=-1, const char* gfile="gntp.0.gtra
 
   h->Draw();
   return h;
+}
+
+void DrawEdepSegments(const char* edepfile="edep.root")
+{
+  auto f = new TFile(edepfile);
+  auto tree = f->Get<TTree>("EDepSimEvents");
+  TG4Event* event = nullptr;
+  tree->SetBranchAddress("Event", &event);
+  // tree->GetEntry(68);
+  // do stuff with event->SegmentDetectors
+
+  const double scale = 0.1; // Edep uses mm; TGeo uses cm
+
+  for (int entry = 0; tree->GetEntry(entry); ++entry) {
+    // if (event->SegmentDetectors.size() == 0)
+    //   continue;
+
+    for (auto& p : event->SegmentDetectors) {
+      if (p.first == "volSensShell") {
+        cout << endl << "Processing #" << entry << endl;
+        auto& segs = p.second;
+        for (auto& seg : segs) {
+          auto l = new TEveLine(2);
+          l->SetPoint(0, scale*seg.Start.X(), scale*seg.Start.Y(), scale*seg.Start.Z());
+          l->SetPoint(1, scale*seg.Stop.X(), scale*seg.Stop.Y(), scale*seg.Stop.Z());
+          l->SetLineColor(kRed);
+          l->SetLineWidth(3);
+          gEve->AddElement(l);
+          // cout << seg.Start.X() << " " << seg.Start.Y() << " " << seg.Start.Z() << endl;
+          // cout << seg.Stop.X() << " " << seg.Stop.Y() << " " << seg.Stop.Z() << endl;
+        }
+      }
+    }
+  }
 }
