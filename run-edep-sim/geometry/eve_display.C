@@ -16,6 +16,7 @@ void eve_display(const char* geomfile)
   gGeoManager->DefaultColors();
   // gGeoManager->SetVisLevel(30);
   RecursiveTransparency(gGeoManager->GetTopVolume(), 10);
+  // gGeoManager->GetTopVolume()->SetTransparency(80);
 
   // Print the list of volumes in the geometry
   // geom->GetListOfVolumes()->Print();
@@ -32,8 +33,12 @@ void eve_display(const char* geomfile)
   }
 
   auto* node = new TEveGeoTopNode(gGeoManager, gGeoManager->GetTopVolume()->GetNode(0));
+  // To render the rock:
+  // auto* node = new TEveGeoTopNode(gGeoManager, gGeoManager->GetNode(0));
   // node->SetVisLevel(30);
   node->SetVisLevel(100);
+  node->SetVisOption(0);
+  node->SetMainTransparency(80);
   gEve->AddGlobalElement(node);
 
   // units are in cm?

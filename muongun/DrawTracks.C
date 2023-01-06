@@ -133,7 +133,7 @@ void HistEnergies(int pdgCode=-14, int status=-1, const char* gfile="gntp.0.gtra
   return h;
 }
 
-void DrawEdepSegments(const char* edepfile="edep.root")
+void DrawEdepSegments(int maxEvts=-1, const char* edepfile="edep.root")
 {
   auto f = new TFile(edepfile);
   auto tree = f->Get<TTree>("EDepSimEvents");
@@ -144,6 +144,7 @@ void DrawEdepSegments(const char* edepfile="edep.root")
 
   const double scale = 0.1; // Edep uses mm; TGeo uses cm
 
+  int nEvts = 0;
   for (int entry = 0; tree->GetEntry(entry); ++entry) {
     // if (event->SegmentDetectors.size() == 0)
     //   continue;
@@ -151,6 +152,7 @@ void DrawEdepSegments(const char* edepfile="edep.root")
     for (auto& p : event->SegmentDetectors) {
       if (p.first == "volSensShell") {
         cout << endl << "Processing #" << entry << endl;
+        ++nEvts;
         auto& segs = p.second;
         for (auto& seg : segs) {
           auto l = new TEveLine(2);
@@ -164,10 +166,12 @@ void DrawEdepSegments(const char* edepfile="edep.root")
         }
       }
     }
+
+    if (nEvts == maxEvts) return;
   }
 }
 
-void DrawEdepSegmentsContig(const char* edepfile="edep.root")
+void DrawEdepSegmentsContig(int maxEvts=-1, const char* edepfile="edep.root")
 {
   auto f = new TFile(edepfile);
   auto tree = f->Get<TTree>("EDepSimEvents");
@@ -178,6 +182,7 @@ void DrawEdepSegmentsContig(const char* edepfile="edep.root")
 
   const double scale = 0.1; // Edep uses mm; TGeo uses cm
 
+  int nEvts = 0;
   for (int entry = 0; tree->GetEntry(entry); ++entry) {
     // if (event->SegmentDetectors.size() == 0)
     //   continue;
@@ -185,6 +190,7 @@ void DrawEdepSegmentsContig(const char* edepfile="edep.root")
     for (auto& p : event->SegmentDetectors) {
       if (p.first == "volSensShell") {
         cout << endl << "Processing #" << entry << endl;
+        ++nEvts;
         auto& segs = p.second;
         auto l = new TEveLine(2*segs.size());
         for (int iseg = 0; iseg < segs.size(); ++iseg) {
@@ -199,5 +205,7 @@ void DrawEdepSegmentsContig(const char* edepfile="edep.root")
         gEve->AddElement(l);
       }
     }
+
+    if (nEvts == maxEvts) return;
   }
 }
