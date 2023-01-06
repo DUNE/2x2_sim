@@ -32,15 +32,17 @@ void eve_display(const char* geomfile)
   }
 
   auto* node = new TEveGeoTopNode(gGeoManager, gGeoManager->GetTopVolume()->GetNode(0));
-  node->SetVisLevel(30);
+  // node->SetVisLevel(30);
+  node->SetVisLevel(100);
   gEve->AddGlobalElement(node);
 
-  auto l = new TEveLine(2);
-  l->SetPoint(0, 0, 0, 20);
-  l->SetPoint(1, 100, 200, 200);
-  l->SetLineWidth(2);
-  l->SetLineColor(kRed);
-  gEve->AddElement(l);
+  // units are in cm?
+  // auto l = new TEveLine(2);
+  // l->SetPoint(0, 0, 0, 20);
+  // l->SetPoint(1, 100, 200, 200);
+  // l->SetLineWidth(2);
+  // l->SetLineColor(kRed);
+  // gEve->AddElement(l);
 
   auto* cathode = gGeoManager->FindVolumeFast("volLArCathode");
   if (cathode) {

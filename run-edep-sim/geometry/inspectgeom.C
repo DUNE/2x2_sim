@@ -11,7 +11,7 @@ void inspectgeom(std::string filename) {
   geom->SetVisLevel(30);
 
   // Print the list of volumes in the geometry
-  geom->GetListOfVolumes()->Print();
+  // geom->GetListOfVolumes()->Print();
 
   // // Set to 50% transparency
   RecursiveTransparency(geom->GetTopVolume(), 30);
