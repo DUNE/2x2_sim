@@ -280,7 +280,8 @@ struct TrackArtist {
   TTree* m_tree;
   TG4Event* m_event = nullptr;
 
-  std::vector<std::unique_ptr<TEveLine>> m_lines;
+  // std::vector<std::unique_ptr<TEveLine>> m_lines;
+  std::vector<TEveLine*> m_lines;
 
   TrackArtist(const char* edepfile = "edep.root")
   {
@@ -297,13 +298,15 @@ struct TrackArtist {
 
     for (const auto& traj : m_event->Trajectories) {
       const size_t npoints = traj.Points.size();
-      auto& line = m_lines.emplace_back(std::make_unique<TEveLine>(npoints));
+      // auto& line = m_lines.emplace_back(std::make_unique<TEveLine>(npoints));
+      auto& line = m_lines.emplace_back(new TEveLine(npoints));
       for (size_t i = 0; i < npoints; ++i) {
         const TLorentzVector& pos = traj.Points[i].Position;
         line->SetPoint(i, scale*pos.X(), scale*pos.Y(), scale*pos.Z());
       }
       line->SetLineColor(color);
-      gEve->AddElement(line.get());
+      // gEve->AddElement(line.get());
+      gEve->AddElement(line);
     }
 
     gEve->FullRedraw3D(true);
@@ -312,7 +315,9 @@ struct TrackArtist {
   void Clear()
   {
     for (auto& pLine : m_lines)
-      gEve->RemoveElement(pLine.get(), gEve->GetGlobalScene());
+      // gEve->RemoveElement(pLine.get(), gEve->GetGlobalScene());
+      // gEve->RemoveElement(pLine, gEve->GetGlobalScene());
+      pLine->Destroy();
 
     m_lines.clear();
 
