@@ -231,14 +231,29 @@ bool IsEnteringCavern(const TG4Trajectory& traj)
         pos.Z() < zlims[0] || zlims[1] < pos.Z();
     };
 
-    if (is_outside(pos1) and not is_outside(pos2))
+    // XXX need to account for trajectories that cross the entire cavern between
+    // two points (i.e. both points are "outside" but on opposite sides in at
+    // least one dimension). Also trajectories that have their final point
+    // inside the rock, but point into the cavern? The real question is, do we
+    // get a point every time the particle crosses volumes, even if there's no
+    // hard interaction?
+    //
+    // How to check: Look for trajectories where the final point lies inside the
+    // rock, but the momentum points into the cavern
+
+    // event 446 (particle produced in sensitive shell?):
+    // if (not is_outside(pos2))
+    if (is_outside(pos1) and not is_outside(pos2)) {
+      // traj.Points[i].Dump();
+      // traj.Points[i+1].Dump();
       return true;
+    }
   }
 
   return false;
 }
 
-void DrawTrajectories(const char* edepfile = "edep.root")
+void DumpTrajectories(const char* edepfile = "edep.root")
 {
   auto f = new TFile(edepfile);
   auto tree = f->Get<TTree>("EDepSimEvents");
@@ -251,9 +266,56 @@ void DrawTrajectories(const char* edepfile = "edep.root")
       //   continue;
 
       if (IsEnteringCavern(traj)) {
-        std::cout << "Event " << entry << " enters" << std::endl;
+        // std::cout << "--> Event " << entry << std::endl << std::endl;
+        std::cout << "--> Event " << entry << std::endl;
         break;
       }
     }
   }
 }
+
+// NOTE: Run eve_display.C first!
+struct TrackArtist {
+  TFile* m_file;
+  TTree* m_tree;
+  TG4Event* m_event = nullptr;
+
+  std::vector<std::unique_ptr<TEveLine>> m_lines;
+
+  TrackArtist(const char* edepfile = "edep.root")
+  {
+    m_file = new TFile(edepfile);
+    m_tree = m_file->Get<TTree>("EDepSimEvents");
+    m_tree->SetBranchAddress("Event", &m_event);
+  }
+
+  void DrawTracks(int entry, EColor color = kRed)
+  {
+    m_tree->GetEntry(entry);
+
+    const double scale = 0.1; // Edep uses mm; TGeo uses cm
+
+    for (const auto& traj : m_event->Trajectories) {
+      const size_t npoints = traj.Points.size();
+      auto& line = m_lines.emplace_back(std::make_unique<TEveLine>(npoints));
+      for (size_t i = 0; i < npoints; ++i) {
+        const TLorentzVector& pos = traj.Points[i].Position;
+        line->SetPoint(i, scale*pos.X(), scale*pos.Y(), scale*pos.Z());
+      }
+      line->SetLineColor(color);
+      gEve->AddElement(line.get());
+    }
+
+    gEve->FullRedraw3D(true);
+  }
+
+  void Clear()
+  {
+    for (auto& pLine : m_lines)
+      gEve->RemoveElement(pLine.get(), gEve->GetGlobalScene());
+
+    m_lines.clear();
+
+    gEve->FullRedraw3D(true);
+  }
+};
