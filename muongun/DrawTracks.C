@@ -191,7 +191,7 @@ void DrawEdepSegmentsContig(int maxEvts=-1, const char* edepfile="edep.root")
 
     for (auto& p : event->SegmentDetectors) {
       if (p.first == "volSensShell") {
-        cout << endl << "Processing #" << entry << endl;
+        cout << "Processing #" << entry << endl;
         ++nEvts;
         auto& segs = p.second;
         auto l = new TEveLine(2*segs.size());
@@ -224,17 +224,14 @@ bool IsEnteringCavern(const TG4Trajectory& traj)
     const TLorentzVector& pos1 = traj.Points[i].Position;
     const TLorentzVector& pos2 = traj.Points[i+1].Position;
 
-    bool crossesX =
-      (pos1.X() < xlims[0] && xlims[0] <= pos2.X()) ||
-      (pos2.X() < xlims[1] && xlims[1] <= pos1.X());
-    bool crossesY =
-      (pos1.Y() < ylims[0] && ylims[0] <= pos2.Y()) ||
-      (pos2.Y() < ylims[1] && ylims[1] <= pos1.Y());
-    bool crossesZ =
-      (pos1.Z() < zlims[0] && zlims[0] <= pos2.Z()) ||
-      (pos2.Z() < zlims[1] && zlims[1] <= pos1.Z());
+    auto is_outside = [&](const TLorentzVector& pos) {
+      return
+        pos.X() < xlims[0] || xlims[1] < pos.X() ||
+        pos.Y() < ylims[0] || ylims[1] < pos.Y() ||
+        pos.Z() < zlims[0] || zlims[1] < pos.Z();
+    };
 
-    if (crossesX && crossesY && crossesZ)
+    if (is_outside(pos1) and not is_outside(pos2))
       return true;
   }
 
@@ -250,12 +247,12 @@ void DrawTrajectories(const char* edepfile = "edep.root")
 
   for (int entry = 0; tree->GetEntry(entry); ++entry) {
     for (const auto& traj : event->Trajectories) {
-      if (abs(traj.PDGCode) != 13)
-        continue;
+      // if (abs(traj.PDGCode) != 13)
+      //   continue;
 
       if (IsEnteringCavern(traj)) {
-        std::cout << "Track " << entry << " enters" << std::endl;
-        continue;
+        std::cout << "Event " << entry << " enters" << std::endl;
+        break;
       }
     }
   }
