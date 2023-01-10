@@ -281,7 +281,7 @@ struct TrackArtist {
   TG4Event* m_event = nullptr;
 
   // std::vector<std::unique_ptr<TEveLine>> m_lines;
-  std::vector<TEveLine*> m_lines;
+  std::vector<TEveElement*> m_elements;
 
   TrackArtist(const char* edepfile = "edep.root")
   {
@@ -290,7 +290,7 @@ struct TrackArtist {
     m_tree->SetBranchAddress("Event", &m_event);
   }
 
-  void DrawTracks(int entry, EColor color = kRed)
+  void DrawTracks(int entry, bool drawPoints = true, EColor color = kRed)
   {
     m_tree->GetEntry(entry);
 
@@ -299,14 +299,26 @@ struct TrackArtist {
     for (const auto& traj : m_event->Trajectories) {
       const size_t npoints = traj.Points.size();
       // auto& line = m_lines.emplace_back(std::make_unique<TEveLine>(npoints));
-      auto& line = m_lines.emplace_back(new TEveLine(npoints));
+      auto line = (TEveLine*) m_elements.emplace_back(new TEveLine(npoints));
+      auto pointSet = drawPoints
+        ? (TEvePointSet*) m_elements.emplace_back(new TEvePointSet(npoints))
+        : nullptr;
       for (size_t i = 0; i < npoints; ++i) {
         const TLorentzVector& pos = traj.Points[i].Position;
         line->SetPoint(i, scale*pos.X(), scale*pos.Y(), scale*pos.Z());
+        if (drawPoints)
+          pointSet->SetPoint(i, scale*pos.X(), scale*pos.Y(), scale*pos.Z());
       }
       line->SetLineColor(color);
+      // line->SetMarkerColor(kYellow);
+      // line->SetMarkerSize(3);
       // gEve->AddElement(line.get());
       gEve->AddElement(line);
+      if (drawPoints) {
+        pointSet->SetMarkerColor(kYellow);
+        pointSet->SetMarkerSize(1);
+        gEve->AddElement(pointSet);
+      }
     }
 
     gEve->FullRedraw3D(true);
@@ -314,12 +326,12 @@ struct TrackArtist {
 
   void Clear()
   {
-    for (auto& pLine : m_lines)
+    for (auto& pEle : m_elements)
       // gEve->RemoveElement(pLine.get(), gEve->GetGlobalScene());
       // gEve->RemoveElement(pLine, gEve->GetGlobalScene());
-      pLine->Destroy();
+      pEle->Destroy();
 
-    m_lines.clear();
+    m_elements.clear();
 
     gEve->FullRedraw3D(true);
   }
