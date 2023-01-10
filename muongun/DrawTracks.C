@@ -225,21 +225,16 @@ bool IsEnteringCavern(const TG4Trajectory& traj)
     const TLorentzVector& pos2 = traj.Points[i+1].Position;
 
     bool crossesX =
-      (pos1.X() <= xlims[0] && xlims[0] < pos2.X()) ||
-      (pos2.X() <= xlims[1] && xlims[1] < pos1.X());
+      (pos1.X() < xlims[0] && xlims[0] <= pos2.X()) ||
+      (pos2.X() < xlims[1] && xlims[1] <= pos1.X());
     bool crossesY =
-      (pos1.Y() <= ylims[0] && ylims[0] < pos2.Y()) ||
-      (pos2.Y() <= ylims[1] && ylims[1] < pos1.Y());
+      (pos1.Y() < ylims[0] && ylims[0] <= pos2.Y()) ||
+      (pos2.Y() < ylims[1] && ylims[1] <= pos1.Y());
     bool crossesZ =
-      (pos1.Z() <= zlims[0] && zlims[0] < pos2.Z()) ||
-      (pos2.Z() <= zlims[1] && zlims[1] < pos1.Z());
+      (pos1.Z() < zlims[0] && zlims[0] <= pos2.Z()) ||
+      (pos2.Z() < zlims[1] && zlims[1] <= pos1.Z());
 
-    if ((pos1.X() <= xlims[0] && xlims[0] < pos2.X()) ||
-        (pos2.X() <= xlims[1] && xlims[1] < pos1.X()) ||
-        (pos1.Y() <= ylims[0] && ylims[0] < pos2.Y()) ||
-        (pos2.Y() <= ylims[1] && ylims[1] < pos1.Y()) ||
-        (pos1.Z() <= zlims[0] && zlims[0] < pos2.Z()) ||
-        (pos2.Z() <= zlims[1] && zlims[1] < pos1.Z()))
+    if (crossesX && crossesY && crossesZ)
       return true;
   }
 
