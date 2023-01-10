@@ -171,6 +171,8 @@ void DrawEdepSegments(int maxEvts=-1, const char* edepfile="edep.root")
   }
 }
 
+// https://github.com/DUNE/dune-tms/blob/main/scripts/FlatTree/dumpSSRITree.cpp
+
 void DrawEdepSegmentsContig(int maxEvts=-1, const char* edepfile="edep.root")
 {
   auto f = new TFile(edepfile);
@@ -201,11 +203,65 @@ void DrawEdepSegmentsContig(int maxEvts=-1, const char* edepfile="edep.root")
           // cout << seg.Stop.X() << " " << seg.Stop.Y() << " " << seg.Stop.Z() << endl;
         }
         l->SetLineColor(kRed);
+        // l->SetLineColor(rand() % 800);
         // l->SetLineWidth(3);
         gEve->AddElement(l);
       }
     }
 
     if (nEvts == maxEvts) return;
+  }
+}
+
+bool IsEnteringCavern(const TG4Trajectory& traj)
+{
+  // Get from EDepSimGeometry?
+  double xlims[] = {-5000, 5000};
+  double ylims[] = {-2750, 2750};
+  double zlims[] = {-10000, 10000};
+
+  for (int i = 0; i < traj.Points.size() - 1; ++i) {
+    const TLorentzVector& pos1 = traj.Points[i].Position;
+    const TLorentzVector& pos2 = traj.Points[i+1].Position;
+
+    bool crossesX =
+      (pos1.X() <= xlims[0] && xlims[0] < pos2.X()) ||
+      (pos2.X() <= xlims[1] && xlims[1] < pos1.X());
+    bool crossesY =
+      (pos1.Y() <= ylims[0] && ylims[0] < pos2.Y()) ||
+      (pos2.Y() <= ylims[1] && ylims[1] < pos1.Y());
+    bool crossesZ =
+      (pos1.Z() <= zlims[0] && zlims[0] < pos2.Z()) ||
+      (pos2.Z() <= zlims[1] && zlims[1] < pos1.Z());
+
+    if ((pos1.X() <= xlims[0] && xlims[0] < pos2.X()) ||
+        (pos2.X() <= xlims[1] && xlims[1] < pos1.X()) ||
+        (pos1.Y() <= ylims[0] && ylims[0] < pos2.Y()) ||
+        (pos2.Y() <= ylims[1] && ylims[1] < pos1.Y()) ||
+        (pos1.Z() <= zlims[0] && zlims[0] < pos2.Z()) ||
+        (pos2.Z() <= zlims[1] && zlims[1] < pos1.Z()))
+      return true;
+  }
+
+  return false;
+}
+
+void DrawTrajectories(const char* edepfile = "edep.root")
+{
+  auto f = new TFile(edepfile);
+  auto tree = f->Get<TTree>("EDepSimEvents");
+  TG4Event* event = nullptr;
+  tree->SetBranchAddress("Event", &event);
+
+  for (int entry = 0; tree->GetEntry(entry); ++entry) {
+    for (const auto& traj : event->Trajectories) {
+      if (abs(traj.PDGCode) != 13)
+        continue;
+
+      if (IsEnteringCavern(traj)) {
+        std::cout << "Track " << entry << " enters" << std::endl;
+        continue;
+      }
+    }
   }
 }
