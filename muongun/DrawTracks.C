@@ -223,7 +223,7 @@ void DrawEdepSegmentsContig(int maxEvts=-1, const char* edepfile="edep.root")
 // Assumes that the box is axis-aligned and centered on the origin
 // (e.g. the MINOS hall in our geometry)
 // Also assumes that p1 and p2 are both outside the box!
-// Returns (if possible) the position where the particle ENTERS the box
+// (NO) Returns (if possible) the position where the particle ENTERS the box
 
 // std::optional<XYZVector>
 bool
@@ -235,7 +235,7 @@ SegmentBoxIntersect(XYZVector p1, XYZVector p2, XYZVector boxDims)
     return coords[axis];
   };
 
-  auto on_box = [&boxDims](const XYZVector& p, size_t axis) {
+  auto on_box = [&](const XYZVector& p, size_t axis) {
     const double coord = get(p, axis);
     const double lim = get(boxDims, axis) / 2;
     return -lim <= coord && coord <= lim;
@@ -246,8 +246,11 @@ SegmentBoxIntersect(XYZVector p1, XYZVector p2, XYZVector boxDims)
       const double faceCoord = sign * get(boxDims, axis) / 2;
       const double p1height = get(p1, axis) - faceCoord;
       const double p2height = get(p2, axis) - faceCoord;
-      if (p1height*p2height < 0 p1height*sign > 0) { // Are we entering the face?
-        // Distance from p1 to plane is height*sec(theta) where cos(theta) = unit(p1ToP2)[axis]
+      // Are we potentially entering the hall via this face?
+      if (p1height*p2height < 0    // opposite sides of the face?
+          and p1height*sign > 0) { // pointing inside?
+        // distance from p1 to plane is height*sec(theta) where cos(theta) = unit(p1ToP2)[axis]
+        // rayLen is length to face along (p1->p2) direction:
         const double rayLen = p1height / get((p2-p1).Unit(), axis);
         XYZVector isect = p1 + rayLen * (p2-p1).Unit(); // where the segment intersects the plane
         if (on_box(isect, (axis+1)%3) && on_box(isect, (axis+2)%3))
@@ -261,11 +264,11 @@ SegmentBoxIntersect(XYZVector p1, XYZVector p2, XYZVector boxDims)
   return false;
 }
 
-bool IsCrossingCavern(const TG4Trajectory& traj)
+bool IsEnteringCavern(const TG4Trajectory& traj)
 {
-  // double xlims[] = {-5000, 5000};
-  // double ylims[] = {-2750, 2750};
-  // double zlims[] = {-10000, 10000};
+  double xlims[] = {-5000, 5000};
+  double ylims[] = {-2750, 2750};
+  double zlims[] = {-10000, 10000};
 
   // TODO Get from EDepSimGeometry?
   const XYZVector boxDims = {10000, 5500, 20000};
@@ -283,12 +286,12 @@ bool IsCrossingCavern(const TG4Trajectory& traj)
         pos.Z() < zlims[0] || zlims[1] < pos.Z();
     };
 
-    // Maybe a particle gets produce inside the cavern, e.g. from a decay
-    if (i == 0 and not is_outside(pos1))
-      DoSomething();
+    // Maybe a particle gets produced inside the cavern, e.g. from a decay
+    // if (i == 0 and not is_outside(pos1))
+    //   DoSomething();
 
-    if (bothOutside and segmentCrossesHall)
-      DoSomething();
+    // if (bothOutside and segmentCrossesHall)
+    //   DoSomething();
 
     // The real way to do this: Take the two positions, connect them, and ask
     // whether this segment has any points that lie inside the hall
@@ -351,8 +354,6 @@ struct TrackArtist {
   // std::vector<std::unique_ptr<TEveLine>> m_lines;
   std::vector<TEveElement*> m_elements;
 
-  static const XYZVector BOXDIMS = {10000, 5500, 20000};
-
   TrackArtist(const char* edepfile = "edep.root")
   {
     m_file = new TFile(edepfile);
@@ -413,9 +414,9 @@ struct TrackArtist {
 
     const size_t MAXN = 256;
     size_t N;
-    int pdgCode[MAXN];
-    float x[MAXN], y[MAXN], z[MAXN];
-    float px[MAXN], py[MAXN], pz[MAXN];
+    int PDGCode[MAXN];
+    float X[MAXN], Y[MAXN], Z[MAXN];
+    float PX[MAXN], PY[MAXN], PZ[MAXN];
 
     outTree.Branch("N", &N, "N/i");
     outTree.Branch("PDGCode", PDGCode, "PDGCode[N]/F");
@@ -425,6 +426,8 @@ struct TrackArtist {
     outTree.Branch("PX", PX, "PX[N]/F");
     outTree.Branch("PY", PY, "PY[N]/F");
     outTree.Branch("PZ", PZ, "PZ[N]/F");
+
+    const XYZVector BOXDIMS = {10000, 5500, 20000};
 
     auto is_outside = [&](const TLorentzVector& pos) {
       return
@@ -442,18 +445,21 @@ struct TrackArtist {
       PX[N] = p.Momentum.X();
       PY[N] = p.Momentum.Y();
       PZ[N] = p.Momentum.Z();
+      // XXX correct momentum for ionization loss in remaining rock?
+      // or do that downstream?
       ++N;
     };
 
-    for (int entry = 0; m_file->GetEntry(entry); ++entry) {
+    for (int entry = 0; m_tree->GetEntry(entry); ++entry) {
       N = 0;
+      assert(m_event->Trajectories.size() <= MAXN);
 
-      for (const auto& traj : event->Trajectories) {
+      for (const auto& traj : m_event->Trajectories) {
         assert(traj.Points.size() > 1);
         for (size_t i = 0; i < traj.Points.size(); ++i) {
           const auto& p = traj.Points[i];
 
-          if (not is_outside(p)) {
+          if (not is_outside(p.Position)) {
             if (i == 0)         // E.g. from a decay in the hall
               save_point(traj, i);
             else                // We want the point i-1 that shoots into the hall
@@ -464,7 +470,11 @@ struct TrackArtist {
           // Are this point and previous point both outside the hall, but joined
           // by a segment that crosses the hall?
           if (i == 0) continue;
-          if (SegmentBoxIntersect(traj.Points[i-1], p, BOXDIMS)) {
+          auto xyz =
+            [](const TG4TrajectoryPoint& p) { return XYZVector(p.Position.Vect()); };
+          if (SegmentBoxIntersect(xyz(traj.Points[i-1]), xyz(p), BOXDIMS)) {
+            std::cout << "Through-goer, event " << entry
+                      << ", TrackId " << traj.TrackId << std::endl;
             save_point(traj, i-1);
             break;
           }
