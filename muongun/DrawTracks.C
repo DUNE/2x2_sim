@@ -1,3 +1,4 @@
+#include "libTG4Event/TG4Trajectory.h"
 #include "libTG4Event/TG4TrajectoryPoint.h"
 #include <optional>
 
@@ -414,14 +415,16 @@ struct TrackArtist {
 
     const size_t MAXN = 256;
     UInt_t N;
-    UInt_t SrcEntry, TrackId[MAXN];
-    Int_t PDGCode[MAXN];
+    UInt_t SrcEntry;
+    Int_t TrackId[MAXN], ParentId[MAXN], PointId[MAXN], PDGCode[MAXN];
     Float_t X[MAXN], Y[MAXN], Z[MAXN];
     Float_t PX[MAXN], PY[MAXN], PZ[MAXN];
 
     outTree.Branch("N", &N, "N/i");
     outTree.Branch("SrcEntry", &SrcEntry, "SrcEntry/i");
-    outTree.Branch("TrackId", TrackId, "TrackId[N]/i");
+    outTree.Branch("TrackId", TrackId, "TrackId[N]/I");
+    outTree.Branch("ParentId", ParentId, "ParentId[N]/I");
+    outTree.Branch("PointId", PointId, "PointId[N]/I");
     outTree.Branch("PDGCode", PDGCode, "PDGCode[N]/I");
     outTree.Branch("X", X, "X[N]/F");
     outTree.Branch("Y", Y, "Y[N]/F");
@@ -439,9 +442,11 @@ struct TrackArtist {
         pos.Z() < -BOXDIMS.Z()/2 || BOXDIMS.Z()/2 < pos.Z();
     };
 
-    auto save_point = [&](const TG4Trajectory& traj, size_t iPoint) {
+    auto save_point_ = [&](const TG4Trajectory& traj, size_t iPoint, size_t thePointId = 0) {
       const TG4TrajectoryPoint& p = traj.Points[iPoint];
       TrackId[N] = traj.TrackId;
+      ParentId[N] = traj.ParentId;
+      PointId[N] = thePointId;
       PDGCode[N] = traj.PDGCode;
       X[N] = p.Position.X();
       Y[N] = p.Position.Y();
@@ -452,6 +457,15 @@ struct TrackArtist {
       // XXX correct momentum for ionization loss in remaining rock?
       // or do that downstream?
       ++N;
+    };
+
+    auto save_point = [&](const TG4Trajectory& traj, size_t iPoint) {
+      const auto npoints = traj.Points.size();
+      if (iPoint >= 1) save_point_(traj, iPoint-1, -1);
+      if (iPoint >= 2) save_point_(traj, iPoint-2, -2);
+      save_point_(traj, iPoint, 0);
+      if (npoints >= 2 && iPoint <= npoints-2) save_point_(traj, iPoint+1, 1);
+      if (npoints >= 3 && iPoint <= npoints-3) save_point_(traj, iPoint+2, 2);
     };
 
     for (int entry = 0; m_tree->GetEntry(entry); ++entry) {
