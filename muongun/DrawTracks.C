@@ -1,4 +1,10 @@
+#include "libTG4Event/TG4TrajectoryPoint.h"
+#include <optional>
+
 using namespace ROOT;
+
+// Mostly less painful than TVector3; has constructor from TVector3
+using ROOT::Math::XYZVector;
 
 // RDataFrame/RVec don't support multidimensional C arrays
 // (e.g. StdHepX4), so must use TTreeReader instead
@@ -213,12 +219,58 @@ void DrawEdepSegmentsContig(int maxEvts=-1, const char* edepfile="edep.root")
   }
 }
 
-bool IsEnteringCavern(const TG4Trajectory& traj)
+
+// Assumes that the box is axis-aligned and centered on the origin
+// (e.g. the MINOS hall in our geometry)
+// Also assumes that p1 and p2 are both outside the box!
+// Returns (if possible) the position where the particle ENTERS the box
+
+// std::optional<XYZVector>
+bool
+SegmentBoxIntersect(XYZVector p1, XYZVector p2, XYZVector boxDims)
 {
-  // Get from EDepSimGeometry?
-  double xlims[] = {-5000, 5000};
-  double ylims[] = {-2750, 2750};
-  double zlims[] = {-10000, 10000};
+  auto get = [](const XYZVector& p, size_t axis) { // TVector3 provides operator()...
+    double coords[3];
+    p.GetCoordinates(coords);
+    return coords[axis];
+  };
+
+  auto on_box = [&boxDims](const XYZVector& p, size_t axis) {
+    const double coord = get(p, axis);
+    const double lim = get(boxDims, axis) / 2;
+    return -lim <= coord && coord <= lim;
+  };
+
+  for (size_t axis : {0, 1, 2}) {
+    for (int sign : {1, -1}) {  // which of the two normal-to-this-axis faces?
+      const double faceCoord = sign * get(boxDims, axis) / 2;
+      const double p1height = get(p1, axis) - faceCoord;
+      const double p2height = get(p2, axis) - faceCoord;
+      if (p1height*p2height < 0 p1height*sign > 0) { // Are we entering the face?
+        // Distance from p1 to plane is height*sec(theta) where cos(theta) = unit(p1ToP2)[axis]
+        const double rayLen = p1height / get((p2-p1).Unit(), axis);
+        XYZVector isect = p1 + rayLen * (p2-p1).Unit(); // where the segment intersects the plane
+        if (on_box(isect, (axis+1)%3) && on_box(isect, (axis+2)%3))
+          // return isect;          // Found the entrance point!
+          return true;          // Found the entrance point!
+      }
+    }
+  }
+
+  // return std::nullopt;
+  return false;
+}
+
+bool IsCrossingCavern(const TG4Trajectory& traj)
+{
+  // double xlims[] = {-5000, 5000};
+  // double ylims[] = {-2750, 2750};
+  // double zlims[] = {-10000, 10000};
+
+  // TODO Get from EDepSimGeometry?
+  const XYZVector boxDims = {10000, 5500, 20000};
+
+  bool entering = false;
 
   for (int i = 0; i < traj.Points.size() - 1; ++i) {
     const TLorentzVector& pos1 = traj.Points[i].Position;
@@ -230,6 +282,16 @@ bool IsEnteringCavern(const TG4Trajectory& traj)
         pos.Y() < ylims[0] || ylims[1] < pos.Y() ||
         pos.Z() < zlims[0] || zlims[1] < pos.Z();
     };
+
+    // Maybe a particle gets produce inside the cavern, e.g. from a decay
+    if (i == 0 and not is_outside(pos1))
+      DoSomething();
+
+    if (bothOutside and segmentCrossesHall)
+      DoSomething();
+
+    // The real way to do this: Take the two positions, connect them, and ask
+    // whether this segment has any points that lie inside the hall
 
     // XXX need to account for trajectories that cross the entire cavern between
     // two points (i.e. both points are "outside" but on opposite sides in at
@@ -244,13 +306,19 @@ bool IsEnteringCavern(const TG4Trajectory& traj)
     // event 446 (particle produced in sensitive shell?):
     // if (not is_outside(pos2))
     if (is_outside(pos1) and not is_outside(pos2)) {
-      // traj.Points[i].Dump();
-      // traj.Points[i+1].Dump();
-      return true;
+      std::cout << "PDGCode = " << traj.PDGCode << ", TotE = "
+                << traj.InitialMomentum.E() << std::endl;
+      traj.Points[i].Dump();
+      traj.Points[i+1].Dump();
+      if (i != traj.Points.size() - 2) traj.Points[i+2].Dump();
+
+      // XXX Remember to include _all_ incoming particles. Don't exit loop after
+      // finding just one!
+      entering = true;
     }
   }
 
-  return false;
+  return entering;
 }
 
 void DumpTrajectories(const char* edepfile = "edep.root")
@@ -266,9 +334,9 @@ void DumpTrajectories(const char* edepfile = "edep.root")
       //   continue;
 
       if (IsEnteringCavern(traj)) {
-        // std::cout << "--> Event " << entry << std::endl << std::endl;
-        std::cout << "--> Event " << entry << std::endl;
-        break;
+        std::cout << "--> Event " << entry << std::endl << std::endl;
+        // std::cout << "--> Event " << entry << std::endl;
+        // break;
       }
     }
   }
@@ -282,6 +350,8 @@ struct TrackArtist {
 
   // std::vector<std::unique_ptr<TEveLine>> m_lines;
   std::vector<TEveElement*> m_elements;
+
+  static const XYZVector BOXDIMS = {10000, 5500, 20000};
 
   TrackArtist(const char* edepfile = "edep.root")
   {
@@ -334,5 +404,75 @@ struct TrackArtist {
     m_elements.clear();
 
     gEve->FullRedraw3D(true);
+  }
+
+  void DumpToFile(const char* fname = "rock_debris.root")
+  {
+    TFile file(fname, "RECREATE");
+    TTree outTree("rock_debris", "Rock debris");
+
+    const size_t MAXN = 256;
+    size_t N;
+    int pdgCode[MAXN];
+    float x[MAXN], y[MAXN], z[MAXN];
+    float px[MAXN], py[MAXN], pz[MAXN];
+
+    outTree.Branch("N", &N, "N/i");
+    outTree.Branch("PDGCode", PDGCode, "PDGCode[N]/F");
+    outTree.Branch("X", X, "X[N]/F");
+    outTree.Branch("Y", Y, "Y[N]/F");
+    outTree.Branch("Z", Z, "Z[N]/F");
+    outTree.Branch("PX", PX, "PX[N]/F");
+    outTree.Branch("PY", PY, "PY[N]/F");
+    outTree.Branch("PZ", PZ, "PZ[N]/F");
+
+    auto is_outside = [&](const TLorentzVector& pos) {
+      return
+        pos.X() < -BOXDIMS.X() || BOXDIMS.X() < pos.X() ||
+        pos.Y() < -BOXDIMS.Y() || BOXDIMS.Y() < pos.Y() ||
+        pos.Z() < -BOXDIMS.Z() || BOXDIMS.Z() < pos.Z();
+    };
+
+    auto save_point = [&](const TG4Trajectory& traj, size_t iPoint) {
+      const TG4TrajectoryPoint& p = traj.Points[iPoint];
+      PDGCode[N] = traj.PDGCode;
+      X[N] = p.Position.X();
+      Y[N] = p.Position.Y();
+      Z[N] = p.Position.Z();
+      PX[N] = p.Momentum.X();
+      PY[N] = p.Momentum.Y();
+      PZ[N] = p.Momentum.Z();
+      ++N;
+    };
+
+    for (int entry = 0; m_file->GetEntry(entry); ++entry) {
+      N = 0;
+
+      for (const auto& traj : event->Trajectories) {
+        assert(traj.Points.size() > 1);
+        for (size_t i = 0; i < traj.Points.size(); ++i) {
+          const auto& p = traj.Points[i];
+
+          if (not is_outside(p)) {
+            if (i == 0)         // E.g. from a decay in the hall
+              save_point(traj, i);
+            else                // We want the point i-1 that shoots into the hall
+              save_point(traj, i-1);
+            break;
+          }
+
+          // Are this point and previous point both outside the hall, but joined
+          // by a segment that crosses the hall?
+          if (i == 0) continue;
+          if (SegmentBoxIntersect(traj.Points[i-1], p, BOXDIMS)) {
+            save_point(traj, i-1);
+            break;
+          }
+        }
+      }
+
+      if (N > 0)
+        outTree.Fill();
+    }
   }
 };
