@@ -461,6 +461,11 @@ struct TrackArtist {
 
       for (const auto& traj : m_event->Trajectories) {
         assert(traj.Points.size() > 1);
+
+        if (abs(traj.PDGCode) == 12 || abs(traj.PDGCode) == 14 ||
+            abs(traj.PDGCode) == 16)
+          continue;
+
         for (size_t i = 0; i < traj.Points.size(); ++i) {
           const auto& p = traj.Points[i];
 
