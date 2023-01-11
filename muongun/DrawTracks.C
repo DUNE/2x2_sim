@@ -309,11 +309,11 @@ bool IsEnteringCavern(const TG4Trajectory& traj)
     // event 446 (particle produced in sensitive shell?):
     // if (not is_outside(pos2))
     if (is_outside(pos1) and not is_outside(pos2)) {
-      std::cout << "PDGCode = " << traj.PDGCode << ", TotE = "
-                << traj.InitialMomentum.E() << std::endl;
-      traj.Points[i].Dump();
-      traj.Points[i+1].Dump();
-      if (i != traj.Points.size() - 2) traj.Points[i+2].Dump();
+      // std::cout << "PDGCode = " << traj.PDGCode << ", TotE = "
+      //           << traj.InitialMomentum.E() << std::endl;
+      // traj.Points[i].Dump();
+      // traj.Points[i+1].Dump();
+      // if (i != traj.Points.size() - 2) traj.Points[i+2].Dump();
 
       // XXX Remember to include _all_ incoming particles. Don't exit loop after
       // finding just one!
@@ -337,9 +337,9 @@ void DumpTrajectories(const char* edepfile = "edep.root")
       //   continue;
 
       if (IsEnteringCavern(traj)) {
-        std::cout << "--> Event " << entry << std::endl << std::endl;
-        // std::cout << "--> Event " << entry << std::endl;
-        // break;
+        // std::cout << "--> Event " << entry << std::endl << std::endl;
+        std::cout << "--> Event " << entry << std::endl;
+        break;
       }
     }
   }
@@ -413,13 +413,16 @@ struct TrackArtist {
     TTree outTree("rock_debris", "Rock debris");
 
     const size_t MAXN = 256;
-    size_t N;
-    int PDGCode[MAXN];
-    float X[MAXN], Y[MAXN], Z[MAXN];
-    float PX[MAXN], PY[MAXN], PZ[MAXN];
+    UInt_t N;
+    UInt_t SrcEntry, TrackId[MAXN];
+    Int_t PDGCode[MAXN];
+    Float_t X[MAXN], Y[MAXN], Z[MAXN];
+    Float_t PX[MAXN], PY[MAXN], PZ[MAXN];
 
     outTree.Branch("N", &N, "N/i");
-    outTree.Branch("PDGCode", PDGCode, "PDGCode[N]/F");
+    outTree.Branch("SrcEntry", &SrcEntry, "SrcEntry/i");
+    outTree.Branch("TrackId", TrackId, "TrackId[N]/i");
+    outTree.Branch("PDGCode", PDGCode, "PDGCode[N]/I");
     outTree.Branch("X", X, "X[N]/F");
     outTree.Branch("Y", Y, "Y[N]/F");
     outTree.Branch("Z", Z, "Z[N]/F");
@@ -431,13 +434,14 @@ struct TrackArtist {
 
     auto is_outside = [&](const TLorentzVector& pos) {
       return
-        pos.X() < -BOXDIMS.X() || BOXDIMS.X() < pos.X() ||
-        pos.Y() < -BOXDIMS.Y() || BOXDIMS.Y() < pos.Y() ||
-        pos.Z() < -BOXDIMS.Z() || BOXDIMS.Z() < pos.Z();
+        pos.X() < -BOXDIMS.X()/2 || BOXDIMS.X()/2 < pos.X() ||
+        pos.Y() < -BOXDIMS.Y()/2 || BOXDIMS.Y()/2 < pos.Y() ||
+        pos.Z() < -BOXDIMS.Z()/2 || BOXDIMS.Z()/2 < pos.Z();
     };
 
     auto save_point = [&](const TG4Trajectory& traj, size_t iPoint) {
       const TG4TrajectoryPoint& p = traj.Points[iPoint];
+      TrackId[N] = traj.TrackId;
       PDGCode[N] = traj.PDGCode;
       X[N] = p.Position.X();
       Y[N] = p.Position.Y();
@@ -452,6 +456,7 @@ struct TrackArtist {
 
     for (int entry = 0; m_tree->GetEntry(entry); ++entry) {
       N = 0;
+      SrcEntry = entry;
       assert(m_event->Trajectories.size() <= MAXN);
 
       for (const auto& traj : m_event->Trajectories) {
@@ -470,8 +475,7 @@ struct TrackArtist {
           // Are this point and previous point both outside the hall, but joined
           // by a segment that crosses the hall?
           if (i == 0) continue;
-          auto xyz =
-            [](const TG4TrajectoryPoint& p) { return XYZVector(p.Position.Vect()); };
+          auto xyz = [](const auto& p) { return XYZVector(p.Position.Vect()); };
           if (SegmentBoxIntersect(xyz(traj.Points[i-1]), xyz(p), BOXDIMS)) {
             std::cout << "Through-goer, event " << entry
                       << ", TrackId " << traj.TrackId << std::endl;
@@ -484,5 +488,7 @@ struct TrackArtist {
       if (N > 0)
         outTree.Fill();
     }
+
+    outTree.Write();
   }
 };
