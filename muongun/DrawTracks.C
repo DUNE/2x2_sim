@@ -413,7 +413,7 @@ struct TrackArtist {
     TFile file(fname, "RECREATE");
     TTree outTree("rock_debris", "Rock debris");
 
-    const size_t MAXN = 256;
+    const size_t MAXN = 20480;
     UInt_t N;
     UInt_t SrcEntry;
     Int_t TrackId[MAXN], ParentId[MAXN], PointId[MAXN], PDGCode[MAXN];
@@ -469,6 +469,9 @@ struct TrackArtist {
     };
 
     for (int entry = 0; m_tree->GetEntry(entry); ++entry) {
+      // std::cout << "Processing " << entry << std::endl; // 623
+      // if (entry == 623) continue;
+
       N = 0;
       SrcEntry = entry;
       assert(m_event->Trajectories.size() <= MAXN);
@@ -480,13 +483,20 @@ struct TrackArtist {
             abs(traj.PDGCode) == 16)
           continue;
 
+        if ((traj.PDGCode == 11 && traj.InitialMomentum.P() < 50) ||
+            (traj.PDGCode == 22 && traj.InitialMomentum.P() < 5)) // XXX derived from histograms
+          continue;
+
         for (size_t i = 0; i < traj.Points.size(); ++i) {
           const auto& p = traj.Points[i];
 
           if (not is_outside(p.Position)) {
-            if (i == 0)         // E.g. from a decay in the hall
+            if (i == 0) {        // E.g. from a decay in the hall
+              // std::cout << "DANGER " << entry << " " << traj.TrackId << std::endl << std::flush;
               save_point(traj, i);
-            else                // We want the point i-1 that shoots into the hall
+            }
+            // else                // We want the point i-1 that shoots into the hall
+            if (i != 0)
               save_point(traj, i-1);
             break;
           }
