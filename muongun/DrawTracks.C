@@ -461,11 +461,11 @@ struct TrackArtist {
 
     auto save_point = [&](const TG4Trajectory& traj, size_t iPoint) {
       const auto npoints = traj.Points.size();
-      if (iPoint >= 1) save_point_(traj, iPoint-1, -1);
-      if (iPoint >= 2) save_point_(traj, iPoint-2, -2);
-      save_point_(traj, iPoint, 0);
-      if (npoints >= 2 && iPoint <= npoints-2) save_point_(traj, iPoint+1, 1);
-      if (npoints >= 3 && iPoint <= npoints-3) save_point_(traj, iPoint+2, 2);
+      // if (iPoint >= 1) save_point_(traj, iPoint-1, -1);
+      // if (iPoint >= 2) save_point_(traj, iPoint-2, -2);
+      save_point_(traj, iPoint, iPoint);
+      // if (npoints >= 2 && iPoint <= npoints-2) save_point_(traj, iPoint+1, 1);
+      // if (npoints >= 3 && iPoint <= npoints-3) save_point_(traj, iPoint+2, 2);
     };
 
     for (int entry = 0; m_tree->GetEntry(entry); ++entry) {
@@ -487,17 +487,26 @@ struct TrackArtist {
             (traj.PDGCode == 22 && traj.InitialMomentum.P() < 5)) // XXX derived from histograms
           continue;
 
+        // XXX this could in theory reject events produced from decays inside the hall
+        // for now it's a hack to avoid the stuff that gets scattered in the sensitive hack water
+        // wouldn't need it if we didn't "need" a sensdet
+        if (not is_outside(traj.Points[0].Position))
+          continue;
+
         for (size_t i = 0; i < traj.Points.size(); ++i) {
           const auto& p = traj.Points[i];
 
           if (not is_outside(p.Position)) {
-            if (i == 0) {        // E.g. from a decay in the hall
-              // std::cout << "DANGER " << entry << " " << traj.TrackId << std::endl << std::flush;
-              save_point(traj, i);
-            }
-            // else                // We want the point i-1 that shoots into the hall
-            if (i != 0)
-              save_point(traj, i-1);
+            // if (i == 0) {        // E.g. from a decay in the hall
+            //   // std::cout << "DANGER " << entry << " " << traj.TrackId << std::endl << std::flush;
+            //   save_point(traj, i);
+            // }
+            // // else // We want the point i-1 that shoots into the hall. Actually
+            // // no, we want the point corresponding to fGeomBoundary, which
+            // // should be on the boundary i.e. "not outside"
+            // if (i != 0)
+            //   save_point(traj, i-1);
+            save_point(traj, i);
             break;
           }
 
