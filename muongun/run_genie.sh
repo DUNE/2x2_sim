@@ -9,6 +9,10 @@ dk2nuAll=("$ARCUBE_DK2NU_DIR"/*.dk2nu)
 dk2nuFile=${dk2nuAll[0]}
 
 maxPathFile=$PWD/../run-edep-sim/maxpath/$(basename "$ARCUBE_GEOM" .gdml).$ARCUBE_TUNE.maxpath.xml
+if [[ ! -f "$maxPathFile" ]]; then
+    echo "Cannot find max path file $maxPathFile"
+    exit 1
+fi
 
 seed=0
 

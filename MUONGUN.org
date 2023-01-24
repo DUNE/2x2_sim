@@ -1,11 +1,15 @@
 * Measuring the muon distribution
-** TODO Produce a GDML file containing /just/ the rock
+** DONE Produce a GDML file containing /just/ the rock
+** TODO Verify that flux window (5 m?) is large enough
+See G4NuMIFlux.xml. Use ProtoDUNE-ND-Rock param_set!
+XXX Flip the beam around!!!
 ** TODO Run =gevgen_fnal= on it to get interactions in the rock
 ** TODO Run =edep-sim= on those GENIE files to transport muons out of the rock
 - Place a sensitive volume on the edge of the rock (cubical shell)
 - Ensure volume is thick enough to record at least one deposit from each muon
+- OK forget that stuff regarding sensitive volumes, instead just use my dontRequireHits branch
 ** TODO Run script to analyze deposits in that sensitive volume
-*** Extract energy, position, elevation, azimuth of each outgoing muon
+*** Extract energy, position, elevation, azimuth of each outgoing muon (and other particles; store PDG ID!)
 - Include floor, ceiling, 4 walls
 
 * Sampling the distribution (1 spill)
