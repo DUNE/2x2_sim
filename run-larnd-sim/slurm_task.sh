@@ -27,7 +27,7 @@ while read -r input; do
 
     echo FILE-START "$(date)"
 
-    /usr/bin/time -f "%P %M %E" -o "$outDir/$outName.time" \
+    time /usr/bin/time -f "%P %M %E" -o "$outDir/$outName.time" \
         simulate_pixels.py --input_filename "$input" \
         --output_filename "$outDir/$outName.LARNDSIM.h5" \
         --detector_properties larnd-sim/larndsim/detector_properties/2x2.yaml \

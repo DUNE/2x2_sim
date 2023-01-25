@@ -33,7 +33,7 @@ timeProg=$PWD/tmp_bin/time      # container is missing /usr/bin/time
 
 run() {
     echo RUNNING "$@"
-    "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
+    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
 export GXMLPATH=$PWD/flux            # contains GNuMIFlux.xml
