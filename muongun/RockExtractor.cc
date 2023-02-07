@@ -1,3 +1,5 @@
+// XXX add EvtCode so that edep-sim doesn't complain
+
 // Takes edep-sim's rock sim output, extracts particles that enter the hall, and
 // dumps them back to gtrac for use by the spill builder (or direct to detector
 // edep-sim)
