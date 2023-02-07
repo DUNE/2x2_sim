@@ -63,8 +63,7 @@
     <!-- rotation matrix created by sequence of rotations -->
     <!-- CW: this is the same as MINOS-ND -->
     <beamdir type="series">
-       <!-- pi minus 0.0582977560 -->
-       <rotation axis="x" units="rad"> 3.0832948975 </rotation>
+       <rotation axis="x" units="rad"> -0.0582977560 </rotation>
     </beamdir>
 
     <!-- position in ( user coords ) = ( beam coords ) -->
@@ -108,11 +107,6 @@
       <point coord="det">  20,  20, -20 </point>
     </window>
     <upstreamz> -500.0 </upstreamz>
-  </param_set>
-
-  <param_set name="mini4mlreco">
-    <using_param_set> ProtoDUNE-ND </using_param_set>
-    <upstreamz> -20.0 </upstreamz>
   </param_set>
 
 </gnumi_config>
