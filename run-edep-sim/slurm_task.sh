@@ -67,15 +67,15 @@ popd
 rmdir "$tmpDir"
 
 run gntpc -i "$genieOutPrefix".0.ghep.root -f rootracker \
-    -o "$genieOutPrefix".0.roo.root
+    -o "$genieOutPrefix".0.gtrac.root
 rm "$genieOutPrefix".0.ghep.root
 
 if [[ "$ARCUBE_CHERRYPICK" == 1 ]]; then
-    run ./cherrypicker.py -i "$genieOutPrefix".0.roo.root \
-        -o "$genieOutPrefix".0.roo.cherry.root
-    genieFile="$genieOutPrefix".0.roo.cherry.root
+    run ./cherrypicker.py -i "$genieOutPrefix".0.gtrac.root \
+        -o "$genieOutPrefix".0.gtrac.cherry.root
+    genieFile="$genieOutPrefix".0.gtrac.cherry.root
 else
-    genieFile="$genieOutPrefix".0.roo.root
+    genieFile="$genieOutPrefix".0.gtrac.root
 fi
 
 rootCode='
