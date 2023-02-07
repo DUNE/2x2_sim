@@ -1,0 +1,7 @@
+volArgonCubeActive -> volLArActiveModWallXX -> volLArActiveMod -> volLArSubModule -> volLArLight(L/R) -> volLArActive
+
+world_vol -> volMinosNDHall -> volArgonCubeDetector -> volArgonCubeCryostat -> volCryostatOuterWall_OuterTubTorusInnerTub -> volCryostatInsulation_OuterTubTorusInnerTub -> volCryostatInnerWall_OuterTubTorusInnerTub -> volCryostatInnerBath_OuterTubTorusInnerTub -> volArgonCube -> volArgonCubeActive
+
+SensDet is on volLArActive
+
+The "zincEdit" doesn't seem to mean anything w.r.t. the GDML; those changes went into the GENIE tune/splines instead? Let's omit zincEdit from future GDML files names.
