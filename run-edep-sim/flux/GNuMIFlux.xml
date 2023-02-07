@@ -110,4 +110,9 @@
     <upstreamz> -500.0 </upstreamz>
   </param_set>
 
+  <param_set name="mini4mlreco">
+    <using_param_set> ProtoDUNE-ND </using_param_set>
+    <upstreamz> -20.0 </upstreamz>
+  </param_set>
+
 </gnumi_config>
