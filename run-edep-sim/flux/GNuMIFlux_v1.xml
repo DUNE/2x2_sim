@@ -63,8 +63,7 @@
     <!-- rotation matrix created by sequence of rotations -->
     <!-- CW: this is the same as MINOS-ND -->
     <beamdir type="series">
-       <!-- pi minus 0.0582977560 -->
-       <rotation axis="x" units="rad"> 3.0832948975 </rotation>
+       <rotation axis="x" units="rad"> -0.0582977560 </rotation>
     </beamdir>
 
     <!-- position in ( user coords ) = ( beam coords ) -->
