@@ -55,3 +55,28 @@ void RecursiveTransparency(TGeoVolume *vol, Int_t transp) {
     RecursiveTransparency(vol->GetNode(i)->GetVolume(), transp);
   }
 }
+
+// compute the global y position of the damn argoncube
+double FindTheOffset(std::vector<int> daughterIdxs, const char* expectedName)
+{
+  TGeoNode* node = gGeoManager->GetNode(0);
+  double offset = node->GetMatrix()->GetTranslation()[1];
+
+  for (auto i : daughterIdxs) {
+    node = node->GetDaughter(i);
+    offset += node->GetMatrix()->GetTranslation()[1];
+  }
+
+  std::cout << "Expected " << expectedName << "; found " << node->GetName();
+  return offset;
+}
+
+double FindTheOffsetForJustThe2x2()
+{
+  return FindTheOffset({0, 0}, "volArgonCube_PV");
+}
+
+double FindTheOffsetForTheWholeThing()
+{
+  return FindTheOffset({0, 0, 0, 3, 0, 0, 0, 0}, "volArgonCube_PV");
+}

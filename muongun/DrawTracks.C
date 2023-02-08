@@ -55,7 +55,8 @@ void DrawGenieTracksRVec(const char* gfile="gntp.0.gtrac.root")
 }
 
 
-void DrawGenieTracks(const char* gfile="gntp.0.gtrac.root")
+void DrawGenieTracks(const char* gfile="gntp.0.gtrac.root",
+                     int maxEvts=-1)
 {
   TTreeReader r("gRooTracker", new TFile(gfile));
   TTreeReaderValue<Int_t> StdHepN(r, "StdHepN");
@@ -76,7 +77,7 @@ void DrawGenieTracks(const char* gfile="gntp.0.gtrac.root")
   //   cout << StdHepP4[i] << endl;
   // }
 
-  while (r.Next()) {
+  for (int iEvt = 0; (maxEvts == -1 || iEvt < maxEvts) && r.Next(); ++iEvt) {
     for (int i = 0; i < *StdHepN; ++i) {
       if (abs(StdHepPdg[i]) == 13 && StdHepStatus[i] == 1) {
         // double* x4 = &StdHepX4[4*i];
