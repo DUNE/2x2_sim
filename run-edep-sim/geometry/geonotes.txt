@@ -5,3 +5,14 @@ world_vol -> volMinosNDHall -> volArgonCubeDetector -> volArgonCubeCryostat -> v
 SensDet is on volLArActive
 
 The "zincEdit" doesn't seem to mean anything w.r.t. the GDML; those changes went into the GENIE tune/splines instead? Let's omit zincEdit from future GDML files names.
+
+chk: volArgonCubeDetector_pos/rot
+vs volArgonCube_pos/rot no wait CryostatInnerBathvolArgonCube_pos/rot
+
+		<position name="volArgonCubeDetector_pos" x="0.0" y="0.0" z="0.0" unit="cm"/>
+		<rotation name="volArgonCubeDetector_rot" x="90" y="0" z="0" unit="degree"/>
+
+		<position name="CryostatInnerBathvolArgonCube_pos" x="0.0" y="0.0" z="6.75" unit="cm"/>
+		<rotation name="CryostatInnerBathvolArgonCube_rot" x="-90" y="0" z="0" unit="degree"/>
+
+positions need to be given a name!!! otherwise (at least in ROOT) they will be silently ignored.
