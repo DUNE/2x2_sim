@@ -16,3 +16,77 @@ vs volArgonCube_pos/rot no wait CryostatInnerBathvolArgonCube_pos/rot
 		<rotation name="CryostatInnerBathvolArgonCube_rot" x="-90" y="0" z="0" unit="degree"/>
 
 positions need to be given a name!!! otherwise (at least in ROOT) they will be silently ignored.
+
+		<volume name="volArgonCubeDetector">
+			<materialref ref="Air"/>
+			<solidref ref="ArgonCubeDetector"/>
+			<physvol name="volArgonCubeCryostat_PV">
+				<volumeref ref="volArgonCubeCryostat"/>
+				<positionref ref="ArgonCubeDetectorvolArgonCubeCryostat0_pos"/>
+				<rotationref ref="ArgonCubeDetector_rot"/>
+			</physvol>
+		</volume>
+        <position name="ArgonCubeDetectorvolArgonCubeCryostat0_pos" x="0.0" y="0.0" z="0.0" unit="cm"/>
+		<rotation name="volArgonCubeDetector_rot" x="90" y="0" z="0" unit="degree"/>
+
+
+		<volume name="volArgonCubeCryostat">
+			<physvol name="volCryostatOuterWall_OuterTubTorusInnerTub_PV">
+				<volumeref ref="volCryostatOuterWall_OuterTubTorusInnerTub"/>
+				<positionref ref="ArgonCubeCryostatvolCryostatOuterWall_OuterTubTorusInnerTub_pos"/>
+				<rotationref ref="ArgonCubeCryostatvolCryostatOuterWall_OuterTubTorusInnerTub_rot"/>
+			</physvol>
+        </volume>
+		<position name="ArgonCubeCryostatvolCryostatOuterWall_OuterTubTorusInnerTub_pos" x="0.0" y="0.0" z="25.5" unit="cm"/>
+		<rotation name="ArgonCubeCryostatvolCryostatOuterWall_OuterTubTorusInnerTub_rot" x="0.0" y="0.0" z="0.0" unit="degree"/>
+
+		<volume name="volCryostatOuterWall_OuterTubTorusInnerTub">
+			<materialref ref="SSteel304"/>
+			<solidref ref="CryostatOuterWall_OuterTubTorusInnerTub"/>
+			<physvol name="volCryostatInsulation_OuterTubTorusInnerTub_PV">
+				<volumeref ref="volCryostatInsulation_OuterTubTorusInnerTub"/>
+				<positionref ref="CryostatOuterWallvolCryostatInsulation_OuterTubTorusInnerTub_pos"/>
+				<rotationref ref="CryostatOuterWallvolCryostatInsulation_OuterTubTorusInnerTub_rot"/>
+			</physvol>
+		</volume>
+        <position name="CryostatOuterWallvolCryostatInsulation_OuterTubTorusInnerTub_pos" x="0.0" y="0.0" z="0.0" unit="cm"/>
+		<rotation name="CryostatOuterWallvolCryostatInsulation_OuterTubTorusInnerTub_rot" x="0.0" y="0.0" z="0.0" unit="degree"/>
+
+		<volume name="volCryostatInsulation_OuterTubTorusInnerTub">
+			<materialref ref="NoGas"/>
+			<solidref ref="CryostatInsulation_OuterTubTorusInnerTub"/>
+			<physvol name="volCryostatInnerWall_OuterTubTorusInnerTub_PV">
+				<volumeref ref="volCryostatInnerWall_OuterTubTorusInnerTub"/>
+				<positionref ref="CryostatInsulationvolCryostatInnerWall_OuterTubTorusInnerTub_pos"/>
+				<rotationref ref="CryostatInsulationvolCryostatInnerWall_OuterTubTorusInnerTub_rot"/>
+			</physvol>
+		</volume>
+		<position name="CryostatInsulationvolCryostatInnerWall_OuterTubTorusInnerTub_pos" x="0.0" y="0.0" z="20.0" unit="cm"/>
+		<rotation name="CryostatInsulationvolCryostatInnerWall_OuterTubTorusInnerTub_rot" x="0.0" y="0.0" z="0.0" unit="degree"/>
+
+		<volume name="volCryostatInnerWall_OuterTubTorusInnerTub">
+			<materialref ref="SSteel304"/>
+			<solidref ref="CryostatInnerWall_OuterTubTorusInnerTub"/>
+			<physvol name="volCryostatInnerBath_OuterTubTorusInnerTub_PV">
+				<volumeref ref="volCryostatInnerBath_OuterTubTorusInnerTub"/>
+				<positionref ref="CryostatInnerWallvolCryostatInnerBath_OuterTubTorusInnerTub_pos"/>
+				<rotationref ref="CryostatInnerWallvolCryostatInnerBath_OuterTubTorusInnerTub_rot"/>
+			</physvol>
+		</volume>
+		<position name="CryostatInnerWallvolCryostatInnerBath_OuterTubTorusInnerTub_pos" x="0.0" y="0.0" z="0.0" unit="cm"/>
+		<rotation name="CryostatInnerWallvolCryostatInnerBath_OuterTubTorusInnerTub_rot" x="0.0" y="0.0" z="0.0" unit="degree"/>
+
+		<volume name="volCryostatInnerBath_OuterTubTorusInnerTub">
+			<materialref ref="LAr"/>
+			<solidref ref="CryostatInnerBath_OuterTubTorusInnerTub"/>
+			<physvol name="volArgonCube_PV">
+				<volumeref ref="volArgonCube"/>
+				<positionref ref="CryostatInnerBathvolArgonCube_pos"/>
+				<rotationref ref="CryostatInnerBathvolArgonCube_rot"/>
+			</physvol>
+		</volume>
+		<position name="CryostatInnerBathvolArgonCube_pos" x="0.0" y="0.0" z="6.75" unit="cm"/>
+		<rotation name="CryostatInnerBathvolArgonCube_rot" x="-90" y="0" z="0" unit="degree"/>
+
+=> 25.5 + 20 + 6.75 = 52.25, that's how much we should raise the 2x2 in
+JustThe2x2.gdml in order to align with the full geometry.
