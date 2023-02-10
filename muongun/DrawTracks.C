@@ -56,7 +56,7 @@ void DrawGenieTracksRVec(const char* gfile="gntp.0.gtrac.root")
 
 
 void DrawGenieTracks(const char* gfile="gntp.0.gtrac.root",
-                     int maxEvts=-1)
+                     int evt=0, int maxEvts=-1)
 {
   TTreeReader r("gRooTracker", new TFile(gfile));
   TTreeReaderValue<Int_t> StdHepN(r, "StdHepN");
@@ -77,16 +77,18 @@ void DrawGenieTracks(const char* gfile="gntp.0.gtrac.root",
   //   cout << StdHepP4[i] << endl;
   // }
 
-  for (int iEvt = 0; (maxEvts == -1 || iEvt < maxEvts) && r.Next(); ++iEvt) {
+  for (int iEvt = evt; (maxEvts == -1 || iEvt < evt + maxEvts) && r.Next(); ++iEvt) {
+    std::cout << iEvt << std::endl;
     for (int i = 0; i < *StdHepN; ++i) {
-      if (abs(StdHepPdg[i]) == 13 && StdHepStatus[i] == 1) {
+      // if (abs(StdHepPdg[i]) == 13 && StdHepStatus[i] == 1) {
+      if (StdHepStatus[i] == 1) {
         // double* x4 = &StdHepX4[4*i];
         double* x4 = &EvtVtx[0];
         double* p4 = &StdHepP4[4*i];
 
-        cout << x4[0] << " " << x4[1] << " " << x4[2] << " " << x4[3] << endl;
-        cout << p4[0] << " " << p4[1] << " " << p4[2] << " " << p4[3] << endl;
-        cout << endl;
+        // cout << x4[0] << " " << x4[1] << " " << x4[2] << " " << x4[3] << endl;
+        // cout << p4[0] << " " << p4[1] << " " << p4[2] << " " << p4[3] << endl;
+        // cout << endl;
 
         const double scale = 100; // GENIE uses m; TGeo uses cm
         auto l = new TEveLine(2);

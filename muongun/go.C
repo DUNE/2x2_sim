@@ -1,8 +1,11 @@
 {
   gROOT->ProcessLine(".x LoadStuff.C");
   // eve_display("../run-edep-sim/geometry/Merged2x2MINERvA_withRock_zincEdit_onlyActiveLArSens_v3.gdml");
-  eve_display("JustThe2x2.gdml");
+  // FindTheOffsetForTheWholeThingActive();
+  eve_display("../run-edep-sim/geometry/JustThe2x2.gdml");
+  FindTheOffsetForJustThe2x2Active();
   // gROOT->ProcessLine(".L DrawTracks.C");
+  // DrawGenieTracks("Just2x2_NuMI_RHC_1E17POT.gtrac.root", 0, 1);
   // DrawGenieTracks("WhereIsOurBeam.gtrac.root");
   // DrawGenieTracks("JustRotateTheBeam.gtrac.root");
   // DrawGenieTracks("ReduceUpstreamZ.gtrac.root");

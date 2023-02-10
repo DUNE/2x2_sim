@@ -60,23 +60,42 @@ void RecursiveTransparency(TGeoVolume *vol, Int_t transp) {
 double FindTheOffset(std::vector<int> daughterIdxs, const char* expectedName)
 {
   TGeoNode* node = gGeoManager->GetNode(0);
+  double sums[3] = {0, 0, 0};
   double offset = node->GetMatrix()->GetTranslation()[1];
 
   for (auto i : daughterIdxs) {
     node = node->GetDaughter(i);
-    offset += node->GetMatrix()->GetTranslation()[1];
+    // offset += node->GetMatrix()->GetTranslation()[1];
+    auto trans = node->GetMatrix()->GetTranslation();
+    std::cout << trans[0] << " " << trans[1] << " " << trans[2] << std::endl;
+    sums[0] += trans[0]; sums[1] += trans[1]; sums[2] += trans[2];
   }
 
-  std::cout << "Expected " << expectedName << "; found " << node->GetName();
+  std::cout << "Expected " << expectedName << "; found " << node->GetName() << std::endl;;
+  std::cout << "sums: " << sums[0] << " " << sums[1] << " " << sums[2] << std::endl;
   return offset;
 }
 
+// load JustThe2x2.gdml first
 double FindTheOffsetForJustThe2x2()
 {
   return FindTheOffset({0, 0}, "volArgonCube_PV");
 }
 
+// load Merged2x2MINERvA_withRock_zincEdit_onlyActiveLArSens_v3.gdml
 double FindTheOffsetForTheWholeThing()
 {
   return FindTheOffset({0, 0, 0, 3, 0, 0, 0, 0}, "volArgonCube_PV");
+}
+
+// load JustThe2x2.gdml first
+double FindTheOffsetForJustThe2x2Active()
+{
+  return FindTheOffset({0, 0, 1}, "volArgonCubeActive_PV");
+}
+
+// load Merged2x2MINERvA_withRock_zincEdit_onlyActiveLArSens_v3.gdml
+double FindTheOffsetForTheWholeThingActive()
+{
+  return FindTheOffset({0, 0, 0, 3, 0, 0, 0, 0, 1}, "volArgonCubeActive_PV");
 }

@@ -88,5 +88,7 @@ positions need to be given a name!!! otherwise (at least in ROOT) they will be s
 		<position name="CryostatInnerBathvolArgonCube_pos" x="0.0" y="0.0" z="6.75" unit="cm"/>
 		<rotation name="CryostatInnerBathvolArgonCube_rot" x="-90" y="0" z="0" unit="degree"/>
 
-=> 25.5 + 20 + 6.75 = 52.25, that's how much we should raise the 2x2 in
+=> 25.5 + 20 + 6.75 = 52.25, that's how much we should raise the 2x2 (volArgonCube) in
 JustThe2x2.gdml in order to align with the full geometry.
+
+But is larnd-sim's 43 cm offset correct? If we take the 52.25 cm of volArgonCube and add the -10.25 ArgonCubevolArgonCubeActive0_pos of volArgonCubeActive, we get 42 cm.
