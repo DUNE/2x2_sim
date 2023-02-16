@@ -1,0 +1,2 @@
+CONFIG_FILE_DIR: {CONFIG_FILE_DIR}
+USER_PACKAGES: ['arcube_tasks']
