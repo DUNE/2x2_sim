@@ -5,4 +5,6 @@
 #SBATCH --time=2:00:00
 #SBATCH --ntasks-per-node=256
 
-srun rlaunch rapidfire -w fworker_edep_sim.yaml
+fw_confdir=$(dirname $FW_CONFIG_FILE)
+
+srun rlaunch rapidfire -w $fw_confdir/fworker_edep_sim.yaml

@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-sbatch "$@" edep_sim_job.sh
+sbatch "$@" $(dirname $0)/edep_sim_job.sh
