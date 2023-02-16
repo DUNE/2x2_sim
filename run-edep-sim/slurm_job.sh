@@ -6,7 +6,7 @@
 #SBATCH --constraint=cpu
 #SBATCH --time=2:00:00
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=128
+#SBATCH --ntasks-per-node=256
 
 # NOTE: Each CPU-only node has 2 sockets, 64 cores/socket, 2 threads/core => 256
 # threads in theory. Available memory is 512 GB. GENIE requires about 1 GB. In
