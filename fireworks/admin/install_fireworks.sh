@@ -25,8 +25,8 @@ pip install 'FireWorks[rtransfer,newt,daemon_mode,flask-plotting,workflow-checks
 # install arcube_tasks
 pip install -e .
 
-confdir=$(realpath config)
-sed "s%{CONFIG_FILE_DIR}%$confdir%" config/templates/FW_config.template.yaml > config/FW_config.yaml
-[[ ! -e config/my_launchpad.yaml ]] && cp config/templates/my_launchpad.template.yaml config/my_launchpad.yaml
+confdir=$(realpath fw_config)
+sed "s%{CONFIG_FILE_DIR}%$confdir%" fw_config/templates/FW_config.template.yaml > fw_config/FW_config.yaml
+[[ ! -e fw_config/my_launchpad.yaml ]] && cp fw_config/templates/my_launchpad.template.yaml fw_config/my_launchpad.yaml
 
-echo "Remember to edit the password in config/my_launchpad.yaml"
+echo "\nRemember to edit the password in fw_config/my_launchpad.yaml"
