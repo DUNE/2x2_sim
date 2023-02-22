@@ -110,6 +110,3 @@ run edep-sim -C -g "$ARCUBE_GEOM_EDEP" -o "$edepRootFile" -e "$nEvents" \
 edepH5File=$outDir/EDEPSIM_H5/${outName}.EDEPSIM.h5
 mkdir -p "$(dirname "$edepH5File")"
 
-# run venv/bin/python3 "$LARND_SIM"/cli/dumpTree.py "$edepRootFile" "$edepH5File"
-# run venv/bin/python3 dumpTree.py "$edepRootFile" "$edepH5File"
-run python3 dumpTree.py "$edepRootFile" "$edepH5File"
