@@ -159,21 +159,27 @@ def updateHDF5File(output_file, trajectories, segments, vertices):
                 f['vertices'][nvert:] = vertices
 
 # Read a file and dump it.
-def dump():
+def dump(input_files, output_file, spill_period=1.2E6):
 
-    directory = '/global/cfs/cdirs/dune/users/kwood/2x2_sim/run-edep-sim/spill_building/MiniRun1_1E19_RHC/test_fullSpill_*.root'
-    output_file = "sim2x2_minprod_test.edepsim.h5"
+    """
+    Script to convert edep-sim root output to an h5 file formatted in a way
+    that larnd-sim expects for consumption.
 
-    spill_period = 1.2e6 # microseconds
+    Args:
+        input_file (str): path to one or more input root files. Each file is expected
+            expected to correspond to a single spill.
+        output_file (str): name of the h5 output file to which the information should
+            be written
+        spill_period (double): the spill period to be simulate. Each spill in the inputs
+            will be separated by this much time [in microseconds]
+    """
 
     # Prep output file
     initHDF5File(output_file)
 
     segment_id = 0
  
-    #for spill_it, inputFile in enumerate(inputFiles):
-    #for spill_it, inputFile in enumerate(os.listdir(directory)):
-    for spill_it, inputFile_name in enumerate(glob.glob(directory)):
+    for spill_it, inputFile_name in enumerate(glob.glob(input_files)):
 
         print("----------------------------------------------------")
         print(spill_it)
