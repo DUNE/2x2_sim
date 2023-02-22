@@ -22,6 +22,10 @@ input=$outDir/EDEPSIM_H5/$outName.EDEPSIM.h5
 output=$outDir/LARNDSIM/$outName.LARNDSIM.h5
 timeFile=$outDir/TIMING/$outName.time
 
+# NOTE: THE CONVERSION OF THE EDEPSIM.ROOT FILE TO H5 SHOULD BE DONE HERE!
+#       IT HAS BEEN REMOVED FROM THE RUN-EDEPSIM STAGE OF THE SIMULATION.
+# python convert_edepsim_roottoh5.py --input_files edep-sim_*.root --output_file edep-sim.h5 --spill_period 1.2E6
+
 /usr/bin/time --append -f "larnd-sim %P %M %E" -o "$timeFile" \
     simulate_pixels.py --input_filename "$input" \
     --output_filename "$output" \
