@@ -40,12 +40,10 @@ void overlaySinglesIntoSpills(std::string inFileName1, std::string inFileName2, 
   // get input nu-LAr files 
   TChain* edep_evts_1 = new TChain("EDepSimEvents");
   edep_evts_1->Add(inFileName1.c_str());
-  //edep_evts_1->Add("");
 
   // get input nu-Rock files 
   TChain* edep_evts_2 = new TChain("EDepSimEvents");
   edep_evts_2->Add(inFileName2.c_str());
-  //edep_evts_2->Add("");
 
   unsigned int N_evts_1 = edep_evts_1->GetEntries();
   double evts_per_spill_1 = ((double)N_evts_1)/(inFile1POT/spillPOT);
@@ -79,8 +77,8 @@ void overlaySinglesIntoSpills(std::string inFileName1, std::string inFileName2, 
 
   int spillN = 0;
 
-  //while((N_left_1 > Nevts_this_spill_1) && (N_left_2 > Nevts_this_spill_2)) {
-  while((N_left_1 > Nevts_this_spill_1) && (N_left_2 > Nevts_this_spill_2) && spillN<128*4) {
+  while((N_left_1 > Nevts_this_spill_1) && (N_left_2 > Nevts_this_spill_2)) {
+  //while((N_left_1 > Nevts_this_spill_1) && (N_left_2 > Nevts_this_spill_2) && spillN<128*4) {
 
     spillN++;
     std::cout << "working on spill # " << spillN << std::endl;
