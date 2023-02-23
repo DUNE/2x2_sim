@@ -156,7 +156,10 @@ void overlaySinglesIntoSpills(std::string inFileName1, std::string inFileName2, 
     while(evt_spill_counter_2 < Nevts_this_spill_2) {
       edep_evts_2->GetEntry(evt_it_2);
 
-      std::string event_string = std::to_string(-1*(edep_evt_2->EventId+1));
+      // TODO: make a more elegant solution that allows for better backtracking
+      // edit the eventID of the rock events to be negative and start from -1
+      edep_evt_2->EventId = -1*(edep_evt_2->EventId+1)
+      std::string event_string = std::to_string(edep_evt_2->EventId);
       std::string spill_string = std::to_string(spillN);
       TObjString* event_tobj = new TObjString(event_string.c_str());
       TObjString* spill_tobj = new TObjString(spill_string.c_str());
