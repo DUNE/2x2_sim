@@ -11,7 +11,7 @@ import h5py
 from tqdm import tqdm
 import glob
 
-from ROOT import TG4Event, TFile
+from ROOT import TG4Event, TFile, TMap
 
 # Output array datatypes
 segments_dtype = np.dtype([("spillID","u4"),("eventID", "u4"), ("segment_id", "u4"),
@@ -179,10 +179,10 @@ def dump(input_files, output_file, spill_period=1.2E6):
 
     segment_id = 0
  
-    for spill_it, inputFile_name in enumerate(glob.glob(input_files)):
+    for it, inputFile_name in enumerate(glob.glob(input_files)):
 
         print("----------------------------------------------------")
-        print(spill_it)
+        print(it)
         print("----------------------------------------------------")
         # Get the input tree out of the file.
         inputFile = TFile(inputFile_name)
@@ -192,6 +192,9 @@ def dump(input_files, output_file, spill_period=1.2E6):
         # Attach a brach to the events.
         event = TG4Event()
         inputTree.SetBranchAddress("Event",event)
+
+        # map that gives which spill each event lives in
+        event_spill_map = inputFile.Get("event_spill_map")
 
         # Read all of the events.
         entries = inputTree.GetEntriesFast()
@@ -203,6 +206,10 @@ def dump(input_files, output_file, spill_period=1.2E6):
         for jentry in tqdm(range(entries)):
             #print(jentry,"/",entries)
             nb = inputTree.GetEntry(jentry)
+
+            spill_it_tobj = event_spill_map.GetValue(str(event.EventId))
+            spill_it = int(spill_it_tobj.GetName())
+            #print("event",event.EventId,"in spill",spill_it)
 
             # write to file
             if len(trajectories_list) >= 1000 or nb <= 0:
