@@ -12,9 +12,10 @@
 //
 //   (2) The timing information is edited to impose the timing
 //       microstructure of the numi/lbnf beamline.
+
+
 // returns a random time for a neutrino interaction to take place within
 // a LBNF/NuMI spill, given the beam's micro timing structure
-
 double getInteractionTime_LBNF() {
 
   // time unit is nanoseconds
@@ -45,6 +46,12 @@ void overlaySinglesIntoSpills(std::string inFileName1, std::string inFileName2, 
   TChain* edep_evts_2 = new TChain("EDepSimEvents");
   edep_evts_2->Add(inFileName2.c_str());
 
+  // make output file
+  TFile* outFile = new TFile(outFileName.c_str(),"RECREATE");
+  TTree* new_tree = edep_evts_1->CloneTree(0);
+  TTree* new_tree2 = edep_evts_2->CloneTree(0);
+
+  // determine events per spill
   unsigned int N_evts_1 = edep_evts_1->GetEntries();
   double evts_per_spill_1 = ((double)N_evts_1)/(inFile1POT/spillPOT);
 
@@ -59,6 +66,7 @@ void overlaySinglesIntoSpills(std::string inFileName1, std::string inFileName2, 
   std::cout << "    Number of spills: "<< inFile2POT/spillPOT << std::endl;
   std::cout << "    Events per spill: "<< evts_per_spill_2 << std::endl;
 
+  // get the event trees
   TG4Event* edep_evt_1 = NULL;
   edep_evts_1->SetBranchAddress("Event",&edep_evt_1);
   unsigned int N_left_1 = N_evts_1;
@@ -71,31 +79,43 @@ void overlaySinglesIntoSpills(std::string inFileName1, std::string inFileName2, 
   int Nevts_this_spill_1 = gRandom->Poisson(evts_per_spill_1);
   int evt_it_1 = 0;
 
-  // Poisson fluctuation of average number of events per spill in this file
   int Nevts_this_spill_2 = gRandom->Poisson(evts_per_spill_2);
   int evt_it_2 = 0;
+
+  // create a map with key event number and value spill number to keep track of
+  // which events are in which spill
+  TMap* event_spill_map = new TMap(N_evts_1+N_evts_2);
 
   int spillN = 0;
 
   while((N_left_1 > Nevts_this_spill_1) && (N_left_2 > Nevts_this_spill_2)) {
-  //while((N_left_1 > Nevts_this_spill_1) && (N_left_2 > Nevts_this_spill_2) && spillN<128*4) {
 
     spillN++;
     std::cout << "working on spill # " << spillN << std::endl;
 
     // make output file
-    TFile* outFile = new TFile(Form("%s_%d.root",outFileName.c_str(),spillN),"RECREATE");
-    TTree* new_tree = edep_evts_1->CloneTree(0);
-    TTree* new_tree2 = edep_evts_2->CloneTree(0);
+    //TFile* outFile = new TFile(Form("%s_%d.root",outFileName.c_str(),spillN),"RECREATE");
+    //TTree* new_tree = edep_evts_1->CloneTree(0);
+    //TTree* new_tree2 = edep_evts_2->CloneTree(0);
 
     // loop over the correct number of nu-LAr events for this spill
     int evt_spill_counter_1=0;
     while(evt_spill_counter_1 < Nevts_this_spill_1) {
       edep_evts_1->GetEntry(evt_it_1);
-      // change the eventID to correspond to the spill ID
-      // this ID will not be unique for each entry in the tree
-      //edep_evt_1->EventId = spillN;
 
+      std::string event_string = std::to_string(edep_evt_1->EventId);
+      std::string spill_string = std::to_string(spillN);
+      TObjString* event_tobj = new TObjString(event_string.c_str());
+      TObjString* spill_tobj = new TObjString(spill_string.c_str());
+
+      if(event_spill_map->FindObject(event_string.c_str()) == 0)
+        event_spill_map->Add(event_tobj, spill_tobj);
+      else {
+        std::cerr << "[ERROR] redundant event ID." << std::endl;
+        std::cerr << "event_spill_map entries = " << event_spill_map->GetEntries() << std::endl;
+        throw;
+      }
+ 
       // assign time offsets to...
       double event_time = getInteractionTime_LBNF();
       double old_event_time = 0.;
@@ -135,10 +155,20 @@ void overlaySinglesIntoSpills(std::string inFileName1, std::string inFileName2, 
     int evt_spill_counter_2=0;
     while(evt_spill_counter_2 < Nevts_this_spill_2) {
       edep_evts_2->GetEntry(evt_it_2);
-      // change the eventID to correspond to the spill ID
-      // this ID will not be unique for each entry in the tree
-      //edep_evt_2->EventId = spillN;
 
+      std::string event_string = std::to_string(-1*(edep_evt_2->EventId+1));
+      std::string spill_string = std::to_string(spillN);
+      TObjString* event_tobj = new TObjString(event_string.c_str());
+      TObjString* spill_tobj = new TObjString(spill_string.c_str());
+
+      if(event_spill_map->FindObject(event_string.c_str()) == 0)
+        event_spill_map->Add(event_tobj, spill_tobj);
+      else {
+        std::cerr << "[ERROR] redundant event ID." << std::endl;
+        std::cerr << "event_spill_map entries = " << event_spill_map->GetEntries() << std::endl;
+        throw;
+      }
+ 
       // assign time offsets to...
       double event_time = getInteractionTime_LBNF();
       double old_event_time = 0.;
@@ -175,22 +205,35 @@ void overlaySinglesIntoSpills(std::string inFileName1, std::string inFileName2, 
       N_left_2--;
     } // nu-Rock event loop
 
-    // write this spill file out
-    TList* tree_list = new TList;
-    tree_list->Add(new_tree);
-    tree_list->Add(new_tree2);
-    TTree* fullSpillTree = TTree::MergeTrees(tree_list);
-    fullSpillTree->SetName("EDepSimEvents");
-    outFile->cd();
-    fullSpillTree->Write();
-    outFile->Close();
-    //delete new_tree;
-    delete outFile;
+   //// write this spill file out
+   //TList* tree_list = new TList;
+   //tree_list->Add(new_tree);
+   //tree_list->Add(new_tree2);
+   //TTree* fullSpillTree = TTree::MergeTrees(tree_list);
+   //fullSpillTree->SetName("EDepSimEvents");
+   //outFile->cd();
+   //fullSpillTree->Write();
+   //outFile->Close();
+   ////delete new_tree;
+   //delete outFile;
 
     // for next spill
     Nevts_this_spill_1 = gRandom->Poisson(evts_per_spill_1); 
     Nevts_this_spill_2 = gRandom->Poisson(evts_per_spill_2); 
 
   } // spill loop
+
+  // write this spill file out
+  TList* tree_list = new TList;
+  tree_list->Add(new_tree);
+  tree_list->Add(new_tree2);
+  TTree* fullSpillTree = TTree::MergeTrees(tree_list);
+  fullSpillTree->SetName("EDepSimEvents");
+  outFile->cd();
+  fullSpillTree->Write();
+  event_spill_map->Write("event_spill_map",1);
+  outFile->Close();
+  //delete new_tree;
+  delete outFile;
 
 }
