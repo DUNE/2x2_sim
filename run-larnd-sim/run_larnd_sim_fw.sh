@@ -17,6 +17,9 @@ dk2nuFile=${dk2nuAll[$dk2nuIdx]}
 echo "dk2nuIdx is $dk2nuIdx"
 echo "dk2nuFile is $dk2nuFile"
 
+[[ -z "$ARCUBE_SPILL_NAME" ]] && ARCUBE_SPILL_NAME=$ARCUBE_OUT_NAME
+inDir=$PWD/output/$ARCUBE_SPILL_NAME
+
 outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
 
@@ -32,7 +35,7 @@ run() {
     time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
-inFile=$outDir/EDEPSIM_H5/${outName}.EDEPSIM.h5
+inFile=$inDir/EDEPSIM_H5/${outName}.EDEPSIM.h5
 
 larndOutDir=$outDir/LARNDSIM
 mkdir -p $larndOutDir
@@ -40,10 +43,11 @@ mkdir -p $larndOutDir
 outFile=$larndOutDir/${outName}.LARNDSIM.h5
 rm -f $outFile
 
-run simulate_pixels_spills.py --input_filename "$inFile" \
+run simulate_pixels.py --input_filename "$inFile" \
     --output_filename "$outFile" \
     --detector_properties larnd-sim/larndsim/detector_properties/2x2.yaml \
     --pixel_layout larnd-sim/larndsim/pixel_layouts/multi_tile_layout-2.3.16.yaml \
     --response_file larnd-sim/larndsim/bin/response_44.npy \
     --light_lut_filename larnd-sim/larndsim/bin/lightLUT.npz \
-    --light_det_noise_filename larnd-sim/larndsim/bin/light_noise-2x2-example.npy
+    --light_det_noise_filename larnd-sim/larndsim/bin/light_noise-2x2-example.npy \
+    --simulation_properties larnd-sim/larndsim/simulation_properties/2x2_NuMI_sim.yaml
