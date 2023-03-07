@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 """
 Converts ROOT file created by edep-sim into HDF5 format
 """
@@ -189,9 +189,10 @@ def dump(input_files, output_file, spill_period=1.2E6):
         inputTree = inputFile.Get("EDepSimEvents")
         #print("Class:", inputTree.ClassName())
 
+        # IF CRASH: Uncomment this section (also see IF CRASH below)
         # Attach a brach to the events.
-        event = TG4Event()
-        inputTree.SetBranchAddress("Event",event)
+        # event = TG4Event()
+        # inputTree.SetBranchAddress("Event",event)
 
         # map that gives which spill each event lives in
         event_spill_map = inputFile.Get("event_spill_map")
@@ -206,6 +207,9 @@ def dump(input_files, output_file, spill_period=1.2E6):
         for jentry in tqdm(range(entries)):
             #print(jentry,"/",entries)
             nb = inputTree.GetEntry(jentry)
+
+            # IF CRASH: Comment this line (also see IF CRASH above)
+            event = inputTree.Event
 
             spill_it_tobj = event_spill_map.GetValue(str(event.EventId))
             spill_it = int(spill_it_tobj.GetName())
