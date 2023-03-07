@@ -32,12 +32,13 @@ run() {
     time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
-inFile=$PWD/../run-spill-build/output/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/${outName}.EDEPSIM_SPILLS.root
+inFile=$outDir/EDEPSIM_H5/${outName}.EDEPSIM.h5
 
 larndOutDir=$outDir/LARNDSIM
 mkdir -p $larndOutDir
 
 outFile=$larndOutDir/${outName}.LARNDSIM.h5
+rm -f $outFile
 
 run simulate_pixels_spills.py --input_filename "$inFile" \
     --output_filename "$outFile" \
