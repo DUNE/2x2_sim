@@ -103,18 +103,30 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
     std::vector<TaggedTime> times(Nevts_this_spill);
     std::generate(times.begin(),
                   times.begin() + Nevts_this_spill_1,
-                  [=]() { return TaggedTime(getInteractionTime_LBNF(), 1); });
+                  []() { return TaggedTime(getInteractionTime_LBNF(), 1); });
     std::generate(times.end() - Nevts_this_spill_2,
                   times.end(),
-                  [=]() { return TaggedTime(getInteractionTime_LBNF(), 2); });
+                  []() { return TaggedTime(getInteractionTime_LBNF(), 2); });
     std::sort(times.begin(),
               times.end(),
               [](const auto& lhs, const auto& rhs) { return lhs.time < rhs.time; });
 
     for (const auto& ttime : times) {
-      TG4Event* edep_evt = ttime.tag == 1 ? edep_evt_1 : edep_evt_2;
-      out_branch->SetAddress(edep_evt);
-      int& evt_it = ttime.tag == 1 ? evt_it_1 : evt_it_2;
+      bool is_nu = ttime.tag == 1;
+
+      TTree* in_tree = is_nu ? edep_evts_1 : edep_evts_2;
+      int& evt_it = is_nu ? evt_it_1 : evt_it_2;
+      in_tree->GetEntry(evt_it);
+
+      TG4Event* edep_evt = is_nu ? edep_evt_1 : edep_evt_2;
+      // out_branch->ResetAddress();
+      out_branch->SetAddress(&edep_evt); // why the &? what is meaning of life
+      // new_tree->SetBranchAddress("Event", &edep_evt);
+
+      // TODO: make a more elegant solution that allows for better backtracking
+      // edit the eventID of the rock events to be negative and start from -1
+      if (not is_nu)
+        edep_evt->EventId = -1*(edep_evt->EventId+1);
 
       std::string event_string = std::to_string(edep_evt->EventId);
       std::string spill_string = std::to_string(spillN);
@@ -124,7 +136,7 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
       if (event_spill_map->FindObject(event_string.c_str()) == 0)
         event_spill_map->Add(event_tobj, spill_tobj);
       else {
-        std::cerr << "[ERROR] redundant event ID." << std::endl;
+        std::cerr << "[ERROR] redundant event ID " << event_string.c_str() << std::endl;
         std::cerr << "event_spill_map entries = " << event_spill_map->GetEntries() << std::endl;
         throw;
       }
