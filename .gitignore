@@ -1,8 +1,10 @@
 __pycache__
 launchdirs
 .ipynb_checkpoints
+*.o
 *.d
 *.so
 *.pcm
-libTG4Event
 slurm-*.out
+*.bak
+*.venv
