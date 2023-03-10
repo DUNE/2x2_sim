@@ -73,6 +73,10 @@ libpath_remove /opt/generators/edep-sim/install/lib
 #     -e "gInterpreter->AddIncludePath(\"libTG4Event\")" \
 #     "overlaySinglesIntoSpills.C(\"$nuInFile\", \"$rockInFile\", \"$spillFile\", $ARCUBE_NU_POT, $ARCUBE_ROCK_POT)"
 
+# run root -l -b -q \
+#     -e "gSystem->Load(\"libTG4Event/libTG4Event.so\")" \
+#     "overlaySinglesIntoSpills.C(\"$nuInFile\", \"$rockInFile\", \"$spillFile\", $ARCUBE_NU_POT, $ARCUBE_ROCK_POT)"
+
 run root -l -b -q \
     -e "gSystem->Load(\"libTG4Event/libTG4Event.so\")" \
-    "overlaySinglesIntoSpills.C(\"$nuInFile\", \"$rockInFile\", \"$spillFile\", $ARCUBE_NU_POT, $ARCUBE_ROCK_POT)"
+    "overlaySinglesIntoSpillsSorted.C(\"$nuInFile\", \"$rockInFile\", \"$spillFile\", $ARCUBE_NU_POT, $ARCUBE_ROCK_POT)"
