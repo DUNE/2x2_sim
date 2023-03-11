@@ -99,3 +99,9 @@ double FindTheOffsetForTheWholeThingActive()
 {
   return FindTheOffset({0, 0, 0, 3, 0, 0, 0, 0, 1}, "volArgonCubeActive_PV");
 }
+
+// load JustThe2x2.gdml first
+double FindTheOffsetForJustThe2x2ActiveCathode()
+{
+  return FindTheOffset({0, 0, 1, 0, 0, 1, 0}, "volLArCathode_PV");
+}
