@@ -3,9 +3,8 @@
 # root -l -b -q 'overlaySinglesIntoSpills.C("/global/cfs/cdirs/dune/users/mkramer/mywork/2x2_sim/run-edep-sim/output/MiniRun1_1E19_RHC_nu/EDEPSIM/g4numiv6_minervame_me000z-200i_0_0001.000.EDEPSIM.root","/global/cfs/cdirs/dune/users/mkramer/mywork/2x2_sim/run-edep-sim/output/MiniRun1_1E19_RHC_rock/EDEPSIM/g4numiv6_minervame_me000z-200i_0_0001.000.EDEPSIM.root","test_multiSpill.root",2E15,5E14)'
 
 # Reload in Shifter if necessary
-image=docker:wilkinsonnu/nuisance_project:2x2_sim_prod
-if [[ "$SHIFTER_IMAGEREQUEST" != "$image" ]]; then
-    shifter --image=$image --module=none -- "$0" "$@"
+if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
+    shifter --image=$ARCUBE_CONTAINER --module=none -- "$0" "$@"
     exit
 fi
 

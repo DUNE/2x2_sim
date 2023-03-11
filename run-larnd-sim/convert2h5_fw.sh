@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-image=docker:wilkinsonnu/nuisance_project:2x2_sim_prod
-if [[ "$SHIFTER_IMAGEREQUEST" != "$image" ]]; then
-    shifter --image=$image --module=none -- "$0" "$@"
+if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
+    shifter --image=$ARCUBE_CONTAINER --module=none -- "$0" "$@"
     exit
 fi
 
