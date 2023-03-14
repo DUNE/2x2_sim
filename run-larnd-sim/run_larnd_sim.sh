@@ -17,8 +17,7 @@ dk2nuFile=${dk2nuAll[$dk2nuIdx]}
 echo "dk2nuIdx is $dk2nuIdx"
 echo "dk2nuFile is $dk2nuFile"
 
-[[ -z "$ARCUBE_SPILL_NAME" ]] && ARCUBE_SPILL_NAME=$ARCUBE_OUT_NAME
-inDir=$PWD/output/$ARCUBE_SPILL_NAME
+inDir=$PWD/output/$ARCUBE_SPILL_H5_NAME
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
