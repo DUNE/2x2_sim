@@ -1,0 +1,9 @@
+cached-property==1.5.2
+fire==0.5.0
+h5py==3.1.0
+importlib-resources==5.4.0
+numpy==1.19.5
+six==1.16.0
+termcolor==1.1.0
+tqdm==4.64.1
+zipp==3.6.0
