@@ -1,38 +1,40 @@
 #!/usr/bin/env bash
 
-echo hello bash
-
-echo $ARCUBE_BASE
-echo $ARCUBE_CHERRYPICK
-echo $ARCUBE_DET_LOCATION
-echo $ARCUBE_DK2NU_DIR
-echo $ARCUBE_EDEP_MAC
-echo $ARCUBE_EXPOSURE
-echo $ARCUBE_GEOM
-echo $ARCUBE_TUNE
-echo $ARCUBE_XSEC_FILE
-echo $ARCUBE_OUT_NAME
-echo $ARCUBE_DK2NU_INDEX
-echo $ARCUBE_SEED
+# Reload in Shifter if necessary
+if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
+    shifter --image=$ARCUBE_CONTAINER --module=none -- "$0" "$@"
+    exit
+fi
 
 source /environment             # provided by the container
 
-# HACK: This will not wait for other tasks on the node to complete
+## HACK: This will not wait for other tasks on the node to complete
 # if [[ "$SLURM_LOCALID" == 0 ]]; then
 #     monitorFile=monitor-$SLURM_JOBID.$SLURM_NODEID.txt
 #     ./monitor.sh >logs/"$ARCUBE_OUT_NAME"/"$SLURM_JOBID"/"$monitorFile" &
 # fi
 
-seed=$ARCUBE_SEED
+# Start seeds at 1 instead of 0, just in case GENIE does something
+# weird when given zero (e.g. use the current time)
+# NOTE: We just use the fixed Edep default seed of
+seed=$((1 + ARCUBE_INDEX))
 echo "Seed is $seed"
 
-dk2nuIdx=$ARCUBE_DK2NU_INDEX
+globalIdx=$ARCUBE_INDEX
+echo "globalIdx is $globalIdx"
+
 dk2nuAll=("$ARCUBE_DK2NU_DIR"/*.dk2nu)
+dk2nuCount=${#dk2nuAll[@]}
+dk2nuIdx=$((globalIdx % dk2nuCount))
 dk2nuFile=${dk2nuAll[$dk2nuIdx]}
+echo "dk2nuIdx is $dk2nuIdx"
+echo "dk2nuFile is $dk2nuFile"
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
-
-outName=$(basename "$dk2nuFile" .dk2nu).$(printf "%07d" $seed)
+# Since each dk2nu file may be processed multiple times (with different seeds),
+# append an identifier
+outName=$(basename "$dk2nuFile" .dk2nu).$(printf "%03d" $((globalIdx / dk2nuCount)))
+echo "outName is $outName"
 
 timeFile=$outDir/TIMING/$outName.time
 mkdir -p "$(dirname "$timeFile")"
@@ -40,7 +42,7 @@ timeProg=$PWD/tmp_bin/time      # container is missing /usr/bin/time
 
 run() {
     echo RUNNING "$@"
-    "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
+    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
 export GXMLPATH=$PWD/flux            # contains GNuMIFlux.xml
@@ -74,15 +76,15 @@ popd
 rmdir "$tmpDir"
 
 run gntpc -i "$genieOutPrefix".0.ghep.root -f rootracker \
-    -o "$genieOutPrefix".0.roo.root
+    -o "$genieOutPrefix".0.gtrac.root
 rm "$genieOutPrefix".0.ghep.root
 
 if [[ "$ARCUBE_CHERRYPICK" == 1 ]]; then
-    run ./cherrypicker.py -i "$genieOutPrefix".0.roo.root \
-        -o "$genieOutPrefix".0.roo.cherry.root
-    genieFile="$genieOutPrefix".0.roo.cherry.root
+    run ./cherrypicker.py -i "$genieOutPrefix".0.gtrac.root \
+        -o "$genieOutPrefix".0.gtrac.cherry.root
+    genieFile="$genieOutPrefix".0.gtrac.cherry.root
 else
-    genieFile="$genieOutPrefix".0.roo.root
+    genieFile="$genieOutPrefix".0.gtrac.root
 fi
 
 rootCode='
@@ -95,12 +97,7 @@ mkdir -p "$(dirname "$edepRootFile")"
 
 edepCode="/generator/kinematics/rooTracker/input $genieFile"
 
-run edep-sim -C -g "$ARCUBE_GEOM" -o "$edepRootFile" -e "$nEvents" \
+export ARCUBE_GEOM_EDEP=${ARCUBE_GEOM_EDEP:-$ARCUBE_GEOM}
+
+run edep-sim -C -g "$ARCUBE_GEOM_EDEP" -o "$edepRootFile" -e "$nEvents" \
     <(echo "$edepCode") "$ARCUBE_EDEP_MAC"
-
-edepH5File=$outDir/EDEPSIM_H5/${outName}.EDEPSIM.h5
-mkdir -p "$(dirname "$edepH5File")"
-
-# run venv/bin/python3 "$LARND_SIM"/cli/dumpTree.py "$edepRootFile" "$edepH5File"
-# run venv/bin/python3 dumpTree.py "$edepRootFile" "$edepH5File"
-run python3 dumpTree.py "$edepRootFile" "$edepH5File"
