@@ -22,7 +22,6 @@ iniconfig==2.0.0
 ipython==8.5.0
 jedi==0.18.1
 Jinja2==3.1.2
--e git+https://github.com/DUNE/larnd-sim.git@bfeaf9c2388beca3e26efb9f01a81a5e14720270#egg=larndsim
 larpix-control==3.7.0
 larpix-geometry==0.4.0
 llvmlite==0.39.1
