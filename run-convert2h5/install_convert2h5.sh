@@ -11,10 +11,10 @@ if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
     exit
 fi
 
-source /environment
+source /environment             # from the container
 
 rm -rf convert.venv
 python3 -m venv convert.venv
 source convert.venv/bin/activate
 
-pip3 install -r pip/requirements.convert2h5.sh
+pip3 install -r requirements.txt

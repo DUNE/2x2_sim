@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
+module load cudatoolkit         # 11.7
+module load python              # 3.9-anaconda-2021.11
+
+source larnd.venv/bin/activate
+
 if [[ "$NERSC_HOST" == "cori" ]]; then
     export HDF5_USE_FILE_LOCKING=FALSE
 fi
-
-# source venv/bin/activate
-source load_larnd_sim.sh
 
 globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"
