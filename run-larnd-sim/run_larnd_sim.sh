@@ -19,7 +19,7 @@ dk2nuFile=${dk2nuAll[$dk2nuIdx]}
 echo "dk2nuIdx is $dk2nuIdx"
 echo "dk2nuFile is $dk2nuFile"
 
-inDir=$PWD/output/$ARCUBE_SPILL_H5_NAME
+inDir=$PWD/../run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir

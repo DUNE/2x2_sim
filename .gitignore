@@ -1,5 +1,6 @@
 __pycache__
 launchdirs
+output
 .ipynb_checkpoints
 *.o
 *.d
