@@ -46,6 +46,7 @@ spillOutDir=$outDir/EDEPSIM_SPILLS
 mkdir -p "$spillOutDir"
 
 spillFile=$spillOutDir/${outName}.EDEPSIM_SPILLS.root
+rm -f "$spillFile"
 
 # run root -l -b -q \
 #     -e "gInterpreter->AddIncludePath(\"/opt/generators/edep-sim/install/include/EDepSim\")" \

@@ -60,6 +60,8 @@ ARCUBE_XSEC_FILE=$(realpath "$ARCUBE_XSEC_FILE")
 tmpDir=$(mktemp -d)
 pushd "$tmpDir"
 
+rm -f "$genieOutPrefix".*
+
 run gevgen_fnal \
     -e "$ARCUBE_EXPOSURE" \
     -f "$dk2nuFile","$ARCUBE_DET_LOCATION" \
@@ -94,6 +96,7 @@ nEvents=$(echo "$rootCode" | root -l -b "$genieFile" | tail -1)
 
 edepRootFile=$outDir/EDEPSIM/${outName}.EDEPSIM.root
 mkdir -p "$(dirname "$edepRootFile")"
+rm -f "$edepRootFile"
 
 edepCode="/generator/kinematics/rooTracker/input $genieFile"
 

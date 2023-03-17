@@ -42,7 +42,7 @@ larndOutDir=$outDir/LARNDSIM
 mkdir -p $larndOutDir
 
 outFile=$larndOutDir/${outName}.LARNDSIM.h5
-rm -f $outFile
+rm -f "$outFile"
 
 run simulate_pixels.py --input_filename "$inFile" \
     --output_filename "$outFile" \
