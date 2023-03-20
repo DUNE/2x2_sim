@@ -15,27 +15,33 @@ def main(sim_file, input_type):
         print('Number of',key,'entries in file:', len(sim_h5[key]))
     print('------------------------------------------------\n')
 
-    output_pdf_name = sim_file.split('.h5')[0]+'_validations.pdf'
+    # Logic to load the correct dataset name in the h5 file
+    # Key name if input file is from larndsim
+    if input_type == 'larnd':
+        segment_key_name = 'tracks'
+        output_pdf_tag = '_EDEPTRUTH'
+    # Key name if input file is from edep-sim via dumpTree
+    elif input_type == 'edep':
+        segment_key_name = 'segments'
+        output_pdf_tag = '_DUMPTREE'
+    # Yell at the screen if somehow a different option is given
+    else:
+        print('Not valid energy deposit key name.')
+        # Should we just exit here if we (somehow) get invalid input?
+        # Or keep going to see if the trajectories dataset is valid?
+
+    output_pdf_name = sim_file.split('.h5')[0]+output_pdf_tag+'_validations.pdf'
     # temperarily, put output in this directory, not the same as the
     # simulation file itself
     output_pdf_name = output_pdf_name.split('/')[-1] # !!
+    print('Writing to {}'.format(output_pdf_name))
     with PdfPages(output_pdf_name) as output:
 
-        # Logic to load the correct dataset name in the h5 file
-        # Key name if input file is from larndsim
-        if input_type == 'larnd':
-            segment_key_name = 'tracks'
-        # Key name if input file is from edep-sim via dumpTree
-        elif input_type == 'edep':
-            segment_key_name = 'segments'
-        # Yell at the screen if somehow a different option is given
-        else:
-            print("Not valid energy deposit key name.")
-
+        # One more check to get the correct dataset from the file
         try:
             segments = sim_h5[segment_key_name]
         except KeyError:
-            print("Energy deposit segments not found in file!")
+            print('Energy deposit segments not found in file!')
 
         ### Plot time structure of packets:
         plt.hist(segments['t0_start'], bins=100)
