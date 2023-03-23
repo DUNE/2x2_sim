@@ -1,4 +1,4 @@
-import matplotlib
+import matplotlib as mlp
 import matplotlib.pyplot as plt
 import numpy as np
 import h5py
@@ -20,7 +20,7 @@ def main(flow_file):
     output_pdf_name = flow_file.split('.h5')[0]+'_validations.pdf'
     # temperarily, put output in this directory, not the same as the
     # simulation file itself
-    output_pdf_name = output_pdf_name.split('/')[-1] # !!
+    #output_pdf_name = output_pdf_name.split('/')[-1] # !!
     with PdfPages(output_pdf_name) as output:
 
         # get the packet data and create some masks:
@@ -28,7 +28,29 @@ def main(flow_file):
         packet_index = np.array(list(range(0,len(packets))))
         data_packet_mask = packets['packet_type'] == 0
 
+        hits = flow_h5['/charge/calib_prompt_hits/data']
+        spill_mask = (hits['ts_pps'] > 0) & (hits['ts_pps'] < 9999999999999)
+
         ### Event display
+        fig = plt.figure(figsize=(10,10))
+        ax = fig.add_subplot(projection='3d')
+        ax.set_facecolor('none')
+        fig.tight_layout()
+        
+        # 3D 
+        dat = ax.scatter(hits[spill_mask]['z'],hits[spill_mask]['x'],
+                   hits[spill_mask]['y'],c=hits[spill_mask]['Q'],
+                   s=3,cmap='viridis',norm=mlp.colors.LogNorm())
+                   #norm=mpl.colors.LogNorm())#, cmap='Greys')
+        fig.colorbar(dat, ax=ax, label="detected charge", shrink=0.5)
+        
+        ax.set_title("edep-sim + larnd-sim + proto_nd_flow",fontsize=20)
+        ax.set_xlabel('z [mm]')
+        ax.set_ylabel('x [mm]')
+        ax.set_zlabel('y [mm]')
+        output.savefig()
+        plt.close()
+
         fig = plt.figure(layout="constrained")
         gs = fig.add_gridspec(5,3,height_ratios=[1,3,1,3,1])
         ax1 = fig.add_subplot(gs[1,0])
