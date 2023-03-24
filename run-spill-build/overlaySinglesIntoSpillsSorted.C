@@ -54,11 +54,22 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
   TChain* edep_evts_2 = new TChain("EDepSimEvents");
   edep_evts_2->Add(inFileName2.c_str());
 
+  // get input nu-LAr files
+  TChain* genie_evts_1 = new TChain("DetSimPassThru/gRooTracker");
+  genie_evts_1->Add(inFileName1.c_str());
+
+  // get input nu-Rock files
+  TChain* genie_evts_2 = new TChain("DetSimPassThru/gRooTracker");
+  genie_evts_2->Add(inFileName2.c_str());
+
   // make output file
   TFile* outFile = new TFile(outFileName.c_str(),"RECREATE");
   TTree* new_tree = edep_evts_1->CloneTree(0);
+  TTree* genie_tree = genie_evts_1->CloneTree(0);
   // TTree* new_tree2 = edep_evts_2->CloneTree(0);
   TBranch* out_branch = new_tree->GetBranch("Event");
+  TBranch* genie_id_br = genie_tree->GetBranch("EvtNum");
+  TBranch* genie_vtx_br = genie_tree->GetBranch("EvtVtx");
 
   // determine events per spill
   unsigned int N_evts_1 = edep_evts_1->GetEntries();
@@ -82,6 +93,18 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
   edep_evts_2->SetBranchAddress("Event",&edep_evt_2);
 
   TMap* event_spill_map = new TMap(N_evts_1+N_evts_2);
+
+  //GENIE event number is stored as int
+  //GENIE vertex is stored as double[4]
+  int genie_evt_id_1 = 0;
+  double genie_vtx_1[4];
+  genie_evts_1->SetBranchAddress("EvtNum", &genie_evt_id_1);
+  genie_evts_1->SetBranchAddress("EvtVtx", &genie_vtx_1);
+
+  int genie_evt_id_2 = 0;
+  double genie_vtx_2[4];
+  genie_evts_2->SetBranchAddress("EvtNum", &genie_evt_id_2);
+  genie_evts_2->SetBranchAddress("EvtVtx", &genie_vtx_2);
 
   int spillN = 0;
 
@@ -115,13 +138,23 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
       bool is_nu = ttime.tag == 1;
 
       TTree* in_tree = is_nu ? edep_evts_1 : edep_evts_2;
+      TTree* gn_tree = is_nu ? genie_evts_1 : genie_evts_2;
+
       int& evt_it = is_nu ? evt_it_1 : evt_it_2;
       in_tree->GetEntry(evt_it);
+      gn_tree->GetEntry(evt_it);
 
       TG4Event* edep_evt = is_nu ? edep_evt_1 : edep_evt_2;
       // out_branch->ResetAddress();
       out_branch->SetAddress(&edep_evt); // why the &? what is meaning of life
       // new_tree->SetBranchAddress("Event", &edep_evt);
+      
+      // not sure if this is the correct way for a plain int
+      int& genie_tmp_id = is_nu ? genie_evt_id_1 : genie_evt_id_2;
+      genie_id_br->SetAddress(&genie_tmp_id);
+
+      double* genie_tmp_vtx = is_nu ? genie_vtx_1 : genie_vtx_2;
+      genie_vtx_br->SetAddress(&genie_tmp_vtx);
 
       // TODO: make a more elegant solution that allows for better backtracking
       // edit the eventID of the rock events to be negative and start from -1
@@ -143,6 +176,11 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
 
       double event_time = ttime.time;
       double old_event_time = 0.;
+
+      // ... GENIE truth info
+      // only update the event ID and the interaction vertex time
+      genie_tmp_id = edep_evt->EventId;
+      genie_tmp_vtx[3] = event_time;
 
       // ... interaction vertex
       for (std::vector<TG4PrimaryVertex>::iterator v = edep_evt->Primaries.begin(); v != edep_evt->Primaries.end(); ++v) {
@@ -171,13 +209,16 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
       }
 
       new_tree->Fill();
+      genie_tree->Fill();
       evt_it++;
     } // loop over events in spill
   } // loop over spills
 
   new_tree->SetName("EdepSimEvents");
+  genie_tree->SetName("gRooTracker");
   outFile->cd();
   new_tree->Write();
+  genie_tree->Write();
   event_spill_map->Write("event_spill_map", 1);
   outFile->Close();
   delete outFile;
