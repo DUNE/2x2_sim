@@ -154,7 +154,7 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
       genie_id_br->SetAddress(&genie_tmp_id);
 
       double* genie_tmp_vtx = is_nu ? genie_vtx_1 : genie_vtx_2;
-      genie_vtx_br->SetAddress(&genie_tmp_vtx);
+      genie_vtx_br->SetAddress(genie_tmp_vtx);
 
       // TODO: make a more elegant solution that allows for better backtracking
       // edit the eventID of the rock events to be negative and start from -1
