@@ -7,5 +7,5 @@ output
 *.so
 *.pcm
 slurm-*.out
-*.bak
+*.bak*
 *.venv
