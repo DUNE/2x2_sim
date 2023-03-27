@@ -27,10 +27,16 @@ def main(sim_file):
         packets = sim_h5['packets']
         packet_index = np.array(list(range(0,len(packets))))
         data_packet_mask = packets['packet_type'] == 0
+        trig_packet_mask = packets['packet_type'] == 7
+        sync_packet_mask = packets['packet_type'] == 4
+        other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask)
+
 
         ### Plot time structure of packets: 
         plt.plot(packets['timestamp'][data_packet_mask],packet_index[data_packet_mask],'o',label='data packets',linestyle='None')
-        plt.plot(packets['timestamp'][~data_packet_mask],packet_index[~data_packet_mask],'o',label='other',linestyle='None')
+        plt.plot(packets['timestamp'][trig_packet_mask],packet_index[trig_packet_mask],'o',label='lrs triggers',linestyle='None')
+        plt.plot(packets['timestamp'][sync_packet_mask],packet_index[sync_packet_mask],'o',label='PPS packets',linestyle='None')
+        plt.plot(packets['timestamp'][other_packet_mask],packet_index[other_packet_mask],'o',label='other',linestyle='None')
         plt.xlabel('timestamp')
         plt.ylabel('packet index')
         plt.legend()
@@ -43,7 +49,9 @@ def main(sim_file):
         plt.close()
 
         plt.plot(packets['receipt_timestamp'][data_packet_mask],packet_index[data_packet_mask],'o',label='data packets',linestyle='None')
-        plt.plot(packets['receipt_timestamp'][~data_packet_mask],packet_index[~data_packet_mask],'o',label='other',linestyle='None')
+        plt.plot(packets['timestamp'][trig_packet_mask],packet_index[trig_packet_mask],'o',label='lrs triggers',linestyle='None')
+        plt.plot(packets['timestamp'][sync_packet_mask],packet_index[sync_packet_mask],'o',label='PPS packets',linestyle='None')
+        plt.plot(packets['receipt_timestamp'][other_packet_mask],packet_index[other_packet_mask],'o',label='other',linestyle='None')
         plt.xlabel('receipt_timestamp')
         plt.ylabel('packet index')
         plt.legend()
