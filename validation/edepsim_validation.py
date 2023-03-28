@@ -81,6 +81,15 @@ def main(sim_file, input_type):
         output.savefig()
         plt.close()
 
+        ### Now by their powers combined -- 2D muon momentum vs angle
+        plt.hist2d(muon_angle, muon_pmag, bins=[60, 40], range=[[0, 180],[0, 20000]])
+        plt.title('True muon momentum vs angle')
+        plt.xlabel(r'$\theta_\mu$ [degrees]')
+        plt.ylabel(r'$p_\mu$ [MeV]')
+        plt.colorbar(label='Event rate')
+        output.savefig()
+        plt.close()
+
         ### Plot the outgoing muon start position as proxy for vertex position
         muon_vtx = traj['xyz_start'][muon_mask]
         for i, coord in enumerate(['x', 'y', 'z']):
