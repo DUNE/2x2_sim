@@ -140,7 +140,7 @@ void gRooTracker::Init(TTree *tree)
    if (!tree) return;
    fChain = tree;
    fCurrent = -1;
-   fChain->SetMakeClass(1);
+   // fChain->SetMakeClass(1);
 
    EvtFlags = nullptr;
    // fChain->SetBranchAddress("EvtFlags", &EvtFlags, &b_EvtFlags);
@@ -148,7 +148,8 @@ void gRooTracker::Init(TTree *tree)
    // fChain->SetBranchAddress("fNbytes", &fNbytes, &b_EvtFlags_fNbytes);
    // fChain->SetBranchAddress("fAllBits", &fAllBits, &b_fAllBits);
    EvtCode = nullptr;
-   fChain->SetBranchAddress("EvtCode", &EvtCode, &b_EvtCode);
+   // fChain->SetBranchAddress("EvtCode", &EvtCode, &b_EvtCode);
+   fChain->SetBranchAddress("EvtCode", &EvtCode);
    // fChain->SetBranchAddress("fString", &fString, &b_EvtCode_fString);
    fChain->SetBranchAddress("EvtNum", &EvtNum, &b_EvtNum);
    fChain->SetBranchAddress("EvtXSec", &EvtXSec, &b_EvtXSec);
