@@ -8,6 +8,8 @@
 #ifndef gRooTracker_h
 #define gRooTracker_h
 
+#include <algorithm>
+
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
@@ -18,6 +20,8 @@
 
 class gRooTracker {
 public :
+   static const size_t MAXP = 4000;    // same as in edep-sim
+
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
 
@@ -37,16 +41,16 @@ public :
    Double_t        EvtProb;
    Double_t        EvtVtx[4];
    Int_t           StdHepN;
-   Int_t           StdHepPdg[83];   //[StdHepN]
-   Int_t           StdHepStatus[83];   //[StdHepN]
-   Int_t           StdHepRescat[83];   //[StdHepN]
-   Double_t        StdHepX4[83][4];   //[StdHepN]
-   Double_t        StdHepP4[83][4];   //[StdHepN]
-   Double_t        StdHepPolz[83][3];   //[StdHepN]
-   Int_t           StdHepFd[83];   //[StdHepN]
-   Int_t           StdHepLd[83];   //[StdHepN]
-   Int_t           StdHepFm[83];   //[StdHepN]
-   Int_t           StdHepLm[83];   //[StdHepN]
+   Int_t           StdHepPdg[MAXP];   //[StdHepN]
+   Int_t           StdHepStatus[MAXP];   //[StdHepN]
+   Int_t           StdHepRescat[MAXP];   //[StdHepN]
+   Double_t        StdHepX4[MAXP][4];   //[StdHepN]
+   Double_t        StdHepP4[MAXP][4];   //[StdHepN]
+   Double_t        StdHepPolz[MAXP][3];   //[StdHepN]
+   Int_t           StdHepFd[MAXP];   //[StdHepN]
+   Int_t           StdHepLd[MAXP];   //[StdHepN]
+   Int_t           StdHepFm[MAXP];   //[StdHepN]
+   Int_t           StdHepLm[MAXP];   //[StdHepN]
 
    // List of branches
    TBranch        *b_EvtFlags;
@@ -82,6 +86,7 @@ public :
    // virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+   void CopyFrom(gRooTracker& other);
 };
 
 #endif
@@ -143,13 +148,12 @@ void gRooTracker::Init(TTree *tree)
    // fChain->SetMakeClass(1);
 
    EvtFlags = nullptr;
-   // fChain->SetBranchAddress("EvtFlags", &EvtFlags, &b_EvtFlags);
+   fChain->SetBranchAddress("EvtFlags", &EvtFlags, &b_EvtFlags);
    // fChain->SetBranchAddress("fNbits", &fNbits, &b_EvtFlags_fNbits);
    // fChain->SetBranchAddress("fNbytes", &fNbytes, &b_EvtFlags_fNbytes);
    // fChain->SetBranchAddress("fAllBits", &fAllBits, &b_fAllBits);
    EvtCode = nullptr;
-   // fChain->SetBranchAddress("EvtCode", &EvtCode, &b_EvtCode);
-   fChain->SetBranchAddress("EvtCode", &EvtCode);
+   fChain->SetBranchAddress("EvtCode", &EvtCode, &b_EvtCode);
    // fChain->SetBranchAddress("fString", &fString, &b_EvtCode_fString);
    fChain->SetBranchAddress("EvtNum", &EvtNum, &b_EvtNum);
    fChain->SetBranchAddress("EvtXSec", &EvtXSec, &b_EvtXSec);
@@ -195,4 +199,30 @@ Int_t gRooTracker::Cut(Long64_t entry)
 // returns  1 if entry is accepted.
 // returns -1 otherwise.
    return 1;
+}
+
+void gRooTracker::CopyFrom(gRooTracker& other)
+{
+   *EvtFlags = *other.EvtFlags;
+   EvtCode->SetString(other.EvtCode->String().Data());
+   EvtNum = other.EvtNum;
+   EvtXSec = other.EvtXSec;
+   EvtDXSec = other.EvtDXSec;
+   EvtWght = other.EvtWght;
+   EvtProb = other.EvtProb;
+   std::copy(other.EvtVtx, other.EvtVtx+4, EvtVtx);
+   StdHepN = other.StdHepN;
+   std::copy(other.StdHepPdg, other.StdHepPdg + MAXP, StdHepPdg);
+   std::copy(other.StdHepStatus, other.StdHepStatus + MAXP, StdHepStatus);
+   std::copy(other.StdHepRescat, other.StdHepRescat + MAXP, StdHepRescat);
+   std::copy((Double_t*)other.StdHepX4, ((Double_t*)other.StdHepX4) + 4*MAXP,
+             (Double_t*)StdHepX4);
+   std::copy((Double_t*)other.StdHepP4, ((Double_t*)other.StdHepP4) + 4*MAXP,
+             (Double_t*)StdHepP4);
+   std::copy((Double_t*)other.StdHepPolz, ((Double_t*)other.StdHepPolz) + 3*MAXP,
+             (Double_t*)StdHepPolz);
+   std::copy(other.StdHepFd, other.StdHepFd + MAXP, StdHepFd);
+   std::copy(other.StdHepLd, other.StdHepLd + MAXP, StdHepLd);
+   std::copy(other.StdHepFm, other.StdHepFm + MAXP, StdHepFm);
+   std::copy(other.StdHepLm, other.StdHepLm + MAXP, StdHepLm);
 }

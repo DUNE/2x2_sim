@@ -1,4 +1,5 @@
 #include "TG4Event.h"
+#include "gRooTracker.h"
 
 // Simple root macro meant to take in an output file from edep-sim
 // containing single neutrino interactions (from some flux) in the
@@ -55,15 +56,18 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
   // get input nu-LAr files
   TChain* genie_evts_1 = new TChain("DetSimPassThru/gRooTracker");
   genie_evts_1->Add(inFileName1.c_str());
+  gRooTracker genie_evts_1_data(genie_evts_1);
 
   // get input nu-Rock files
   TChain* genie_evts_2 = new TChain("DetSimPassThru/gRooTracker");
   genie_evts_2->Add(inFileName2.c_str());
+  gRooTracker genie_evts_2_data(genie_evts_2);
 
   // make output file
   TFile* outFile = new TFile(outFileName.c_str(),"RECREATE");
   TTree* new_tree = edep_evts_1->CloneTree(0);
   TTree* genie_tree = genie_evts_1->CloneTree(0);
+  gRooTracker genie_tree_data(genie_tree);
   TBranch* out_branch = new_tree->GetBranch("Event");
 
   // determine events per spill
@@ -88,17 +92,6 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
   edep_evts_2->SetBranchAddress("Event",&edep_evt_2);
 
   TMap* event_spill_map = new TMap(N_evts_1+N_evts_2);
-
-  // The only GENIE branches we need to rewrite are EvtNum and EvtVtx[3] (i.e.
-  // time).
-  int genie_evt_id_1, genie_evt_id_2;
-  genie_evts_1->SetBranchAddress("EvtNum", &genie_evt_id_1);
-  genie_evts_2->SetBranchAddress("EvtNum", &genie_evt_id_2);
-  double genie_vtx_1[4], genie_vtx_2[4];
-  genie_evts_1->SetBranchAddress("EvtVtx", &genie_vtx_1);
-  genie_evts_2->SetBranchAddress("EvtVtx", &genie_vtx_2);
-  TBranch* genie_br_evt_id = genie_tree->GetBranch("EvtNum");
-  TBranch* genie_br_vtx = genie_tree->GetBranch("EvtVtx");
 
   int spillN = 0;
 
@@ -164,20 +157,10 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
       double event_time = ttime.time;
       double old_event_time = 0.;
 
-      for (int i = 0; i < gn_tree->GetListOfBranches()->GetEntries(); ++i) {
-        auto br_in = (TBranch*) gn_tree->GetListOfBranches()->At(i);
-        auto br_out = (TBranch*) genie_tree->GetListOfBranches()->At(i);
-        br_out->SetAddress(br_in->GetAddress());
-      }
-
-      // ... GENIE truth info
-      // only update the event ID and the interaction vertex time
-      auto& genie_evt_id = is_nu ? genie_evt_id_1 : genie_evt_id_2;
-      auto& genie_vtx = is_nu ? genie_vtx_1 : genie_vtx_2;
-      genie_br_evt_id->SetAddress(&genie_evt_id);
-      genie_br_evt_id->SetAddress(genie_vtx);
-      genie_evt_id = edep_evt->EventId;
-      genie_vtx[3] = event_time;
+      gRooTracker& genie_evts_data = is_nu ? genie_evts_1_data : genie_evts_2_data;
+      genie_tree_data.CopyFrom(genie_evts_data);
+      genie_tree_data.EvtNum = edep_evt->EventId;
+      genie_tree_data.EvtVtx[3] = event_time;
 
       // ... interaction vertex
       for (std::vector<TG4PrimaryVertex>::iterator v = edep_evt->Primaries.begin(); v != edep_evt->Primaries.end(); ++v) {
