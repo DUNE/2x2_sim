@@ -6,7 +6,11 @@ if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
     exit
 fi
 
-source /environment             # provided by the container
+if [[ "$ARCUBE_LOCAL_EDEP" == 1 ]]; then
+    source environment_local_edep.sh
+else
+    source /environment             # provided by the container
+fi
 
 ## HACK: This will not wait for other tasks on the node to complete
 # if [[ "$SLURM_LOCALID" == 0 ]]; then
