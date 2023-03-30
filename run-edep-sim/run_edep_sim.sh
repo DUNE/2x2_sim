@@ -102,7 +102,12 @@ edepRootFile=$outDir/EDEPSIM/${outName}.EDEPSIM.root
 mkdir -p "$(dirname "$edepRootFile")"
 rm -f "$edepRootFile"
 
-edepCode="/generator/kinematics/rooTracker/input $genieFile"
+if [ "$ARCUBE_LOCAL_EDEP" == "1" ]; then
+    edepCode="/generator/kinematics/rooTracker/input $genieFile
+/edep/db/set/requireEventsWithHits true"
+else
+    edepCode="/generator/kinematics/rooTracker/input $genieFile"
+fi
 
 export ARCUBE_GEOM_EDEP=${ARCUBE_GEOM_EDEP:-$ARCUBE_GEOM}
 
