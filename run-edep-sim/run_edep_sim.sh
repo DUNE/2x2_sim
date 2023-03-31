@@ -6,11 +6,7 @@ if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
     exit
 fi
 
-if [[ "$ARCUBE_LOCAL_EDEP" == 1 ]]; then
-    source environment_local_edep.sh
-else
-    source /environment             # provided by the container
-fi
+source /environment             # provided by the container
 
 ## HACK: This will not wait for other tasks on the node to complete
 # if [[ "$SLURM_LOCALID" == 0 ]]; then
@@ -102,12 +98,7 @@ edepRootFile=$outDir/EDEPSIM/${outName}.EDEPSIM.root
 mkdir -p "$(dirname "$edepRootFile")"
 rm -f "$edepRootFile"
 
-if [ "$ARCUBE_LOCAL_EDEP" == "1" ]; then
-    edepCode="/generator/kinematics/rooTracker/input $genieFile
-/edep/db/set/requireEventsWithHits true"
-else
-    edepCode="/generator/kinematics/rooTracker/input $genieFile"
-fi
+edepCode="/generator/kinematics/rooTracker/input $genieFile"
 
 export ARCUBE_GEOM_EDEP=${ARCUBE_GEOM_EDEP:-$ARCUBE_GEOM}
 
