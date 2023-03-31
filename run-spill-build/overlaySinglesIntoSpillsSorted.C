@@ -43,7 +43,7 @@ struct TaggedTime {
   TaggedTime() : time(0), tag(0) {}
 };
 
-void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileName2, std::string outFileName = "spillFile", double inFile1POT = 1.024E19, double inFile2POT = 1.024E19, double spillPOT = 6.5E13) {
+void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileName2, std::string outFileName = "spillFile", double inFile1POT = 1.024E19, double inFile2POT = 1.024E19, double spillPOT = 5E13) {
 
   // get input nu-LAr files
   TChain* edep_evts_1 = new TChain("EDepSimEvents");
