@@ -193,7 +193,7 @@ def updateHDF5File(output_file, trajectories, segments, vertices, genie_s, genie
                 f['genie_hdr'][nvert:] = genie_h
 
 # Read a file and dump it.
-def dump(input_files, output_file, spill_period=1.2E6):
+def dump(input_files, output_file):
 
     """
     Script to convert edep-sim root output to an h5 file formatted in a way
@@ -204,8 +204,6 @@ def dump(input_files, output_file, spill_period=1.2E6):
             expected to correspond to a single spill.
         output_file (str): name of the h5 output file to which the information should
             be written
-        spill_period (double): the spill period to be simulate. Each spill in the inputs
-            will be separated by this much time [in microseconds]
     """
 
     # Prep output file
@@ -315,8 +313,8 @@ def dump(input_files, output_file, spill_period=1.2E6):
                 trajectories[iTraj]["pxyz_end"] = (end_pt.GetMomentum().X(), end_pt.GetMomentum().Y(), end_pt.GetMomentum().Z())
                 trajectories[iTraj]["xyz_start"] = (start_pt.GetPosition().X() * edep2cm, start_pt.GetPosition().Y() * edep2cm, start_pt.GetPosition().Z() * edep2cm)
                 trajectories[iTraj]["xyz_end"] = (end_pt.GetPosition().X() * edep2cm, end_pt.GetPosition().Y() * edep2cm, end_pt.GetPosition().Z() * edep2cm)
-                trajectories[iTraj]["t_start"] = start_pt.GetPosition().T() * edep2us + spill_period*spill_it
-                trajectories[iTraj]["t_end"] = end_pt.GetPosition().T() * edep2us + spill_period*spill_it
+                trajectories[iTraj]["t_start"] = start_pt.GetPosition().T() * edep2us
+                trajectories[iTraj]["t_end"] = end_pt.GetPosition().T() * edep2us
                 trajectories[iTraj]["start_process"] = start_pt.GetProcess()
                 trajectories[iTraj]["start_subprocess"] = start_pt.GetSubprocess()
                 trajectories[iTraj]["end_process"] = end_pt.GetProcess()
@@ -347,12 +345,12 @@ def dump(input_files, output_file, spill_period=1.2E6):
                     segment[iHit]["x_start"] = hitSegment.GetStart().X() * edep2cm
                     segment[iHit]["y_start"] = hitSegment.GetStart().Y() * edep2cm
                     segment[iHit]["z_start"] = hitSegment.GetStart().Z() * edep2cm
-                    segment[iHit]["t0_start"] = hitSegment.GetStart().T() * edep2us + spill_period*spill_it
+                    segment[iHit]["t0_start"] = hitSegment.GetStart().T() * edep2us
                     segment[iHit]["t_start"] = 0
                     segment[iHit]["x_end"] = hitSegment.GetStop().X() * edep2cm
                     segment[iHit]["y_end"] = hitSegment.GetStop().Y() * edep2cm
                     segment[iHit]["z_end"] = hitSegment.GetStop().Z() * edep2cm
-                    segment[iHit]["t0_end"] = hitSegment.GetStop().T() * edep2us + spill_period*spill_it
+                    segment[iHit]["t0_end"] = hitSegment.GetStop().T() * edep2us
                     segment[iHit]["t_end"] = 0
                     segment[iHit]["dE"] = hitSegment.GetEnergyDeposit()
                     xd = segment[iHit]["x_end"] - segment[iHit]["x_start"]

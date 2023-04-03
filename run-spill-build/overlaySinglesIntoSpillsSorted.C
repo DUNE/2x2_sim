@@ -9,8 +9,8 @@
 //
 //   (1) The EventId for rock events starts from -1 and counts backward.
 //
-//   (2) The timing information is edited to impose the timing
-//       microstructure of the numi/lbnf beamline.
+//   (2) The timing information is edited to impose the timing microstructure of
+//       the numi/lbnf beamline, as well as the "macrostructure" (spill period).
 
 
 // returns a random time for a neutrino interaction to take place within
@@ -43,7 +43,13 @@ struct TaggedTime {
   TaggedTime() : time(0), tag(0) {}
 };
 
-void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileName2, std::string outFileName = "spillFile", double inFile1POT = 1.024E19, double inFile2POT = 1.024E19, double spillPOT = 5E13) {
+void overlaySinglesIntoSpillsSorted(std::string inFileName1,
+                                    std::string inFileName2,
+                                    std::string outFileName = "spillFile",
+                                    double inFile1POT = 1.024E19,
+                                    double inFile2POT = 1.024E19,
+                                    double spillPOT = 5E13,
+                                    double spillPeriod_s = 1.2) {
 
   // get input nu-LAr files
   TChain* edep_evts_1 = new TChain("EDepSimEvents");
@@ -151,7 +157,7 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
         throw;
       }
 
-      double event_time = ttime.time;
+      double event_time = ttime.time + 1e9*spillPeriod_s*spillN;
       double old_event_time = 0.;
 
       gRooTracker& genie_evts_data = is_nu ? genie_evts_1_data : genie_evts_2_data;
