@@ -93,12 +93,10 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
 
   TMap* event_spill_map = new TMap(N_evts_1+N_evts_2);
 
-  int spillN = 0;
-
   int evt_it_1 = 0;
   int evt_it_2 = 0;
 
-  while (true) {
+  for (int spillN = 0; ; ++spillN) {
     int Nevts_this_spill_1 = gRandom->Poisson(evts_per_spill_1);
     int Nevts_this_spill_2 = gRandom->Poisson(evts_per_spill_2);
 
@@ -106,7 +104,6 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1, std::string inFileN
         evt_it_2 + Nevts_this_spill_2 > N_evts_2)
       break;
 
-    spillN++;
     std::cout << "working on spill # " << spillN << std::endl;
 
     int Nevts_this_spill = Nevts_this_spill_1 + Nevts_this_spill_2;
