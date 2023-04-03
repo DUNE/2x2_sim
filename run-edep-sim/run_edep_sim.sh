@@ -98,7 +98,8 @@ edepRootFile=$outDir/EDEPSIM/${outName}.EDEPSIM.root
 mkdir -p "$(dirname "$edepRootFile")"
 rm -f "$edepRootFile"
 
-edepCode="/generator/kinematics/rooTracker/input $genieFile"
+edepCode="/generator/kinematics/rooTracker/input $genieFile
+/edep/runId $ARCUBE_INDEX"
 
 export ARCUBE_GEOM_EDEP=${ARCUBE_GEOM_EDEP:-$ARCUBE_GEOM}
 
