@@ -49,6 +49,6 @@ run simulate_pixels.py --input_filename "$inFile" \
     --detector_properties larnd-sim/larndsim/detector_properties/2x2.yaml \
     --pixel_layout larnd-sim/larndsim/pixel_layouts/multi_tile_layout-2.3.16.yaml \
     --response_file larnd-sim/larndsim/bin/response_44.npy \
-    --light_lut_filename larnd-sim/larndsim/bin/lightLUT.npz \
+    --light_lut_filename /global/cfs/cdirs/dune/www/data/2x2/simulation/larndsim_data/light_LUT_M123_v1/lightLUT_M123.npz \
     --light_det_noise_filename larnd-sim/larndsim/bin/light_noise-2x2-example.npy \
     --simulation_properties larnd-sim/larndsim/simulation_properties/2x2_NuMI_sim.yaml

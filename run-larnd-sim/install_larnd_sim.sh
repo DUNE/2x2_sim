@@ -22,10 +22,8 @@ pip install -r requirements.txt
 # https://docs.nersc.gov/development/languages/python/using-python-perlmutter/#installing-with-pip
 ( git clone https://github.com/DUNE/larnd-sim.git
   cd larnd-sim || exit
-  # temperarily* checkout the feature branch for spill simulation
-  # *soon to be merged into develop
-  # git checkout feature_spillSim
-  git checkout bfeaf9c2388beca3e26efb9f01a81a5e14720270
+  # From the test_MiniRun3 branch
+  git checkout faa29c97e4d949041a90b16577518985df2c4858
   # HACK: Replace cupy with cupy-cuda11x (no longer necessary; setup.py is smarter now)
   # mv setup.py setup.py.orig
   # sed 's/cupy/cupy-cuda11x/' setup.py.orig > setup.py
