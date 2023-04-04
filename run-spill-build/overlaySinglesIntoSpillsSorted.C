@@ -209,6 +209,8 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
   outFile->mkdir("DetSimPassThru");
   outFile->cd("DetSimPassThru");
   genie_tree->Write();
+  auto p = new TParameter<float>("spillPeriod_s", spillPeriod_s);
+  p->Write();
   outFile->Close();
   delete outFile;
 }

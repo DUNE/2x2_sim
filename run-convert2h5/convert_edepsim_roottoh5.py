@@ -38,8 +38,8 @@ trajectories_dtype = np.dtype([("spillID","u4"), ("eventID", "u8"),
                                ("end_subprocess", "u4")], align=True)
 
 vertices_dtype = np.dtype([("spillID","u4"), ("eventID","u8"),
-                           ("x_vert","f4"), ("y_vert","f4"),
-                           ("z_vert","f4")], align=True)
+                           ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
+                           ("t_vert","f4"), ("t_spill","f4")], align=True)
 
 genie_stack_dtype = np.dtype([("spillID", "u4"), ("eventID", "u8"),
                               ("part_4mom", "f4", (4,)), ("part_pdg", "i4"),
@@ -231,6 +231,11 @@ def dump(input_files, output_file):
         # map that gives which spill each event lives in
         event_spill_map = inputFile.Get("event_spill_map")
 
+        # for setting t_spill
+        spillPeriod_s = inputFile.Get("spillPeriod_s").GetVal()
+        spillCounter = -1
+        lastSpill = None        # Most-recent global spill ID
+
         # Read all of the events.
         entries = inputTree.GetEntriesFast()
         genie_entries = genieTree.GetEntriesFast()
@@ -259,6 +264,11 @@ def dump(input_files, output_file):
 
             spill_it_tobj = event_spill_map.GetValue(f"{event.RunId} {event.EventId}")
             spill_it = int(spill_it_tobj.GetName())
+            if spill_it != lastSpill: # New spill?
+                spillCounter += 1
+                lastSpill = spill_it
+            t_spill = spillCounter * spillPeriod_s * 1E6 # convert to us
+
             #print("event",event.EventId,"in spill",spill_it)
 
             # write to file
@@ -302,6 +312,8 @@ def dump(input_files, output_file):
                 vertex["x_vert"] = primaryVertex.GetPosition().X()
                 vertex["y_vert"] = primaryVertex.GetPosition().Y()
                 vertex["z_vert"] = primaryVertex.GetPosition().Z()
+                vertex["t_vert"] = primaryVertex.GetPosition().T()
+                vertex["t_spill"] = t_spill
                 vertices_list.append(vertex)
 
             trackMap = {}
