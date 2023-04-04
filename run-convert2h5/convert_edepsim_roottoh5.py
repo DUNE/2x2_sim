@@ -295,7 +295,7 @@ def dump(input_file, output_file):
         #print("Class: ", event.ClassName())
         #print("Event number:", event.EventId)
 
-        globalEventID = (event.RunId<<32) + event.EventId
+        globalEventID = (event.RunId * 1E6) + event.EventId
 
         # Dump the primary vertices
         vertex = np.empty(len(event.Primaries), dtype=vertices_dtype)
