@@ -28,7 +28,7 @@ segments_dtype = np.dtype([("spillID","u4"),("eventID", "u8"), ("segment_id", "u
                            ("n_photons","f4")], align=True)
 
 trajectories_dtype = np.dtype([("spillID","u4"), ("eventID", "u8"),
-                               ("trackID", "u4"), ("parentID", "i4"),
+                               ("trackID", "u4"), ("local_trackID", "u4"), ("parentID", "i4"),
                                ("pxyz_start", "f4", (3,)),
                                ("xyz_start", "f4", (3,)), ("t_start", "f4"),
                                ("pxyz_end", "f4", (3,)),
@@ -246,6 +246,9 @@ def dump(input_files, output_file):
         genie_stack_list = list()
         genie_hdr_list = list()
 
+        # For assigning unique-in-file track IDs:
+        trackCounter = 0
+
         for jentry in tqdm(range(entries)):
             #print(jentry,"/",entries)
             nb = inputTree.GetEntry(jentry)
@@ -301,16 +304,25 @@ def dump(input_files, output_file):
                 vertex["z_vert"] = primaryVertex.GetPosition().Z()
                 vertices_list.append(vertex)
 
+            trackMap = {}
+
             # Dump the trajectories
             #print("Number of trajectories ", len(event.Trajectories))
             trajectories = np.empty(len(event.Trajectories), dtype=trajectories_dtype)
             for iTraj, trajectory in enumerate(event.Trajectories):
+                fileTrackID = trackCounter
+                trackCounter += 1
+                trackMap[trajectory.GetTrackId()] = fileTrackID
+
                 start_pt, end_pt = trajectory.Points[0], trajectory.Points[-1]
                 trajectories[iTraj]["spillID"] = spill_it
                 trajectories[iTraj]["eventID"] = globalEventID
-                #trajectories[iTraj]["trackID"] = trajectory.GetTrackId() + 1e6*spill_it
-                trajectories[iTraj]["trackID"] = trajectory.GetTrackId()
-                trajectories[iTraj]["parentID"] = trajectory.GetParentId()
+
+                trajectories[iTraj]["trackID"] = fileTrackID
+                trajectories[iTraj]["local_trackID"] = trajectory.GetTrackId()
+                trajectories[iTraj]["parentID"] = -1 if trajectory.GetParentId() == -1 \
+                    else trackMap[trajectory.GetParentId()]
+
                 trajectories[iTraj]["pxyz_start"] = (start_pt.GetMomentum().X(), start_pt.GetMomentum().Y(), start_pt.GetMomentum().Z())
                 trajectories[iTraj]["pxyz_end"] = (end_pt.GetMomentum().X(), end_pt.GetMomentum().Y(), end_pt.GetMomentum().Z())
                 trajectories[iTraj]["xyz_start"] = (start_pt.GetPosition().X() * edep2cm, start_pt.GetPosition().Y() * edep2cm, start_pt.GetPosition().Z() * edep2cm)
@@ -337,7 +349,7 @@ def dump(input_files, output_file):
                     segment[iHit]["segment_id"] = segment_id
                     segment_id += 1
                     try:
-                        segment[iHit]["trackID"] = trajectories[hitSegment.Contrib[0]]["trackID"]
+                        segment[iHit]["trackID"] = trackMap[hitSegment.Contrib[0]]
                     except IndexError as e:
                         print(e)
                         print("iHit:",iHit)
