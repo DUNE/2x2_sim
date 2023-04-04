@@ -25,6 +25,7 @@ outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
 
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
+inName=$ARCUBE_CONVERT2H5_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
 timeFile=$outDir/TIMING/$outName.time
@@ -36,7 +37,7 @@ run() {
     time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
-inFile=$inDir/EDEPSIM_H5/${outName}.EDEPSIM.h5
+inFile=$inDir/EDEPSIM_H5/${inName}.EDEPSIM.h5
 
 larndOutDir=$outDir/LARNDSIM
 mkdir -p $larndOutDir
