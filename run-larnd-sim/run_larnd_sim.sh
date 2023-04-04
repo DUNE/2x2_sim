@@ -24,7 +24,7 @@ inDir=$PWD/../run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
 outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
 
-outName=$(basename "$dk2nuFile" .dk2nu).$(printf "%03d" $((globalIdx / dk2nuCount)))
+outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
 timeFile=$outDir/TIMING/$outName.time

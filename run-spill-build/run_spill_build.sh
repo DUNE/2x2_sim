@@ -20,7 +20,7 @@ dk2nuFile=${dk2nuAll[$dk2nuIdx]}
 echo "dk2nuIdx is $dk2nuIdx"
 echo "dk2nuFile is $dk2nuFile"
 
-outName=$(basename "$dk2nuFile" .dk2nu).$(printf "%03d" $((globalIdx / dk2nuCount)))
+outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
 inBaseDir=$PWD/../run-edep-sim/output

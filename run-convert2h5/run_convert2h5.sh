@@ -27,8 +27,8 @@ echo "dk2nuFile is $dk2nuFile"
 outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
 
-outName=$(basename "$dk2nuFile" .dk2nu).$(printf "%03d" $((globalIdx / dk2nuCount)))
 echo "outName is $outName"
+outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
 
 timeFile=$outDir/TIMING/$outName.time
 mkdir -p "$(dirname "$timeFile")"
