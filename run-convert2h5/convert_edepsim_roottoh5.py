@@ -185,12 +185,12 @@ def updateHDF5File(output_file, trajectories, segments, vertices, genie_s, genie
             if len(genie_s):
                 ngenie_s = len(f['genie_stack'])
                 f['genie_stack'].resize((ngenie_s+len(genie_s),))
-                f['genie_stack'][nvert:] = genie_s
+                f['genie_stack'][ngenie_s:] = genie_s
 
             if len(genie_h):
                 ngenie_h = len(f['genie_hdr'])
                 f['genie_hdr'].resize((ngenie_h+len(genie_h),))
-                f['genie_hdr'][nvert:] = genie_h
+                f['genie_hdr'][ngenie_h:] = genie_h
 
 # Read a file and dump it.
 def dump(input_file, output_file):
