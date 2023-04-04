@@ -14,14 +14,16 @@ globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"
 
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
+nuName=$ARCUBE_NU_NAME.$(printf "%05d" "$globalIdx")
+rockName=$ARCUBE_ROCK_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
 inBaseDir=$PWD/../run-edep-sim/output
 nuInDir=$inBaseDir/$ARCUBE_NU_NAME
 rockInDir=$inBaseDir/$ARCUBE_ROCK_NAME
 
-nuInFile=$nuInDir/EDEPSIM/${outName}.EDEPSIM.root
-rockInFile=$rockInDir/EDEPSIM/${outName}.EDEPSIM.root
+nuInFile=$nuInDir/EDEPSIM/${nuName}.EDEPSIM.root
+rockInFile=$rockInDir/EDEPSIM/${rockName}.EDEPSIM.root
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p "$outDir"

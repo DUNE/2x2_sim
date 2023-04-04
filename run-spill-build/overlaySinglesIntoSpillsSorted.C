@@ -203,14 +203,17 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
 
   new_tree->SetName("EDepSimEvents");
   genie_tree->SetName("gRooTracker");
+
   outFile->cd();
   new_tree->Write();
   event_spill_map->Write("event_spill_map", 1);
+  auto p = new TParameter<float>("spillPeriod_s", spillPeriod_s);
+  p->Write();
+
   outFile->mkdir("DetSimPassThru");
   outFile->cd("DetSimPassThru");
   genie_tree->Write();
-  auto p = new TParameter<float>("spillPeriod_s", spillPeriod_s);
-  p->Write();
+
   outFile->Close();
   delete outFile;
 }

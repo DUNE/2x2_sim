@@ -29,6 +29,7 @@ mkdir -p $outDir
 
 echo "outName is $outName"
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
+inName=$ARCUBE_SPILL_NAME.$(printf "%05d" "$globalIdx")
 
 timeFile=$outDir/TIMING/$outName.time
 mkdir -p "$(dirname "$timeFile")"
@@ -39,7 +40,7 @@ run() {
     time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
-inFile=$PWD/../run-spill-build/output/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/${outName}.EDEPSIM_SPILLS.root
+inFile=$PWD/../run-spill-build/output/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/${inName}.EDEPSIM_SPILLS.root
 
 h5OutDir=$outDir/EDEPSIM_H5
 mkdir -p $h5OutDir
@@ -47,4 +48,4 @@ mkdir -p $h5OutDir
 outFile=$h5OutDir/${outName}.EDEPSIM.h5
 rm -f $outFile
 
-run ./convert_edepsim_roottoh5.py --input_files $inFile --output_file $outFile
+run ./convert_edepsim_roottoh5.py --input_file $inFile --output_file $outFile
