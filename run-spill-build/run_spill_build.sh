@@ -13,13 +13,6 @@ source /environment             # provided by the container
 globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"
 
-dk2nuAll=("$ARCUBE_DK2NU_DIR"/*.dk2nu)
-dk2nuCount=${#dk2nuAll[@]}
-dk2nuIdx=$((globalIdx % dk2nuCount))
-dk2nuFile=${dk2nuAll[$dk2nuIdx]}
-echo "dk2nuIdx is $dk2nuIdx"
-echo "dk2nuFile is $dk2nuFile"
-
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
@@ -79,4 +72,4 @@ libpath_remove /opt/generators/edep-sim/install/lib
 
 run root -l -b -q \
     -e "gSystem->Load(\"libTG4Event/libTG4Event.so\")" \
-    "overlaySinglesIntoSpillsSorted.C(\"$nuInFile\", \"$rockInFile\", \"$spillFile\", $ARCUBE_NU_POT, $ARCUBE_ROCK_POT)"
+    "overlaySinglesIntoSpillsSorted.C(\"$nuInFile\", \"$rockInFile\", \"$spillFile\", $globalIdx, $ARCUBE_NU_POT, $ARCUBE_ROCK_POT)"

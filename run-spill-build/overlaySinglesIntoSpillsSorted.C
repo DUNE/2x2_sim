@@ -45,7 +45,8 @@ struct TaggedTime {
 
 void overlaySinglesIntoSpillsSorted(std::string inFileName1,
                                     std::string inFileName2,
-                                    std::string outFileName = "spillFile",
+                                    std::string outFileName,
+                                    int spillFileId,
                                     double inFile1POT = 1.024E19,
                                     double inFile2POT = 1.024E19,
                                     double spillPOT = 5E13,
@@ -139,13 +140,16 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
       out_branch->SetAddress(&edep_evt); // why the &? what is meaning of life
       // new_tree->SetBranchAddress("Event", &edep_evt);
 
-      // TODO: make a more elegant solution that allows for better backtracking
-      // edit the eventID of the rock events to be negative and start from -1
+      // Indicate that the event comes from a rock run (instead of a nu run) by
+      // tweaking the RunId
       if (not is_nu)
-        edep_evt->EventId = -1*(edep_evt->EventId+1);
+        edep_evt->RunId = int(1E9) + edep_evt->RunId;
 
-      std::string event_string = std::to_string(edep_evt->EventId);
-      std::string spill_string = std::to_string(spillN);
+      int globalSpillId = int(1E3)*spillFileId + spillN;
+
+      std::string event_string = std::to_string(edep_evt->RunId) + " "
+        + std::to_string(edep_evt->EventId);
+      std::string spill_string = std::to_string(globalSpillId);
       TObjString* event_tobj = new TObjString(event_string.c_str());
       TObjString* spill_tobj = new TObjString(spill_string.c_str());
 
