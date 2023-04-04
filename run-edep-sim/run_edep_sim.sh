@@ -79,7 +79,7 @@ rmdir "$tmpDir"
 
 run gntpc -i "$genieOutPrefix".0.ghep.root -f rootracker \
     -o "$genieOutPrefix".0.gtrac.root
-rm "$genieOutPrefix".0.ghep.root
+# rm "$genieOutPrefix".0.ghep.root
 
 if [[ "$ARCUBE_CHERRYPICK" == 1 ]]; then
     run ./cherrypicker.py -i "$genieOutPrefix".0.gtrac.root \
