@@ -92,16 +92,16 @@ def main(sim_file, input_type):
 
         NDHallwidths = [10000.,5500.,20000.] # mm
 
-        def segment_bounds(i):
-            """A sad little function that returns the bounds of each 2x2 segment in one dimension.
+        def tpc_bounds(i):
+            """A sad little function that returns the bounds of each 2x2 tpc in one dimension.
             The dimension is chosen by i: 0, 1, 2 -> x, y, z.
             Values are taken from 2x2_sim/run-edep-sim/geometry/Merged2x2MINERvA_v2"""
             
-            active_segment_widths = [306., 1300., 640.] # mm
+            active_tpc_widths = [306., 1300., 640.] # mm
             
-            # The positions in mm of the center of each drift segment relative to a module center.
-            # There are two drift segments for each module.            
-            segments_relative_to_module = [[-157.,0.,0.], [157., 0., 0.]] 
+            # The positions in mm of the center of each tpc relative to a module center.
+            # There are two tpcs for each module.            
+            tpcs_relative_to_module = [[-157.,0.,0.], [157., 0., 0.]] 
 
             # The positions in mm of each of the four modules, relative to the 2x2 center position.            
             modules_relative_to_2x2= [[-335.,0.,-335.],
@@ -112,17 +112,17 @@ def main(sim_file, input_type):
             # The position of the 2x2 center, relative to the center of the ND hall
             detector_center = [0.,522.5,0.]
         
-            # Get the segment bounds relative to the module center in the ith coordinates
-            segment_bounds = np.array([-active_segment_widths[i]/2., active_segment_widths[i]/2.])
+            # Get the tpc bounds relative to the tpc center in the ith coordinates
+            tpc_bounds = np.array([-active_tpc_widths[i]/2., active_tpc_widths[i]/2.])
             
-            segment_bounds_relative_to_2x2 = []
-            for segment in segments_relative_to_module:
-                segment_bound_relative_to_module = segment_bounds + segment[i]
+            tpc_bounds_relative_to_2x2 = []
+            for tpc in tpcs_relative_to_module:
+                tpc_bound_relative_to_module = tpc_bounds + tpc[i]
                 for module in modules_relative_to_2x2:
-                    bound = segment_bound_relative_to_module + module[i]
-                    segment_bounds_relative_to_2x2.append(bound)
+                    bound = tpc_bound_relative_to_module + module[i]
+                    tpc_bounds_relative_to_2x2.append(bound)
                     
-            bounds_relative_to_NDhall = np.array(segment_bounds_relative_to_2x2) + detector_center[i]
+            bounds_relative_to_NDhall = np.array(tpc_bounds_relative_to_2x2) + detector_center[i]
             
             return np.unique(bounds_relative_to_NDhall, axis = 0)
 
@@ -173,7 +173,7 @@ def main(sim_file, input_type):
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
                 else:
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5)
-            for i_bounds, bounds in enumerate(segment_bounds(i)):
+            for i_bounds, bounds in enumerate(tpc_bounds(i)):
                 if i_bounds == 0:
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5, label = 'Active 2x2')
                 else:
@@ -198,7 +198,7 @@ def main(sim_file, input_type):
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
                 else:
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5)
-            for i_bounds, bounds in enumerate(segment_bounds(i)):
+            for i_bounds, bounds in enumerate(tpc_bounds(i)):
                 if i_bounds == 0:
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5, label = 'Active 2x2')
                 else:
