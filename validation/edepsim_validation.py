@@ -90,15 +90,158 @@ def main(sim_file, input_type):
         output.savefig()
         plt.close()
 
+        NDHallwidths = [10000.,5500.,20000.] # mm
+
+        def segment_bounds(i):
+            """A sad little function that returns the bounds of each 2x2 segment in one dimension.
+            The dimension is chosen by i: 0, 1, 2 -> x, y, z.
+            Values are taken from 2x2_sim/run-edep-sim/geometry/Merged2x2MINERvA_v2"""
+            
+            active_segment_widths = [306., 1300., 640.] # mm
+            
+            # The positions in mm of the center of each drift segment relative to a module center.
+            # There are two drift segments for each module.            
+            segments_relative_to_module = [[-157.,0.,0.], [157., 0., 0.]] 
+
+            # The positions in mm of each of the four modules, relative to the 2x2 center position.            
+            modules_relative_to_2x2= [[-335.,0.,-335.],
+                                      [335.,0.,-335.],
+                                      [-335.,0.,335],
+                                      [335.,0.,335]]
+            
+            # The position of the 2x2 center, relative to the center of the ND hall
+            detector_center = [0.,522.5,0.]
+        
+            # Get the segment bounds relative to the module center in the ith coordinates
+            segment_bounds = np.array([-active_segment_widths[i]/2., active_segment_widths[i]/2.])
+            
+            segment_bounds_relative_to_2x2 = []
+            for segment in segments_relative_to_module:
+                segment_bound_relative_to_module = segment_bounds + segment[i]
+                for module in modules_relative_to_2x2:
+                    bound = segment_bound_relative_to_module + module[i]
+                    segment_bounds_relative_to_2x2.append(bound)
+                    
+            bounds_relative_to_NDhall = np.array(segment_bounds_relative_to_2x2) + detector_center[i]
+            
+            return np.unique(bounds_relative_to_NDhall, axis = 0)
+
+
+        def MINERvA_bounds(i):
+            """A sadder littler function that returns the bounds of the MINERvA detector for a given
+            dimension i: 0, 1, 2 -> x, y, z.
+            For now, I take the detector to just simply be two monolithic hexagonal prisms,
+            downstream and upstream of the 2x2 modules. 
+            """
+            
+            # Taken from the gdml file.
+            MINERvA_center = [0., 430., -6548.65]
+                        
+            # From GDML file, the length of one side of the outer detector in mm 
+            side_length = 1994.39876988864
+            
+            # Properties of a hexagon, given a side length
+            long_diameter = 2*side_length
+            short_diameter = np.sqrt(3)/2.*long_diameter 
+            
+            width = short_diameter 
+            height = long_diameter
+            
+            # The detector bounds, in each dimention. The bounds of the z dimension for each prism
+            # were obtained by looking at the central positions of the first and last HCal frame 
+            # position for each slab. 
+            detector_bounds = np.array([ 
+                [[-width/2., width/2.], [-height/2., height/2.], [4032.7185, 4511.8895]],
+                [[-width/2., width/2.], [-height/2., height/2.], [8585.4105, 9972.314]]
+            ])
+            
+            bounds_relative_to_NDhall = [] 
+            for bound in detector_bounds:
+                
+                bounds_relative_to_NDhall.append(bound[i] + MINERvA_center[i])
+            
+            return np.unique(np.array(bounds_relative_to_NDhall), axis = 0)
+            
         ### Plot the outgoing muon start position as proxy for vertex position
         muon_vtx = traj['xyz_start'][muon_mask]
         for i, coord in enumerate(['x', 'y', 'z']):
-            plt.hist(muon_vtx[:,i], bins=100)
+            counts, bins, _ = plt.hist(muon_vtx[:,i], bins=100)
+            plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
+            plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+            for i_bounds, bounds in enumerate(MINERvA_bounds(i)):
+                if i_bounds == 0:
+                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
+                else:
+                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5)
+            for i_bounds, bounds in enumerate(segment_bounds(i)):
+                if i_bounds == 0:
+                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5, label = 'Active 2x2')
+                else:
+                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
+            plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
             plt.title('Muon vertex {}'.format(coord))
             plt.xlabel(r'{} position'.format(coord))
             plt.ylabel(r'Event rate')
+            plt.legend()
             output.savefig()
             plt.close()
+            
+        ### Plot the interaction vertex positions. The distinction from the above is that
+        ### this includes events that did not produce muons. (NC events?)
+        vertex = sim_h5['vertices']
+        for i, coord in enumerate(['x_vert', 'y_vert', 'z_vert']):
+            counts, bins, _ = plt.hist(vertex[coord], bins=200)
+            plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
+            plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+            for i_bounds, bounds in enumerate(MINERvA_bounds(i)):
+                if i_bounds == 0:
+                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
+                else:
+                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5)
+            for i_bounds, bounds in enumerate(segment_bounds(i)):
+                if i_bounds == 0:
+                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5, label = 'Active 2x2')
+                else:
+                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
+            plt.vlines( [-NDHallwidths[i]/2., NDHallwidths[i]/2.], 0,counts.max(), colors = 'gray')
+            plt.title('Interaction Vertex {}'.format(coord))
+            plt.xlabel(r'{} position'.format(coord))
+            plt.ylabel(r'Event rate')
+            plt.legend()
+            output.savefig()
+            plt.close()
+                        
+        r_squared = vertex['x_vert']**2 + vertex['y_vert'] **2 + vertex['z_vert'] **2 
+        plt.hist(np.sqrt(r_squared), bins=100)
+        plt.title('Interaction vertex, distance from center')
+        plt.xlabel(r'Radial distance')
+        plt.ylabel(r'Event rate')
+        output.savefig()
+        plt.close()
+            
+        plt.axes().set_aspect('equal')
+        plt.hist2d(vertex['x_vert'], vertex['y_vert'], bins = 100)
+        plt.title('Interaction vertex, x vs y')
+        plt.xlabel('x [mm]')
+        plt.ylabel('y [mm]')
+        output.savefig()
+        plt.close()
+   
+        plt.axes().set_aspect('equal')
+        plt.hist2d(vertex['z_vert'], vertex['y_vert'], bins = 100)
+        plt.title('Interaction vertex, z vs y')
+        plt.xlabel('z [mm]')
+        plt.ylabel('y [mm]')
+        output.savefig()
+        plt.close()
+        
+        plt.axes().set_aspect('equal')
+        plt.hist2d(vertex['z_vert'], vertex['x_vert'], bins = 100)
+        plt.title('Interaction vertex, z vs x')
+        plt.xlabel('z [mm]')
+        plt.ylabel('x [mm]')
+        output.savefig()
+        plt.close()
 
         ### Plot total number of primary tracks from the vertex
         event_ids = np.unique(traj['eventID'])
