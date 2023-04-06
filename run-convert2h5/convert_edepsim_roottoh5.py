@@ -303,10 +303,10 @@ def dump(input_file, output_file):
             #printPrimaryVertex("PP", primaryVertex)
             vertex["spillID"] = spill_it
             vertex["eventID"] = globalEventID
-            vertex["x_vert"] = primaryVertex.GetPosition().X()
-            vertex["y_vert"] = primaryVertex.GetPosition().Y()
-            vertex["z_vert"] = primaryVertex.GetPosition().Z()
-            vertex["t_vert"] = primaryVertex.GetPosition().T()
+            vertex["x_vert"] = primaryVertex.GetPosition().X() * edep2cm
+            vertex["y_vert"] = primaryVertex.GetPosition().Y() * edep2cm
+            vertex["z_vert"] = primaryVertex.GetPosition().Z() * edep2cm
+            vertex["t_vert"] = primaryVertex.GetPosition().T() * edep2us
             vertex["t_spill"] = t_spill
             vertices_list.append(vertex)
 
