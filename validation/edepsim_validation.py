@@ -90,27 +90,27 @@ def main(sim_file, input_type):
         output.savefig()
         plt.close()
 
-        NDHallwidths = [10000.,5500.,20000.] # mm
+        NDHallwidths = [1000.,550.,2000.] # cm
 
         def tpc_bounds(i):
             """A sad little function that returns the bounds of each 2x2 tpc in one dimension.
             The dimension is chosen by i: 0, 1, 2 -> x, y, z.
             Values are taken from 2x2_sim/run-edep-sim/geometry/Merged2x2MINERvA_v2"""
             
-            active_tpc_widths = [306., 1300., 640.] # mm
+            active_tpc_widths = [30.6, 130., 64.] # cm
             
-            # The positions in mm of the center of each tpc relative to a module center.
+            # The positions in cm of the center of each tpc relative to a module center.
             # There are two tpcs for each module.            
-            tpcs_relative_to_module = [[-157.,0.,0.], [157., 0., 0.]] 
+            tpcs_relative_to_module = [[-15.7,0.,0.], [15.7, 0., 0.]]
 
-            # The positions in mm of each of the four modules, relative to the 2x2 center position.            
-            modules_relative_to_2x2= [[-335.,0.,-335.],
-                                      [335.,0.,-335.],
-                                      [-335.,0.,335],
-                                      [335.,0.,335]]
+            # The positions in cm of each of the four modules, relative to the 2x2 center position.
+            modules_relative_to_2x2= [[-33.5,0.,-33.5],
+                                      [33.5,0.,-33.5],
+                                      [-33.5,0.,33.5],
+                                      [33.5,0.,33.5]]
             
             # The position of the 2x2 center, relative to the center of the ND hall
-            detector_center = [0.,522.5,0.]
+            detector_center = [0.,52.25,0.]
         
             # Get the tpc bounds relative to the tpc center in the ith coordinates
             tpc_bounds = np.array([-active_tpc_widths[i]/2., active_tpc_widths[i]/2.])
@@ -135,10 +135,10 @@ def main(sim_file, input_type):
             """
             
             # Taken from the gdml file.
-            MINERvA_center = [0., 430., -6548.65]
+            MINERvA_center = [0., 43., -654.865]
                         
-            # From GDML file, the length of one side of the outer detector in mm 
-            side_length = 1994.39876988864
+            # From GDML file, the length of one side of the outer detector in cm
+            side_length = 199.439876988864
             
             # Properties of a hexagon, given a side length
             long_diameter = 2*side_length
@@ -151,8 +151,8 @@ def main(sim_file, input_type):
             # were obtained by looking at the central positions of the first and last HCal frame 
             # position for each slab. 
             detector_bounds = np.array([ 
-                [[-width/2., width/2.], [-height/2., height/2.], [4032.7185, 4511.8895]],
-                [[-width/2., width/2.], [-height/2., height/2.], [8585.4105, 9972.314]]
+                [[-width/2., width/2.], [-height/2., height/2.], [403.27185, 451.18895]],
+                [[-width/2., width/2.], [-height/2., height/2.], [858.54105, 997.2314]]
             ])
             
             bounds_relative_to_NDhall = [] 
@@ -166,8 +166,12 @@ def main(sim_file, input_type):
         muon_vtx = traj['xyz_start'][muon_mask]
         for i, coord in enumerate(['x', 'y', 'z']):
             counts, bins, _ = plt.hist(muon_vtx[:,i], bins=100)
-            plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
-            plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+            
+            if bins[0] < -NDHallwidths[i]/2:
+                plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
+            if bins[-1] > NDHallwidths[i]/2:
+                plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+            
             for i_bounds, bounds in enumerate(MINERvA_bounds(i)):
                 if i_bounds == 0:
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
@@ -178,7 +182,7 @@ def main(sim_file, input_type):
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5, label = 'Active 2x2')
                 else:
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
-            plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+
             plt.title('Muon vertex {}'.format(coord))
             plt.xlabel(r'{} position'.format(coord))
             plt.ylabel(r'Event rate')
@@ -191,8 +195,12 @@ def main(sim_file, input_type):
         vertex = sim_h5['vertices']
         for i, coord in enumerate(['x_vert', 'y_vert', 'z_vert']):
             counts, bins, _ = plt.hist(vertex[coord], bins=200)
-            plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
-            plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+
+            if bins[0] < -NDHallwidths[i]/2:
+                plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
+            if bins[-1] > NDHallwidths[i]/2:
+                plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+
             for i_bounds, bounds in enumerate(MINERvA_bounds(i)):
                 if i_bounds == 0:
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
@@ -222,24 +230,24 @@ def main(sim_file, input_type):
         plt.axes().set_aspect('equal')
         plt.hist2d(vertex['x_vert'], vertex['y_vert'], bins = 100)
         plt.title('Interaction vertex, x vs y')
-        plt.xlabel('x [mm]')
-        plt.ylabel('y [mm]')
+        plt.xlabel('x [cm]')
+        plt.ylabel('y [cm]')
         output.savefig()
         plt.close()
    
         plt.axes().set_aspect('equal')
         plt.hist2d(vertex['z_vert'], vertex['y_vert'], bins = 100)
         plt.title('Interaction vertex, z vs y')
-        plt.xlabel('z [mm]')
-        plt.ylabel('y [mm]')
+        plt.xlabel('z [cm]')
+        plt.ylabel('y [cm]')
         output.savefig()
         plt.close()
         
         plt.axes().set_aspect('equal')
         plt.hist2d(vertex['z_vert'], vertex['x_vert'], bins = 100)
         plt.title('Interaction vertex, z vs x')
-        plt.xlabel('z [mm]')
-        plt.ylabel('x [mm]')
+        plt.xlabel('z [cm]')
+        plt.ylabel('x [cm]')
         output.savefig()
         plt.close()
 
