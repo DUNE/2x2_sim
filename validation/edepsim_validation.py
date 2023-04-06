@@ -194,7 +194,7 @@ def main(sim_file, input_type):
         ### this includes events that did not produce muons. (NC events?)
         vertex = sim_h5['vertices']
         for i, coord in enumerate(['x_vert', 'y_vert', 'z_vert']):
-            counts, bins, _ = plt.hist(vertex[coord], bins=200)
+            counts, bins, _ = plt.hist(vertex[coord]/10., bins=200)
 
             if bins[0] < -NDHallwidths[i]/2:
                 plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
