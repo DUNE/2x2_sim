@@ -1,0 +1,13 @@
+## Physics changes
+
+## Not everything is LAr
+/edep/phys/ionizationModel 0
+/edep/update
+
+/generator/kinematics/set bomb
+/generator/kinematics/bomb/config mpvmpr/2x2_config_mpvmpr.yaml
+/generator/position/set free
+/generator/time/set free
+/generator/count/fixed/number 1
+/generator/count/set fixed
+/generator/add
