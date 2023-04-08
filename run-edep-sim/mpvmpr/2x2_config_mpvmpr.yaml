@@ -1,0 +1,101 @@
+# ===============
+# mpvmpr_cfg.yaml
+# ===============
+
+SEED: -1
+## CC
+GeneratorMPV:
+  NumEvent: [1,2]
+  NumParticle: [1,10]
+  XRange: [-640,640] #mm
+  YRange: [-200,1100] #mm
+  ZRange: [-640,640] #mm
+  TRange: [0,10000] #ns
+  AddParent: True
+  Particles:
+    -
+      PDG:      [11,-11,13,-13]
+      NumRange: [1,1]
+      KERange:  [0.,10.] 
+      UseMom:   False
+      Weight:   1
+    -
+      PDG:      [211,-211]
+      NumRange: [0,2]
+      KERange:  [0.,4.]
+      UseMom:   False
+      Weight:   1
+
+    -
+      PDG:      [22,111]
+      NumRange: [0,2]
+      KERange:  [0.,4.]
+      UseMom:   False
+      Weight:   1
+
+    -
+      PDG:      [2212]
+      NumRange: [0,5]
+      KERange:  [0.,3.]
+      UseMom:   False
+      Weight:   1
+
+    -
+      PDG:      [130, 321, -321, 310]
+      NumRange: [0,1]
+      KERange:  [0.,4.]
+      UseMom:   False
+      Weight:   1
+
+# NC
+GeneratorMPV:
+  NumEvent: [0,1]
+  NumParticle: [1,8]
+  XRange: [-640,640] #mm
+  YRange: [-200,1100] #mm
+  ZRange: [-640,640] #mm
+  TRange: [0,10000] #ns
+  AddParent: True
+  Particles:
+    -
+      PDG:      [211,-211]
+      NumRange: [0,2]
+      KERange:  [0.,4.]
+      UseMom:   False
+      Weight:   1
+
+    -
+      PDG:      [22,111]
+      NumRange: [0,2]
+      KERange:  [0.,4.]
+      UseMom:   False
+      Weight:   1
+
+    -
+      PDG:      [2212]
+      NumRange: [0,5]
+      KERange:  [0.,3.]
+      UseMom:   False
+      Weight:   1
+
+    -
+      PDG:      [130, 321, -321, 310]
+      NumRange: [0,1]
+      KERange:  [0.,4.]
+      UseMom:   False
+      Weight:   1
+
+GeneratorMPR:
+  NumEvent: [1,5]
+  NumParticle: [1,1]
+  XRange: [-640,640] #mm
+  YRange: [-200,1100] #mm
+  ZRange: [-640,640] #mm
+  TRange: [0,10000] #ns
+  Particles:
+    -
+      PDG:  [13]
+      NumRange: [0,5]
+      KERange:  [0.,15.]
+      UseMom:   False
+      Weight:   1
