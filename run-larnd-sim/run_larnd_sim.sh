@@ -48,4 +48,4 @@ run simulate_pixels.py --input_filename "$inFile" \
     --light_lut_filename /global/cfs/cdirs/dune/www/data/2x2/simulation/larndsim_data/light_LUT_M123_v1/lightLUT_M123.npz \
     --light_det_noise_filename larnd-sim/larndsim/bin/light_noise-2x2-example.npy \
     --rand_seed $seed \
-    --simulation_properties larnd-sim/larndsim/simulation_properties/2x2_NuMI_sim.yaml
+    --simulation_properties sim_props/2x2_bomb_sim_props.yaml
