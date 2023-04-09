@@ -24,6 +24,7 @@ fi
 
 if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
     source /environment         # provided by the container
+    source ../run-edep-sim/environment_local.sh
 elif [[ "$ARCUBE_RUNTIME" == "SINGULARITY" ]]; then
     # "singularity pull" overwrites /environment
     source "$ARCUBE_DIR"/admin/container_env."$ARCUBE_CONTAINER".sh
