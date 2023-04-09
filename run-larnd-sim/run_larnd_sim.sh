@@ -9,6 +9,8 @@ if [[ "$NERSC_HOST" == "cori" ]]; then
     export HDF5_USE_FILE_LOCKING=FALSE
 fi
 
+seed=$((1 + ARCUBE_INDEX))
+
 globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"
 
@@ -52,4 +54,5 @@ run simulate_pixels.py --input_filename "$inFile" \
     --response_file larnd-sim/larndsim/bin/response_44.npy \
     --light_lut_filename /global/cfs/cdirs/dune/www/data/2x2/simulation/larndsim_data/light_LUT_M123_v1/lightLUT_M123.npz \
     --light_det_noise_filename larnd-sim/larndsim/bin/light_noise-2x2-example.npy \
+    --rand_seed $seed \
     --simulation_properties larnd-sim/larndsim/simulation_properties/2x2_NuMI_sim.yaml
