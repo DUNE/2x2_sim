@@ -32,11 +32,12 @@
     # export EDEPSIM=${GEN_DIR}/edep-sim/install
     # export PATH=${EDEPSIM}/bin:${PATH}
     # export LD_LIBRARY_PATH=${EDEPSIM}/lib:${LD_LIBRARY_PATH}
-    export EDEPSIM=${PWD}/local/install
+    SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    export EDEPSIM=${SCRIPTDIR}/local/install
     export PATH=${EDEPSIM}/bin:${PATH}
     export LD_LIBRARY_PATH=${EDEPSIM}/lib:${LD_LIBRARY_PATH}
     export CMAKE_PREFIX_PATH=${EDEPSIM}:${CMAKE_PREFIX_PATH}
 
-    export DLPGENERATOR_INCDIR=$PWD/local/DLPGenerator/build/include
-    export DLPGENERATOR_LIBDIR=$PWD/local/DLPGenerator/build/lib
+    export DLPGENERATOR_INCDIR=${SCRIPTDIR}/local/DLPGenerator/build/include
+    export DLPGENERATOR_LIBDIR=${SCRIPTDIR}/local/DLPGenerator/build/lib
     export LD_LIBRARY_PATH=$DLPGENERATOR_LIBDIR:$LD_LIBRARY_PATH
