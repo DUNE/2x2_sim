@@ -11,7 +11,7 @@ if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
     exit
 fi
 
-source /environment             # from the container
+source ../run-edep-sim/environment_local.sh
 
 rm -rf convert.venv
 python3 -m venv convert.venv

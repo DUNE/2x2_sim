@@ -5,7 +5,7 @@ if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
     exit
 fi
 
-source /environment             # provided by the container
+source ../run-edep-sim/environment_local.sh
 
 # in the container, install numpy fire h5py tqdm
 source convert.venv/bin/activate
@@ -21,7 +21,7 @@ outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
 
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
-inName=$ARCUBE_SPILL_NAME.$(printf "%05d" "$globalIdx")
+inName=$ARCUBE_EDEP_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
 timeFile=$outDir/TIMING/$outName.time
@@ -33,7 +33,7 @@ run() {
     time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
-inFile=$PWD/../run-spill-build/output/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/${inName}.EDEPSIM_SPILLS.root
+inFile=$PWD/../run-edep-sim/output/${ARCUBE_EDEP_NAME}/EDEPSIM/${inName}.EDEPSIM.root
 
 h5OutDir=$outDir/EDEPSIM_H5
 mkdir -p $h5OutDir
