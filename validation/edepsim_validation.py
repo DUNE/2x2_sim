@@ -184,7 +184,7 @@ def main(sim_file, input_type):
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
 
             plt.title('Muon vertex {}'.format(coord))
-            plt.xlabel(r'{} position'.format(coord))
+            plt.xlabel(r'{} position [cm]'.format(coord))
             plt.ylabel(r'Event rate')
             plt.legend()
             output.savefig()
@@ -192,9 +192,9 @@ def main(sim_file, input_type):
             
         ### Plot the interaction vertex positions. The distinction from the above is that
         ### this includes events that did not produce muons. (NC events?)
-        vertex = sim_h5['vertices']
+        vertex = sim_h5['genie_hdr']['vertex']
         for i, coord in enumerate(['x_vert', 'y_vert', 'z_vert']):
-            counts, bins, _ = plt.hist(vertex[coord], bins=200)
+            counts, bins, _ = plt.hist(vertex[:, i], bins=200)
 
             if bins[0] < -NDHallwidths[i]/2:
                 plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
@@ -213,13 +213,13 @@ def main(sim_file, input_type):
                     plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
             plt.vlines( [-NDHallwidths[i]/2., NDHallwidths[i]/2.], 0,counts.max(), colors = 'gray')
             plt.title('Interaction Vertex {}'.format(coord))
-            plt.xlabel(r'{} position'.format(coord))
+            plt.xlabel(r'{} position [cm]'.format(coord))
             plt.ylabel(r'Event rate')
             plt.legend()
             output.savefig()
             plt.close()
                         
-        r_squared = vertex['x_vert']**2 + vertex['y_vert'] **2 + vertex['z_vert'] **2 
+        r_squared = vertex[:,0]**2 + vertex[:,1] **2 + vertex[:,2] **2 
         plt.hist(np.sqrt(r_squared), bins=100)
         plt.title('Interaction vertex, distance from center')
         plt.xlabel(r'Radial distance')
@@ -228,7 +228,7 @@ def main(sim_file, input_type):
         plt.close()
             
         plt.axes().set_aspect('equal')
-        plt.hist2d(vertex['x_vert'], vertex['y_vert'], bins = 100)
+        plt.hist2d(vertex[:,0], vertex[:,1], bins = 100)
         plt.title('Interaction vertex, x vs y')
         plt.xlabel('x [cm]')
         plt.ylabel('y [cm]')
@@ -236,7 +236,7 @@ def main(sim_file, input_type):
         plt.close()
    
         plt.axes().set_aspect('equal')
-        plt.hist2d(vertex['z_vert'], vertex['y_vert'], bins = 100)
+        plt.hist2d(vertex[:,2], vertex[:,1], bins = 100)
         plt.title('Interaction vertex, z vs y')
         plt.xlabel('z [cm]')
         plt.ylabel('y [cm]')
@@ -244,7 +244,7 @@ def main(sim_file, input_type):
         plt.close()
         
         plt.axes().set_aspect('equal')
-        plt.hist2d(vertex['z_vert'], vertex['x_vert'], bins = 100)
+        plt.hist2d(vertex[:,2], vertex[:,0], bins = 100)
         plt.title('Interaction vertex, z vs x')
         plt.xlabel('z [cm]')
         plt.ylabel('x [cm]')
