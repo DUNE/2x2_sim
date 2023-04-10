@@ -29,14 +29,15 @@ def main(sim_file):
         data_packet_mask = packets['packet_type'] == 0
         trig_packet_mask = packets['packet_type'] == 7
         sync_packet_mask = packets['packet_type'] == 4
-        other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask)
-
+        rollover_packet_mask = (packets['packet_type'] == 6) & (packets['trigger_type'] == 83)
+        other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask | rollover_packet_mask)
 
         ### Plot time structure of packets: 
         plt.plot(packets['timestamp'][data_packet_mask],packet_index[data_packet_mask],'o',label='data packets',linestyle='None')
         plt.plot(packets['timestamp'][trig_packet_mask],packet_index[trig_packet_mask],'o',label='lrs triggers',linestyle='None')
         plt.plot(packets['timestamp'][sync_packet_mask],packet_index[sync_packet_mask],'o',label='PPS packets',linestyle='None')
         plt.plot(packets['timestamp'][other_packet_mask],packet_index[other_packet_mask],'o',label='other',linestyle='None')
+        plt.plot(packets['timestamp'][rollover_packet_mask],packet_index[rollover_packet_mask],'o',label='rollover packets',linestyle='None')
         plt.xlabel('timestamp')
         plt.ylabel('packet index')
         plt.legend()
@@ -73,7 +74,17 @@ def main(sim_file):
         output.savefig()
         plt.close()
 
-
+        genie_hdr = sim_h5['genie_hdr']
+        n_vertices = np.zeros(genie_hdr['spillID'].max())
+        for i in range(len(n_vertices)):
+            n_vertices[i] = np.count_nonzero(genie_hdr['spillID'] == i)
+        plt.title('Total interactions per spill')
+        plt.xlabel('Interactions')
+        plt.ylabel('Counts')
+        plt.hist(n_vertices, bins = np.arange(-0.5, n_vertices.max() + 1.5, 1))
+        output.savefig()
+        plt.close()
+        
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--sim_file', default=None, type=str,help='''string corresponding to the path of the larnd-sim output simulation file to be considered''')
