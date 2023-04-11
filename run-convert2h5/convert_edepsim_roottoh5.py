@@ -298,17 +298,18 @@ def dump(input_file, output_file):
         globalVertexID = (event.RunId * 1E6) + event.EventId
 
         # Dump the primary vertices
-        vertex = np.empty(len(event.Primaries), dtype=vertices_dtype)
-        for primaryVertex in event.Primaries:
+        vertices = np.empty(len(event.Primaries), dtype=vertices_dtype)
+        for iVtx, primaryVertex in enumerate(event.Primaries):
             #printPrimaryVertex("PP", primaryVertex)
-            vertex["spillID"] = spill_it
-            vertex["vertexID"] = globalVertexID
-            vertex["x_vert"] = primaryVertex.GetPosition().X() * edep2cm
-            vertex["y_vert"] = primaryVertex.GetPosition().Y() * edep2cm
-            vertex["z_vert"] = primaryVertex.GetPosition().Z() * edep2cm
-            vertex["t_vert"] = primaryVertex.GetPosition().T() * edep2us
-            vertex["t_spill"] = t_spill
-            vertices_list.append(vertex)
+            vertices[iVtx]["spillID"] = spill_it
+            vertices[iVtx]["vertexID"] = globalVertexID
+            vertices[iVtx]["x_vert"] = primaryVertex.GetPosition().X() * edep2cm
+            vertices[iVtx]["y_vert"] = primaryVertex.GetPosition().Y() * edep2cm
+            vertices[iVtx]["z_vert"] = primaryVertex.GetPosition().Z() * edep2cm
+            vertices[iVtx]["t_vert"] = primaryVertex.GetPosition().T() * edep2us
+            vertices[iVtx]["t_spill"] = t_spill
+
+        vertices_list.append(vertices)
 
         trackMap = {}
 
