@@ -17,19 +17,12 @@ fi
 globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"
 
-dk2nuAll=("$ARCUBE_DK2NU_DIR"/*.dk2nu)
-dk2nuCount=${#dk2nuAll[@]}
-dk2nuIdx=$((globalIdx % dk2nuCount))
-dk2nuFile=${dk2nuAll[$dk2nuIdx]}
-echo "dk2nuIdx is $dk2nuIdx"
-echo "dk2nuFile is $dk2nuFile"
-
 outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
 
-echo "outName is $outName"
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
 inName=$ARCUBE_SPILL_NAME.$(printf "%05d" "$globalIdx")
+echo "outName is $outName"
 
 timeFile=$outDir/TIMING/$outName.time
 mkdir -p "$(dirname "$timeFile")"

@@ -14,13 +14,6 @@ seed=$((1 + ARCUBE_INDEX))
 globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"
 
-dk2nuAll=("$ARCUBE_DK2NU_DIR"/*.dk2nu)
-dk2nuCount=${#dk2nuAll[@]}
-dk2nuIdx=$((globalIdx % dk2nuCount))
-dk2nuFile=${dk2nuAll[$dk2nuIdx]}
-echo "dk2nuIdx is $dk2nuIdx"
-echo "dk2nuFile is $dk2nuFile"
-
 inDir=$PWD/../run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
