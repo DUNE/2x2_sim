@@ -22,7 +22,7 @@ def main(flow_file):
     output_pdf_name = flow_file.split('.h5')[0]+'_validations.pdf'
     # temperarily, put output in this directory, not the same as the
     # simulation file itself
-    #output_pdf_name = output_pdf_name.split('/')[-1] # !!
+    output_pdf_name = output_pdf_name.split('/')[-1] # !!
     with PdfPages(output_pdf_name) as output:
 
         hits = flow_h5['/charge/calib_prompt_hits/data']
