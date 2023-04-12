@@ -33,3 +33,7 @@ popd
 pushd run-ndlar-flow
 tests/test_MiniRun3.ndlar-flow.sh
 popd
+
+pushd validation
+tests/test_MiniRun3.plots.sh
+popd

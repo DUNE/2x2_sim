@@ -27,3 +27,7 @@ popd
 pushd run-ndlar-flow
 ./install_ndlar_flow.sh
 popd
+
+pushd validation
+./install_validation.sh
+popd
