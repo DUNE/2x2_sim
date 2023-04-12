@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 
-echo "See libTG4Event/MAKEP, modify it as necessary, and run it inside the container"
+# Reload in Shifter if necessary
+if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
+    shifter --image=$ARCUBE_CONTAINER --module=none -- "$0" "$@"
+    exit
+fi
 
-# NOTE: See makeLibTG4Event.sh to see how libTG4Event was generated. To
-# regenerate the source (which should not be necessary), an arbitrary edep-sim
-# output file is required.
+echo "If this fails, inspect and modify run-spill-build/libTG4Event/MAKEP"
+echo "or regenerate MAKEP from an arbitrary edep-sim file (see makeLibTG4Event.sh)"
+
+source /environment
+
+cd libTG4Event
+bash MAKEP
