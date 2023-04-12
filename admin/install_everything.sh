@@ -23,3 +23,7 @@ popd
 pushd run-larnd-sim
 ./install_larnd_sim.sh
 popd
+
+pushd run-ndlar-flow
+./install_ndlar_flow.sh
+popd

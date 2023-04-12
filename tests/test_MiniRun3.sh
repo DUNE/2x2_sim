@@ -29,3 +29,7 @@ popd
 pushd run-larnd-sim
 tests/test_MiniRun3.larnd-sim.sh
 popd
+
+pushd run-ndlar-flow
+tests/test_MiniRun3.ndlar-flow.sh
+popd
