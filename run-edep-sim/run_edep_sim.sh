@@ -36,9 +36,6 @@ run() {
     time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
-# HACK: gevgen_fnal hardcodes the name of the status file (unlike gevgen, which
-# respects -o), so run it in a temporary directory. Need to get absolute paths.
-
 edepRootFile=$outDir/EDEPSIM/${outName}.EDEPSIM.root
 mkdir -p "$(dirname "$edepRootFile")"
 rm -f "$edepRootFile"
