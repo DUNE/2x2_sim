@@ -23,7 +23,7 @@ pip install -r requirements.txt
 ( git clone https://github.com/DUNE/larnd-sim.git
   cd larnd-sim || exit
   # From the test_MiniRun3 branch
-  git checkout 10c77cac3dca71835ac9815780fdeb0ac6f6dd68
+  git checkout 05fe6aec7c8d2edc69a57d6ef870a9e7340c4a33
   # HACK: Replace cupy with cupy-cuda11x (no longer necessary; setup.py is smarter now)
   # mv setup.py setup.py.orig
   # sed 's/cupy/cupy-cuda11x/' setup.py.orig > setup.py
