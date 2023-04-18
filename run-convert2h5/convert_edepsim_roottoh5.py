@@ -14,7 +14,7 @@ import glob
 from ROOT import TG4Event, TFile, TMap
 
 # Output array datatypes
-segments_dtype = np.dtype([("spillID","u4"),("vertexID", "u8"), ("segment_id", "u4"),
+segments_dtype = np.dtype([("eventID","u4"),("vertexID", "u8"), ("segment_id", "u4"),
                            ("z_end", "f4"),("trackID", "u4"), ("tran_diff", "f4"),
                            ("z_start", "f4"), ("x_end", "f4"),
                            ("y_end", "f4"), ("n_electrons", "u4"),
@@ -27,7 +27,7 @@ segments_dtype = np.dtype([("spillID","u4"),("vertexID", "u8"), ("segment_id", "
                            ("y", "f4"), ("x", "f4"), ("z", "f4"),
                            ("n_photons","f4")], align=True)
 
-trajectories_dtype = np.dtype([("spillID","u4"), ("vertexID", "u8"),
+trajectories_dtype = np.dtype([("eventID","u4"), ("vertexID", "u8"),
                                ("trackID", "u4"), ("local_trackID", "u4"), ("parentID", "i4"),
                                ("pxyz_start", "f4", (3,)),
                                ("xyz_start", "f4", (3,)), ("t_start", "f4"),
@@ -37,9 +37,9 @@ trajectories_dtype = np.dtype([("spillID","u4"), ("vertexID", "u8"),
                                ("start_subprocess", "u4"), ("end_process", "u4"),
                                ("end_subprocess", "u4")], align=True)
 
-vertices_dtype = np.dtype([("spillID","u4"), ("vertexID","u8"),
+vertices_dtype = np.dtype([("eventID","u4"), ("vertexID","u8"),
                            ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
-                           ("t_vert","f4"), ("t_spill","f4")], align=True)
+                           ("t_vert","f4"), ("t_event","f4")], align=True)
 
 # Convert from EDepSim default units (mm, ns)
 edep2cm = 0.1   # convert to cm
@@ -250,13 +250,13 @@ def dump(input_file, output_file):
         vertices = np.empty(len(event.Primaries), dtype=vertices_dtype)
         for iVtx, primaryVertex in enumerate(event.Primaries):
             #printPrimaryVertex("PP", primaryVertex)
-            vertices[iVtx]["spillID"] = spill_it
-            vertices[iVtx]["vertexID"] = globalVertexID
+            vertices[iVtx]["eventID"] = event.EventId
+            vertices[iVtx]["vertexID"] = iVtx
             vertices[iVtx]["x_vert"] = primaryVertex.GetPosition().X() * edep2cm
             vertices[iVtx]["y_vert"] = primaryVertex.GetPosition().Y() * edep2cm
             vertices[iVtx]["z_vert"] = primaryVertex.GetPosition().Z() * edep2cm
             vertices[iVtx]["t_vert"] = primaryVertex.GetPosition().T() * edep2us
-            vertices[iVtx]["t_spill"] = t_spill
+            vertices[iVtx]["t_event"] = t_spill
 
         vertices_list.append(vertices)
 
@@ -271,7 +271,7 @@ def dump(input_file, output_file):
             trackMap[trajectory.GetTrackId()] = fileTrackID
 
             start_pt, end_pt = trajectory.Points[0], trajectory.Points[-1]
-            trajectories[iTraj]["spillID"] = spill_it
+            trajectories[iTraj]["eventID"] = event.EventId
             trajectories[iTraj]["vertexID"] = globalVertexID
 
             trajectories[iTraj]["trackID"] = fileTrackID
@@ -300,7 +300,7 @@ def dump(input_file, output_file):
                 continue
             segment = np.empty(len(hitSegments), dtype=segments_dtype)
             for iHit, hitSegment in enumerate(hitSegments):
-                segment[iHit]["spillID"] = spill_it
+                segment[iHit]["eventID"] = event.EventId
                 segment[iHit]["vertexID"] = globalVertexID
                 segment[iHit]["segment_id"] = segment_id
                 segment_id += 1
