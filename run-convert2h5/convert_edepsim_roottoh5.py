@@ -14,7 +14,7 @@ import glob
 from ROOT import TG4Event, TFile, TMap
 
 # Output array datatypes
-segments_dtype = np.dtype([("spillID","u4"),("vertexID", "u8"), ("segment_id", "u4"),
+segments_dtype = np.dtype([("eventID","u4"),("vertexID", "u8"), ("segment_id", "u4"),
                            ("z_end", "f4"),("trackID", "u4"), ("tran_diff", "f4"),
                            ("z_start", "f4"), ("x_end", "f4"),
                            ("y_end", "f4"), ("n_electrons", "u4"),
@@ -27,7 +27,7 @@ segments_dtype = np.dtype([("spillID","u4"),("vertexID", "u8"), ("segment_id", "
                            ("y", "f4"), ("x", "f4"), ("z", "f4"),
                            ("n_photons","f4")], align=True)
 
-trajectories_dtype = np.dtype([("spillID","u4"), ("vertexID", "u8"),
+trajectories_dtype = np.dtype([("eventID","u4"), ("vertexID", "u8"),
                                ("trackID", "u4"), ("local_trackID", "u4"), ("parentID", "i4"),
                                ("pxyz_start", "f4", (3,)),
                                ("xyz_start", "f4", (3,)), ("t_start", "f4"),
@@ -37,15 +37,15 @@ trajectories_dtype = np.dtype([("spillID","u4"), ("vertexID", "u8"),
                                ("start_subprocess", "u4"), ("end_process", "u4"),
                                ("end_subprocess", "u4")], align=True)
 
-vertices_dtype = np.dtype([("spillID","u4"), ("vertexID","u8"),
+vertices_dtype = np.dtype([("eventID","u4"), ("vertexID","u8"),
                            ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
-                           ("t_vert","f4"), ("t_spill","f4")], align=True)
+                           ("t_vert","f4"), ("t_event","f4")], align=True)
 
-genie_stack_dtype = np.dtype([("spillID", "u4"), ("vertexID", "u8"),
+genie_stack_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"),
                               ("part_4mom", "f4", (4,)), ("part_pdg", "i4"),
                               ("part_status", "i4")], align=True)
 
-genie_hdr_dtype = np.dtype([("spillID", "u4"), ("vertexID", "u8"),
+genie_hdr_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"),
                             ("vertex", "f4", (4,)), ("target", "u4"),
                             ("isCC", "?"), ("isQES", "?"), ("isMEC", "?"),
                             ("isRES", "?"), ("isDIS", "?"), ("isCOH", "?"),
@@ -301,13 +301,13 @@ def dump(input_file, output_file):
         vertices = np.empty(len(event.Primaries), dtype=vertices_dtype)
         for iVtx, primaryVertex in enumerate(event.Primaries):
             #printPrimaryVertex("PP", primaryVertex)
-            vertices[iVtx]["spillID"] = spill_it
+            vertices[iVtx]["eventID"] = spill_it
             vertices[iVtx]["vertexID"] = globalVertexID
             vertices[iVtx]["x_vert"] = primaryVertex.GetPosition().X() * edep2cm
             vertices[iVtx]["y_vert"] = primaryVertex.GetPosition().Y() * edep2cm
             vertices[iVtx]["z_vert"] = primaryVertex.GetPosition().Z() * edep2cm
             vertices[iVtx]["t_vert"] = primaryVertex.GetPosition().T() * edep2us
-            vertices[iVtx]["t_spill"] = t_spill
+            vertices[iVtx]["t_event"] = t_spill
 
         vertices_list.append(vertices)
 
@@ -322,7 +322,7 @@ def dump(input_file, output_file):
             trackMap[trajectory.GetTrackId()] = fileTrackID
 
             start_pt, end_pt = trajectory.Points[0], trajectory.Points[-1]
-            trajectories[iTraj]["spillID"] = spill_it
+            trajectories[iTraj]["eventID"] = spill_it
             trajectories[iTraj]["vertexID"] = globalVertexID
 
             trajectories[iTraj]["trackID"] = fileTrackID
@@ -351,7 +351,7 @@ def dump(input_file, output_file):
                 continue
             segment = np.empty(len(hitSegments), dtype=segments_dtype)
             for iHit, hitSegment in enumerate(hitSegments):
-                segment[iHit]["spillID"] = spill_it
+                segment[iHit]["eventID"] = spill_it
                 segment[iHit]["vertexID"] = globalVertexID
                 segment[iHit]["segment_id"] = segment_id
                 segment_id += 1
@@ -405,7 +405,7 @@ def dump(input_file, output_file):
 
             #Get only initial and final state particles
             if genieTree.StdHepStatus[p] == 0 or genieTree.StdHepStatus[p] == 1:
-                genie_stack[genie_idx]["spillID"] = spill_it
+                genie_stack[genie_idx]["eventID"] = spill_it
                 genie_stack[genie_idx]["vertexID"] = globalVertexID
                 genie_stack[genie_idx]["part_4mom"] = np.array([genieTree.StdHepP4[p*4 + 0]*gev2mev,
                                                     genieTree.StdHepP4[p*4 + 1]*gev2mev,
@@ -445,7 +445,7 @@ def dump(input_file, output_file):
 
         #Create GENIE header/summary dataset
         genie_hdr = np.empty(1, dtype=genie_hdr_dtype)
-        genie_hdr["spillID"] = spill_it
+        genie_hdr["eventID"] = spill_it
         genie_hdr["vertexID"] = globalVertexID
         genie_hdr["isCC"]  = "CC" in genie_str
         genie_hdr["isQES"] = "QES" in genie_str
