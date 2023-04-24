@@ -77,9 +77,9 @@ def main(sim_file):
         plt.close()
 
         genie_hdr = sim_h5['genie_hdr']
-        n_vertices = np.zeros(genie_hdr['spillID'].max())
+        n_vertices = np.zeros(genie_hdr['eventID'].max())
         for i in range(len(n_vertices)):
-            n_vertices[i] = np.count_nonzero(genie_hdr['spillID'] == i)
+            n_vertices[i] = np.count_nonzero(genie_hdr['eventID'] == i)
         plt.title('Total interactions per spill')
         plt.xlabel('Interactions')
         plt.ylabel('Counts')
