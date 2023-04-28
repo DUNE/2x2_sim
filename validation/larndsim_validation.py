@@ -76,6 +76,7 @@ def main(sim_file):
         output.savefig()
         plt.close()
 
+        ### Plot interactions per spill
         genie_hdr = sim_h5['genie_hdr']
         n_vertices = np.zeros(genie_hdr['eventID'].max())
         for i in range(len(n_vertices)):
@@ -86,7 +87,52 @@ def main(sim_file):
         plt.hist(n_vertices, bins = np.arange(-0.5, n_vertices.max() + 1.5, 1))
         output.savefig()
         plt.close()
-        
+
+        ### Plot hits per event
+        tracks = sim_h5['tracks']
+        def get_eventIDs(event_packets, mc_packets_assn):
+            """Takes as input the packets and mc_packets_assn fields, and
+            returns the eventIDs that deposited that energy"""
+    
+            event_IDs = []
+            eventID = tracks['eventID'] # eventIDs associated to each track
+            track_id_assn = mc_packets_assn['track_ids'] # track indices corresponding to each packet
+
+            # Loop over each packet
+            for ip, packet in enumerate(event_packets):
+
+                if packet['packet_type'] != 0:
+                    continue
+                    
+                # For packet ip, get track indices that contributed to hit
+                packet_track_ids = track_id_assn[ip]
+                packet_track_ids = packet_track_ids[packet_track_ids != -1]
+                
+                # For track indices, get the corresponding eventID
+                packet_event_IDs = eventID[packet_track_ids]
+                
+                # Make sure that there's only one eventID corresponding to hit.
+                # In principle, a hit could come from two events. But I'll deal
+                # with that when it happens.
+                unique_packet_event_ID = np.unique(packet_event_IDs)
+                assert(len(unique_packet_event_ID == 1))
+                
+                packet_event_ID = unique_packet_event_ID[0]
+                
+                event_IDs.append(packet_event_ID)
+
+            return np.array(event_IDs)
+
+        mc_packets_assn = sim_h5['mc_packets_assn']
+        event_IDs = get_eventIDs(packets, mc_packets_assn)
+        unique_event_IDs, hit_counts = np.unique(event_IDs, return_counts = True)
+        plt.hist(hit_counts, bins = 50)
+        plt.title("Pixels hit per event")
+        plt.xlabel("Pixels")
+        plt.ylabel("Counts")
+        output.savefig()
+        plt.close()     
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--sim_file', default=None, type=str,help='''string corresponding to the path of the larnd-sim output simulation file to be considered''')
