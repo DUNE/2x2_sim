@@ -41,7 +41,7 @@ plotOutDir=$outDir/PLOTS
 mkdir -p "$plotOutDir"
 cd "$plotOutDir"
 
-# "$codeDir"/edepsim_validation.py --sim_file "$edepFile" --input_type edep
-# "$codeDir"/edepsim_validation.py --sim_file "$larndFile" --input_type larnd
-# "$codeDir"/larndsim_validation.py --sim_file "$larndFile"
+"$codeDir"/edepsim_validation.py --sim_file "$edepFile" --input_type edep
+"$codeDir"/edepsim_validation.py --sim_file "$larndFile" --input_type larnd
+"$codeDir"/larndsim_validation.py --sim_file "$larndFile"
 "$codeDir"/flow_validation.py --flow_file "$flowFile"
