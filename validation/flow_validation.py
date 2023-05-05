@@ -187,6 +187,63 @@ def main(flow_file):
         output.savefig()
         plt.close()
 
+        # comparisons of prompt hits and final hits
+        # currently correspondes to comparisons before and after merging multi-hits
+        fig = plt.figure(figsize=(12,9),layout='constrained')
+        gs = fig.add_gridspec(2,3)
+        ax1 = fig.add_subplot(gs[0,0])
+        ax2 = fig.add_subplot(gs[0,1])
+        ax3 = fig.add_subplot(gs[0,2])
+        ax4 = fig.add_subplot(gs[1,0])
+        ax5 = fig.add_subplot(gs[1,1])
+        ax6 = fig.add_subplot(gs[1,2])
+        
+        ax1.hist(flow_h5['charge/calib_prompt_hits/data']['x'],bins=100,alpha=0.5,label='prompt hits')
+        ax1.hist(flow_h5['charge/calib_final_hits/data']['x'],bins=100,alpha=0.5,label='merged hits')
+        ax1.set_xlabel('x [mm]')
+        ax1.set_ylabel('N hits')
+        #ax1.legend()
+        
+        ax2.hist(flow_h5['charge/calib_prompt_hits/data']['y'],bins=100,alpha=0.5,label='prompt hits')
+        ax2.hist(flow_h5['charge/calib_final_hits/data']['y'],bins=100,alpha=0.5,label='merged hits')
+        ax2.set_xlabel('y [mm]')
+        ax2.set_ylabel('N hits')
+        ax2.legend()
+        
+        ax3.hist(flow_h5['charge/calib_prompt_hits/data']['z'],bins=100,alpha=0.5,label='prompt hits')
+        ax3.hist(flow_h5['charge/calib_final_hits/data']['z'],bins=100,alpha=0.5,label='merged hits')
+        ax3.set_xlabel('z [mm]')
+        ax3.set_ylabel('N hits')
+        #ax3.legend()
+        
+        ax4.hist(flow_h5['charge/calib_prompt_hits/data']['x'],weights=flow_h5['charge/calib_prompt_hits/data']['E'],bins=100,alpha=0.5,label='prompt hits')
+        ax4.hist(flow_h5['charge/calib_final_hits/data']['x'],weights=flow_h5['charge/calib_final_hits/data']['E'],bins=100,alpha=0.5,label='merged hits')
+        ax4.set_xlabel('x [mm]')
+        ax4.set_ylabel('Energy [MeV]')
+        #ax4.legend()
+        
+        ax5.hist(flow_h5['charge/calib_prompt_hits/data']['y'],weights=flow_h5['charge/calib_prompt_hits/data']['E'],bins=100,alpha=0.5,label='prompt hits')
+        ax5.hist(flow_h5['charge/calib_final_hits/data']['y'],weights=flow_h5['charge/calib_final_hits/data']['E'],bins=100,alpha=0.5,label='merged hits')
+        ax5.set_xlabel('y [mm]')
+        ax5.set_ylabel('Energy [MeV]')
+        #ax5.legend()
+        
+        ax6.hist(flow_h5['charge/calib_prompt_hits/data']['z'],weights=flow_h5['charge/calib_prompt_hits/data']['E'],bins=100,alpha=0.5,label='prompt hits')
+        ax6.hist(flow_h5['charge/calib_final_hits/data']['z'],weights=flow_h5['charge/calib_final_hits/data']['E'],bins=100,alpha=0.5,label='merged hits')
+        ax6.set_xlabel('z [mm]')
+        ax6.set_ylabel('Energy [MeV]')
+        #ax6.legend()
+        
+        output.savefig()
+        plt.close()
+        
+        #ax4.hist(f['charge/calib_prompt_hits/data']['ts_pps'],bins=100,alpha=0.5,label='prompt hits')
+        #ax4.hist(f['charge/calib_final_hits/data']['ts_pps'],bins=100,alpha=0.5,label='merged hits')
+        #ax4.set_xlabel('ts_pps [ticks = 0.1 us]')
+        #ax4.set_ylabel('N hits')
+        #ax4.legend()
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--flow_file', default=None, type=str,help='''string corresponding to the path of the ndlar_flow output file to be considered''')
