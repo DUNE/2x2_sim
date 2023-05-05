@@ -9,3 +9,5 @@ output
 slurm-*.out
 *.bak*
 *.venv
+*.h5
+*.root
