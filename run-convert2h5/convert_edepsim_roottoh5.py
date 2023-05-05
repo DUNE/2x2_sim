@@ -371,13 +371,6 @@ def dump(input_file, output_file):
             trajectories[iTraj]["end_subprocess"] = end_pt.GetSubprocess()
             trajectories[iTraj]["pdgId"] = trajectory.GetPDGCode()
 
-            # print("Traj {}".format(iTraj))
-            # print("Init E: {}".format(trajectory.GetInitialMomentum().E()))
-            # print("Calc E: {}".format(trajectories[iTraj]["E_start"]))
-            # print(p_start)
-            # print(trajectory.GetInitialMomentum()[0],trajectory.GetInitialMomentum()[1],trajectory.GetInitialMomentum()[2])
-            # print("IsClose {}".format(np.isclose(trajectory.GetInitialMomentum().E(), trajectories[iTraj]["E_start"])))
-
         trajectories_list.append(trajectories)
 
         # Dump the segment containers
