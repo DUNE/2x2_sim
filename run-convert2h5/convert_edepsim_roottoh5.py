@@ -29,9 +29,9 @@ segments_dtype = np.dtype([("eventID","u4"),("vertexID", "u8"), ("segment_id", "
 
 trajectories_dtype = np.dtype([("eventID","u4"), ("vertexID", "u8"),
                                ("trackID", "u4"), ("local_trackID", "u4"), ("parentID", "i4"),
-                               ("pxyz_start", "f4", (3,)),
+                               ("E_start", "f4"), ("pxyz_start", "f4", (3,)),
                                ("xyz_start", "f4", (3,)), ("t_start", "f4"),
-                               ("pxyz_end", "f4", (3,)),
+                               ("E_end", "f4"), ("pxyz_end", "f4", (3,)),
                                ("xyz_end", "f4", (3,)), ("t_end", "f4"),
                                ("pdgId", "i4"), ("start_process", "u4"),
                                ("start_subprocess", "u4"), ("end_process", "u4"),
@@ -41,7 +41,7 @@ vertices_dtype = np.dtype([("eventID","u4"), ("vertexID","u8"),
                            ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
                            ("t_vert","f4"), ("t_event","f4")], align=True)
 
-genie_stack_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"),
+genie_stack_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"), ("trackID", "i4"),
                               ("part_4mom", "f4", (4,)), ("part_pdg", "i4"),
                               ("part_status", "i4")], align=True)
 
@@ -153,6 +153,29 @@ def printSegmentContainer(depth, containerName, hitSegments):
     print(depth,"Detector: ", containerName, hitSegments.size())
     depth = depth + ".."
     for hitSegment in hitSegments: printHitSegment(depth, hitSegment)
+
+# Match edep-sim trajectories with MC generator particles.
+# Objects are matched based on the PDG code and the momentum 4-vector.
+# If no match is found, return default value of -999
+def matchTrackID(traj_list, part_4mom, part_pdg):
+
+    trackID = -999
+    for traj in traj_list:
+        if traj["parentID"] != -1:
+            continue
+
+        if traj["pdgId"] != part_pdg:
+            continue
+
+        p = traj["pxyz_start"]
+        E = traj["E_start"]
+        traj_4mom = np.array([p[0], p[1], p[2], E])
+
+        if np.allclose(traj_4mom, part_4mom):
+            trackID = traj["trackID"]
+            break
+
+    return trackID
 
 # Prep HDF5 file for writing
 def initHDF5File(output_file):
@@ -330,10 +353,16 @@ def dump(input_file, output_file):
             trajectories[iTraj]["parentID"] = -1 if trajectory.GetParentId() == -1 \
                 else trackMap[trajectory.GetParentId()]
 
-            trajectories[iTraj]["pxyz_start"] = (start_pt.GetMomentum().X(), start_pt.GetMomentum().Y(), start_pt.GetMomentum().Z())
-            trajectories[iTraj]["pxyz_end"] = (end_pt.GetMomentum().X(), end_pt.GetMomentum().Y(), end_pt.GetMomentum().Z())
+            mass = trajectory.GetInitialMomentum().M()
+            p_start = (start_pt.GetMomentum().X(), start_pt.GetMomentum().Y(), start_pt.GetMomentum().Z())
+            p_end = (end_pt.GetMomentum().X(), end_pt.GetMomentum().Y(), end_pt.GetMomentum().Z())
+
+            trajectories[iTraj]["pxyz_start"] = p_start #(start_pt.GetMomentum().X(), start_pt.GetMomentum().Y(), start_pt.GetMomentum().Z())
+            trajectories[iTraj]["pxyz_end"] = p_end #(end_pt.GetMomentum().X(), end_pt.GetMomentum().Y(), end_pt.GetMomentum().Z())
             trajectories[iTraj]["xyz_start"] = (start_pt.GetPosition().X() * edep2cm, start_pt.GetPosition().Y() * edep2cm, start_pt.GetPosition().Z() * edep2cm)
             trajectories[iTraj]["xyz_end"] = (end_pt.GetPosition().X() * edep2cm, end_pt.GetPosition().Y() * edep2cm, end_pt.GetPosition().Z() * edep2cm)
+            trajectories[iTraj]["E_start"] = np.sqrt(np.sum(np.square(p_start)) + mass**2)
+            trajectories[iTraj]["E_end"] = np.sqrt(np.sum(np.square(p_end)) + mass**2)
             trajectories[iTraj]["t_start"] = start_pt.GetPosition().T() * edep2us
             trajectories[iTraj]["t_end"] = end_pt.GetPosition().T() * edep2us
             trajectories[iTraj]["start_process"] = start_pt.GetProcess()
@@ -341,6 +370,13 @@ def dump(input_file, output_file):
             trajectories[iTraj]["end_process"] = end_pt.GetProcess()
             trajectories[iTraj]["end_subprocess"] = end_pt.GetSubprocess()
             trajectories[iTraj]["pdgId"] = trajectory.GetPDGCode()
+
+            # print("Traj {}".format(iTraj))
+            # print("Init E: {}".format(trajectory.GetInitialMomentum().E()))
+            # print("Calc E: {}".format(trajectories[iTraj]["E_start"]))
+            # print(p_start)
+            # print(trajectory.GetInitialMomentum()[0],trajectory.GetInitialMomentum()[1],trajectory.GetInitialMomentum()[2])
+            # print("IsClose {}".format(np.isclose(trajectory.GetInitialMomentum().E(), trajectories[iTraj]["E_start"])))
 
         trajectories_list.append(trajectories)
 
@@ -405,13 +441,18 @@ def dump(input_file, output_file):
 
             #Get only initial and final state particles
             if genieTree.StdHepStatus[p] == 0 or genieTree.StdHepStatus[p] == 1:
+
+                part_4mom = np.array([genieTree.StdHepP4[p*4 + 0]*gev2mev,
+                                      genieTree.StdHepP4[p*4 + 1]*gev2mev,
+                                      genieTree.StdHepP4[p*4 + 2]*gev2mev,
+                                      genieTree.StdHepP4[p*4 + 3]*gev2mev])
+                part_pdg = genieTree.StdHepPdg[p]
+
                 genie_stack[genie_idx]["eventID"] = spill_it
                 genie_stack[genie_idx]["vertexID"] = globalVertexID
-                genie_stack[genie_idx]["part_4mom"] = np.array([genieTree.StdHepP4[p*4 + 0]*gev2mev,
-                                                    genieTree.StdHepP4[p*4 + 1]*gev2mev,
-                                                    genieTree.StdHepP4[p*4 + 2]*gev2mev,
-                                                    genieTree.StdHepP4[p*4 + 3]*gev2mev])
-                genie_stack[genie_idx]["part_pdg"] = genieTree.StdHepPdg[p]
+                genie_stack[genie_idx]["trackID"] = matchTrackID(trajectories_list[-1], part_4mom, part_pdg)
+                genie_stack[genie_idx]["part_4mom"] = part_4mom
+                genie_stack[genie_idx]["part_pdg"] = part_pdg
                 genie_stack[genie_idx]["part_status"] = genieTree.StdHepStatus[p]
 
                 #Get the incident neutrino four-vector
