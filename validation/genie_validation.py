@@ -6,6 +6,9 @@ import h5py
 import argparse
 from matplotlib.backends.backend_pdf import PdfPages
 
+from validation_utils import rasterize_plots
+rasterize_plots()
+
 def main(sim_file):
 
     sim_h5 = h5py.File(sim_file,'r')

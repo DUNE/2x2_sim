@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ########################################################################
 # Script:      Charged Particle Multiplicity validation plots
 # Analyzer:    Aleena Rafique
@@ -9,6 +10,9 @@ import numpy as np
 import h5py
 import argparse
 from matplotlib.backends.backend_pdf import PdfPages
+
+from validation_utils import rasterize_plots
+rasterize_plots()
 
 SPILL_PERIOD = 1.2e7 # units = ticks
 
@@ -23,6 +27,7 @@ def main(flow_file):
     print('------------------------------------------------\n')
     
     output_pdf_name = flow_file.split('.h5')[0]+'_validations_CPM.pdf'
+    output_pdf_name = output_pdf_name.split('/')[-1] # !!
     mcparticles = flow_h5['mc_truth/trajectories/data']
     print(flow_h5['mc_truth/trajectories/data'].dtype.names)
     mcpstartxyz = mcparticles['xyz_start']

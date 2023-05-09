@@ -7,6 +7,9 @@ import h5py
 import argparse
 from matplotlib.backends.backend_pdf import PdfPages
 
+from validation_utils import rasterize_plots
+rasterize_plots()
+
 SPILL_PERIOD = 1.2e7 # units = ticks
 
 def main(sim_file):

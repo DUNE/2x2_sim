@@ -45,3 +45,4 @@ cd "$plotOutDir"
 "$codeDir"/edepsim_validation.py --sim_file "$larndFile" --input_type larnd
 "$codeDir"/larndsim_validation.py --sim_file "$larndFile"
 "$codeDir"/flow_validation.py --flow_file "$flowFile"
+"$codeDir"/CPM_validation.py --flow_file "$flowFile"
