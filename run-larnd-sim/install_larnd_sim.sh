@@ -22,8 +22,8 @@ pip install -r requirements.txt
 # https://docs.nersc.gov/development/languages/python/using-python-perlmutter/#installing-with-pip
 ( git clone https://github.com/DUNE/larnd-sim.git
   cd larnd-sim || exit
-  # From the test_MiniRun3 branch
-  git checkout MiniRun3
+  # fix_event_times feature branch (now merged into develop; MiniRun3C tag)
+  git checkout 458218edfeb5b0a9728eeeb0cf0d98f62fe2b2c2
   # HACK: Replace cupy with cupy-cuda11x (no longer necessary; setup.py is smarter now)
   # mv setup.py setup.py.orig
   # sed 's/cupy/cupy-cuda11x/' setup.py.orig > setup.py

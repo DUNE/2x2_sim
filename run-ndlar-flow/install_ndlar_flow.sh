@@ -18,7 +18,8 @@ cd ..
 # install ndlar_flow
 git clone https://github.com/larpix/ndlar_flow.git
 cd ndlar_flow
-git checkout 946336a19343bcd9a7ef5b4ef56a0c8be13c2fff
+# feature_genie_stack (now merged into MiniRun3_dev; MiniRun3C tag)
+git checkout 7c52150c14f2447b06aa2fd9ee9bee8d0b4dbf83
 pip install .
 cd ..
 
