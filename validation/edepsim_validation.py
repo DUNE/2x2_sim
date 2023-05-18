@@ -65,7 +65,7 @@ def main(sim_file, input_type):
 
         ### Plot segment lengths:
         plt.hist(segments['dx'], bins=100)
-        plt.xlabel('dx')
+        plt.xlabel('dx [cm]')
         plt.ylabel(r'N segments')
         plt.yscale('log')
         output.savefig()
