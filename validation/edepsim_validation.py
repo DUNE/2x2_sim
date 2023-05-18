@@ -63,6 +63,14 @@ def main(sim_file, input_type):
         output.savefig()
         plt.close()
 
+        ### Plot segment lengths:
+        plt.hist(segments['dx'], bins=100)
+        plt.xlabel('dx')
+        plt.ylabel(r'N segments')
+        plt.yscale('log')
+        output.savefig()
+        plt.close()
+
         ### Plot the outgoing muon momentum
         traj = sim_h5['trajectories']
         muon_mask = (np.abs(traj['pdgId']) == 13) & (traj['parentID'] == -1)
@@ -257,13 +265,13 @@ def main(sim_file, input_type):
         plt.close()
 
         ### Plot total number of primary tracks from the vertex
-        event_ids = np.unique(traj['eventID'])
+        event_ids = np.unique(traj['vertexID'])
         n_primaries = np.zeros(event_ids.size)
         current_evt = 0
-        current_id = traj['eventID'][0]
+        current_id = traj['vertexID'][0]
         for trk in traj:
-            if trk['eventID'] != current_id:
-                current_id = trk['eventID']
+            if trk['vertexID'] != current_id:
+                current_id = trk['vertexID']
                 current_evt += 1
 
             if trk['parentID'] == -1:
@@ -275,6 +283,7 @@ def main(sim_file, input_type):
         plt.ylabel(r'Event rate')
         output.savefig()
         plt.close()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
