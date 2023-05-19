@@ -17,7 +17,7 @@ pushd run-spill-build
 popd
 
 pushd run-convert2h5
-./install_convert2h5
+./install_convert2h5.sh
 popd
 
 pushd run-larnd-sim
