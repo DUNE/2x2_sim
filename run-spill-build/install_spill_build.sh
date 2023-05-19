@@ -6,6 +6,7 @@ if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
     exit
 fi
 
+echo "Setting up run-spill-build"
 echo "If this fails, inspect and modify run-spill-build/libTG4Event/MAKEP"
 echo "or regenerate MAKEP from an arbitrary edep-sim file (see makeLibTG4Event.sh)"
 
