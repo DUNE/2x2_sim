@@ -102,9 +102,9 @@
   <param_set name="ProtoDUNE-ND-Rock">
     <using_param_set> ProtoDUNE-ND </using_param_set>
     <window>
-      <point coord="det">  20, -20, -20 </point>
-      <point coord="det"> -20, -20, -20 </point>
-      <point coord="det">  20,  20, -20 </point>
+      <point coord="det">  7.5, -7.5, -20 </point>
+      <point coord="det"> -7.5, -7.5, -20 </point>
+      <point coord="det">  7.5,  7.5, -20 </point>
     </window>
     <upstreamz> -500.0 </upstreamz>
   </param_set>
