@@ -487,7 +487,7 @@ def dump(input_file, output_file):
         genie_hdr["isRES"] = "RES" in genie_str
         genie_hdr["isDIS"] = "DIS" in genie_str
         genie_hdr["isCOH"] = "COH" in genie_str
-        genie_hdr["vertex"] = np.array([genieTree.EvtVtx[0], genieTree.EvtVtx[1], genieTree.EvtVtx[2], genieTree.EvtVtx[3]]) * meter2cm
+        genie_hdr["vertex"] = np.array([genieTree.EvtVtx[0]*meter2cm, genieTree.EvtVtx[1]*meter2cm, genieTree.EvtVtx[2]*meter2cm, genieTree.EvtVtx[3]*edep2us])
         genie_hdr["target"] = int((target_pdg % 10000000) / 10000) #Extract Z value from PDG code
         genie_hdr["Enu"]  = nu_4mom[3]
         genie_hdr["nu_4mom"] = nu_4mom
