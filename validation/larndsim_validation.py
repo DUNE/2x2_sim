@@ -141,7 +141,7 @@ def main(sim_file):
         plt.close()     
         
         # Now we validate the light simulation:
-        # For questions on light validations, see DUNE ND Prototype Workshop (May 2023) Coding Tutorial, 
+        # For questions on the light validations below, see DUNE ND Prototype Workshop (May 2023) Coding Tutorial, 
         # or message Angela White on the DUNE Slack
         
         # Account for the timestamp turnover:
