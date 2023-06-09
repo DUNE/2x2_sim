@@ -74,6 +74,7 @@ args_gevgen_fnal=( \
 
 [ -z "${ARCUBE_TOP_VOLUME}" ] && args_gevgen_fnal+=( -t "$ARCUBE_TOP_VOLUME" )
 [ -z "${ARCUBE_FID_CUT_STRING}" ] && args_gevgen_fnal+=( -t "$ARCUBE_FID_CUT_STRING" )
+[ -z "${ARCUBE_ZMIN}" ] && args_gevgen_fnal+=( -z "$ARCUBE_ZMIN" )
 
 run gevgen_fnal "${args_gevgen_fnal[@]}"
 
