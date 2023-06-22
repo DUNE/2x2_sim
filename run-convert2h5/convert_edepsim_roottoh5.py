@@ -434,9 +434,11 @@ def dump(input_file, output_file, keep_all_dets=False):
         genie_idx = 0
         nu_4mom = np.empty((4,), dtype='f4')
         lep_4mom = np.empty((4,), dtype='f4')
+        target_pdg = 0
 
         # Create particle stack dataset
         genie_stack = np.empty(genieTree.StdHepN, dtype=genie_stack_dtype)
+
         for p in range(genieTree.StdHepN):
 
             #Get only initial and final state particles
@@ -472,7 +474,7 @@ def dump(input_file, output_file, keep_all_dets=False):
                     lep_pdg = genieTree.StdHepPdg[p]
 
                 #Get the struck nucleus pdg code
-                if genieTree.StdHepStatus[p] == 0 and np.abs(genieTree.StdHepPdg[p]) > 1E9:
+                if genieTree.StdHepStatus[p] == 0 and np.abs(genieTree.StdHepPdg[p]) not in [12, 14, 16]:
                     target_pdg = genieTree.StdHepPdg[p]
 
                 genie_idx += 1
