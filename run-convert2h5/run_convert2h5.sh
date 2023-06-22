@@ -46,4 +46,10 @@ mkdir -p $h5OutDir
 outFile=$h5OutDir/${outName}.EDEPSIM.h5
 rm -f $outFile
 
-run ./convert_edepsim_roottoh5.py --input_file $inFile --output_file $outFile
+if [[ "$ARCUBE_KEEP_ALL_DETS" == "1" ]]; then
+    keepAllDets=--keep_all_dets
+else
+    keepAllDets=""
+fi
+
+run ./convert_edepsim_roottoh5.py --input_file $inFile --output_file $outFile $keepAllDets

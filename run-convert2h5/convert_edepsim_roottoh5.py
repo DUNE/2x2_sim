@@ -216,7 +216,7 @@ def updateHDF5File(output_file, trajectories, segments, vertices, genie_s, genie
                 f['genie_hdr'][ngenie_h:] = genie_h
 
 # Read a file and dump it.
-def dump(input_file, output_file):
+def dump(input_file, output_file, keep_all_dets=False):
 
     """
     Script to convert edep-sim root output to an h5 file formatted in a way
@@ -316,13 +316,13 @@ def dump(input_file, output_file):
         if nb <= 0:
             continue
 
-        no_active_hits = True
-        for containerName, hitSegments in event.SegmentDetectors:
-            if not containerName == 'volLArActive':
+        if keep_all_dets:
+            if len(event.SegmentDetectors) == 0:
                 continue
-            no_active_hits = False
-        if no_active_hits:
-            continue
+        else:
+            if not any(containerName == 'volLArActive'
+                       for containerName, _hits in event.SegmentDetectors):
+                continue
 
         #print("Class: ", event.ClassName())
         #print("Event number:", event.EventId)
@@ -383,7 +383,7 @@ def dump(input_file, output_file):
         # Dump the segment containers
         #print("Number of segment containers:", event.SegmentDetectors.size())
         for containerName, hitSegments in event.SegmentDetectors:
-            if not containerName == 'volLArActive':
+            if (not keep_all_dets) and containerName != 'volLArActive':
                 continue
             segment = np.empty(len(hitSegments), dtype=segments_dtype)
             for iHit, hitSegment in enumerate(hitSegments):
