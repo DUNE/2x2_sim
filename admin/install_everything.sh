@@ -6,7 +6,7 @@ set -o errexit
 
 # This is the "default" container. It can be overridden by exporting
 # ARCUBE_CONTAINER before running e.g. run_edep_sim.sh
-export ARCUBE_CONTAINER=mjkramer/sim2x2:genie_edep.3_04_00.20230606
+export ARCUBE_CONTAINER=mjkramer/sim2x2:genie_edep.3_04_00.20230620
 
 pushd run-edep-sim
 ./install_edep_sim.sh
