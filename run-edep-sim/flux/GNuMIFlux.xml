@@ -127,7 +127,7 @@
     <!-- XML config must have already set the rotation matrix -->
     <!-- Cryostat center is 13 m downstream from center of hall which is at z = 49.5892 m -->
     <!-- and 3.1 m below vertical centerline of hall -->
-    <beampos> ( 0, -3.1, 62.5892 ) = ( 0, 0, 1036.48837 ) </beampos>
+    <beampos> ( 0, -3.1, 13 ) = ( 0, 0, 1036.48837 ) </beampos>
 
     <!-- CW: default enumax... -->
     <enumax> 120. 1.05 1.05 2500000 </enumax>
@@ -143,10 +143,12 @@
   <param_set name="WindowStudy4">
     <using_param_set> MiniRun4 </using_param_set>
     <!-- Place the window on the upstream surface of the rock -->
+    <!-- Rock is 165 m long, half-length is 82.5 m, rock center global Z is -49.5892 m,
+         so upstream surface global Z is -49.5892 - 82.5 = -132.0892 m -->
     <window>
-      <point coord="det">  35.56, -34.66, -82.5 </point>
-      <point coord="det"> -35.56, -34.66, -82.5 </point>
-      <point coord="det">  35.56,  34.66, -82.5 </point>
+      <point coord="det">  35.56, -34.66, -132.08 </point>
+      <point coord="det"> -35.56, -34.66, -132.08 </point>
+      <point coord="det">  35.56,  34.66, -132.08 </point>
     </window>
   </param_set>
 
