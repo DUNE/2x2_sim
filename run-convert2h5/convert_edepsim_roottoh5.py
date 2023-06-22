@@ -248,10 +248,13 @@ def dump(input_file, output_file):
     # map that gives which spill each event lives in
     event_spill_map = inputFile.Get("event_spill_map")
 
-    # for setting t_spill
-    spillPeriod_s = inputFile.Get("spillPeriod_s").GetVal()
-    spillCounter = -1
-    lastSpill = None        # Most-recent global spill ID
+    if not event_spill_map:
+        spillPeriod_s = 0.
+    else:
+        spillPeriod_s = inputFile.Get("spillPeriod_s").GetVal()
+        # for setting t_spill
+        spillCounter = -1
+        lastSpill = None        # Most-recent global spill ID
 
     # Read all of the events.
     entries = inputTree.GetEntriesFast()
@@ -279,12 +282,18 @@ def dump(input_file, output_file):
         # IF CRASH: Comment this line (also see IF CRASH above)
         event = inputTree.Event
 
-        spill_it_tobj = event_spill_map.GetValue(f"{event.RunId} {event.EventId}")
-        spill_it = int(spill_it_tobj.GetName())
-        if spill_it != lastSpill: # New spill?
-            spillCounter += 1
-            lastSpill = spill_it
-        t_spill = spillCounter * spillPeriod_s * 1E6 # convert to us
+        globalVertexID = (event.RunId * 1E6) + event.EventId
+
+        if not event_spill_map:
+            spill_it = globalVertexID
+            t_spill = 0.
+        else:
+            spill_it_tobj = event_spill_map.GetValue(f"{event.RunId} {event.EventId}")
+            spill_it = int(spill_it_tobj.GetName())
+            if spill_it != lastSpill: # New spill?
+                spillCounter += 1
+                lastSpill = spill_it
+            t_spill = spillCounter * spillPeriod_s * 1E6 # convert to us
 
         #print("event",event.EventId,"in spill",spill_it)
 
@@ -317,8 +326,6 @@ def dump(input_file, output_file):
 
         #print("Class: ", event.ClassName())
         #print("Event number:", event.EventId)
-
-        globalVertexID = (event.RunId * 1E6) + event.EventId
 
         # Dump the primary vertices
         vertices = np.empty(len(event.Primaries), dtype=vertices_dtype)

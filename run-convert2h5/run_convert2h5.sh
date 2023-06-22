@@ -21,7 +21,6 @@ outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
 
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
-inName=$ARCUBE_SPILL_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
 timeFile=$outDir/TIMING/$outName.time
@@ -33,7 +32,13 @@ run() {
     time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
-inFile=$PWD/../run-spill-build/output/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/${inName}.EDEPSIM_SPILLS.root
+if [[ -n "$ARCUBE_SPILL_NAME" ]]; then
+    inName=$ARCUBE_SPILL_NAME.$(printf "%05d" "$globalIdx")
+    inFile=$PWD/../run-spill-build/output/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/${inName}.EDEPSIM_SPILLS.root
+else
+    inName=$ARCUBE_SINGLE_NAME.$(printf "%05d" "$globalIdx")
+    inFile=$PWD/../run-edep-sim/output/${ARCUBE_SINGLE_NAME}/EDEPSIM/${inName}.EDEPSIM.root
+fi
 
 h5OutDir=$outDir/EDEPSIM_H5
 mkdir -p $h5OutDir
