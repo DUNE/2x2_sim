@@ -48,7 +48,6 @@
 <!--
   ****************************************************************************
   **   An attempt for the combined 2x2+MINERvA geometry
-  **   This is currently centred on (0,0,0), but this could change!
   ****************************************************************************
   -->
 
@@ -107,6 +106,48 @@
       <point coord="det">  7.5,  7.5, -20 </point>
     </window>
     <upstreamz> -500.0 </upstreamz>
+  </param_set>
+
+  <param_set name="MiniRun4">
+    <!-- verbosity of XML parsing -->
+    <verbose> 0 </verbose>
+
+    <!-- setting user units should be first -->
+    <units> m </units>
+
+    <!-- beamdir must come before beam zero position -->
+    <!-- rotation matrix created by sequence of rotations -->
+    <!-- CW: this is the same as MINOS-ND -->
+    <beamdir type="series">
+       <rotation axis="x" units="rad"> -0.0582977560 </rotation>
+    </beamdir>
+
+    <!-- position in ( user coords ) = ( beam coords ) -->
+    <!-- CW: I *think* this is correct... if the rotation to the beam is done before this, I guess it's okay -->
+    <!-- XML config must have already set the rotation matrix -->
+    <!-- Cryostat center is 13 m downstream from center of hall which is at z = 49.5892 m -->
+    <!-- and 3.1 m below vertical centerline of hall -->
+    <beampos> ( 0, -3.1, 62.5892 ) = ( 0, 0, 1036.48837 ) </beampos>
+
+    <!-- CW: default enumax... -->
+    <enumax> 120. 1.05 1.05 2500000 </enumax>
+
+    <!-- CW: allow entry to be reused 1000 times -->
+    <!-- CW: maybe too much, but I'm following the NOvA files here -->
+    <reuse> 1000 </reuse>
+
+    <!-- MK: don't bother with upstreamz (which may not even be respected in dk2nu mode) -->
+    <!--     just let the ray start on the window -->
+  </param_set>
+
+  <param_set name="WindowStudy4">
+    <using_param_set> MiniRun4 </using_param_set>
+    <!-- Place the window on the upstream surface of the rock -->
+    <window>
+      <point coord="det">  35.56, -34.66, -82.5 </point>
+      <point coord="det"> -35.56, -34.66, -82.5 </point>
+      <point coord="det">  35.56,  34.66, -82.5 </point>
+    </window>
   </param_set>
 
 </gnumi_config>
