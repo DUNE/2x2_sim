@@ -2,6 +2,8 @@
 
 # run me from run-edep-sim
 
+# note: these were also used for MiniRun3 (same GENIE and geometry as MiniRun2)
+
 export ARCUBE_CONTAINER=mjkramer/sim2x2:genie_edep.LFG_testing.20230228.v2
 tune=D22_22a_02_11b
 
