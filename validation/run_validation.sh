@@ -41,8 +41,16 @@ plotOutDir=$outDir/PLOTS
 mkdir -p "$plotOutDir"
 cd "$plotOutDir"
 
-"$codeDir"/edepsim_validation.py --sim_file "$edepFile" --input_type edep
-"$codeDir"/edepsim_validation.py --sim_file "$larndFile" --input_type larnd
-"$codeDir"/larndsim_validation.py --sim_file "$larndFile"
-"$codeDir"/flow_validation.py --flow_file "$flowFile"
-"$codeDir"/CPM_validation.py --flow_file "$flowFile"
+run_in() {
+    direc=$1; shift
+    mkdir -p "$direc"
+    pushd "$direc"
+    run "$@"
+    popd
+}
+
+run_in EDEPSIM_DUMPTREE "$codeDir"/edepsim_validation.py --sim_file "$edepFile" --input_type edep
+run_in LARNDSIM_EDEPTRUTH "$codeDir"/edepsim_validation.py --sim_file "$larndFile" --input_type larnd
+run_in LARNDSIM "$codeDir"/larndsim_validation.py --sim_file "$larndFile"
+run_in FLOW "$codeDir"/flow_validation.py --flow_file "$flowFile"
+run_in FLOW_CPM "$codeDir"/CPM_validation.py --flow_file "$flowFile"

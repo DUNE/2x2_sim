@@ -404,12 +404,12 @@ def main(sim_file):
                             X = (tracks[trackid]['x_start']*10,tracks[trackid]['x_end']*10)
                             Y = (tracks[trackid]['y_start']*10,tracks[trackid]['y_end']*10)
                             Z = (tracks[trackid]['z_start']*10,tracks[trackid]['z_end']*10)
-                            axs1.plot(Z,Y,c=colors[ios.index(io_first)],alpha=1,lw=1.5)
+                            axs1.plot(X,Y,c=colors[ios.index(io_first)],alpha=1,lw=1.5)
                         if io_group==io_second:
                             X = (tracks[trackid]['x_start']*10,tracks[trackid]['x_end']*10)
                             Y = (tracks[trackid]['y_start']*10,tracks[trackid]['y_end']*10)
                             Z = (tracks[trackid]['z_start']*10,tracks[trackid]['z_end']*10)
-                            axs4.plot(Z,Y,c=colors[ios.index(io_second)],alpha=1,lw=1.5)
+                            axs4.plot(X,Y,c=colors[ios.index(io_second)],alpha=1,lw=1.5)
                         else:
                             pass
             ## LABEL THE LIGHT PLOTS                            

@@ -19,34 +19,34 @@ segments_dtype = np.dtype([("eventID","u4"),("vertexID", "u8"), ("segment_id", "
                            ("z_start", "f4"), ("x_end", "f4"),
                            ("y_end", "f4"), ("n_electrons", "u4"),
                            ("pdgId", "i4"), ("x_start", "f4"),
-                           ("y_start", "f4"), ("t_start", "f4"),
+                           ("y_start", "f4"), ("t_start", "f8"),
                            ("t0_start", "f8"), ("t0_end", "f8"), ("t0", "f8"),
                            ("dx", "f4"), ("long_diff", "f4"),
-                           ("pixel_plane", "i4"), ("t_end", "f4"),
-                           ("dEdx", "f4"), ("dE", "f4"), ("t", "f4"),
+                           ("pixel_plane", "i4"), ("t_end", "f8"),
+                           ("dEdx", "f4"), ("dE", "f4"), ("t", "f8"),
                            ("y", "f4"), ("x", "f4"), ("z", "f4"),
                            ("n_photons","f4")], align=True)
 
 trajectories_dtype = np.dtype([("eventID","u4"), ("vertexID", "u8"),
                                ("trackID", "u4"), ("local_trackID", "u4"), ("parentID", "i4"),
                                ("E_start", "f4"), ("pxyz_start", "f4", (3,)),
-                               ("xyz_start", "f4", (3,)), ("t_start", "f4"),
+                               ("xyz_start", "f4", (3,)), ("t_start", "f8"),
                                ("E_end", "f4"), ("pxyz_end", "f4", (3,)),
-                               ("xyz_end", "f4", (3,)), ("t_end", "f4"),
+                               ("xyz_end", "f4", (3,)), ("t_end", "f8"),
                                ("pdgId", "i4"), ("start_process", "u4"),
                                ("start_subprocess", "u4"), ("end_process", "u4"),
                                ("end_subprocess", "u4")], align=True)
 
 vertices_dtype = np.dtype([("eventID","u4"), ("vertexID","u8"),
                            ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
-                           ("t_vert","f4"), ("t_event","f4")], align=True)
+                           ("t_vert","f8"), ("t_event","f8")], align=True)
 
 genie_stack_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"), ("trackID", "i4"),
                               ("part_4mom", "f4", (4,)), ("part_pdg", "i4"),
                               ("part_status", "i4")], align=True)
 
 genie_hdr_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"),
-                            ("vertex", "f4", (4,)), ("target", "u4"),
+                            ("vertex", "f8", (4,)), ("target", "u4"),
                             ("isCC", "?"), ("isQES", "?"), ("isMEC", "?"),
                             ("isRES", "?"), ("isDIS", "?"), ("isCOH", "?"),
                             ("Enu", "f4"), ("nu_4mom", "f4", (4,)), ("nu_pdg", "i4"),
