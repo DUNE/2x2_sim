@@ -14,11 +14,11 @@ import glob
 from ROOT import TG4Event, TFile, TMap
 
 # Output array datatypes
-segments_dtype = np.dtype([("eventID","u4"),("vertexID", "u8"), ("segment_id", "u4"),
-                           ("z_end", "f4"),("trackID", "u4"), ("tran_diff", "f4"),
+segments_dtype = np.dtype([("eventID","u4"),("vertexID", "u8"), ("segmentID", "u4"),
+                           ("z_end", "f4"),("trajID", "u4"), ("tran_diff", "f4"),
                            ("z_start", "f4"), ("x_end", "f4"),
                            ("y_end", "f4"), ("n_electrons", "u4"),
-                           ("pdgId", "i4"), ("x_start", "f4"),
+                           ("pdgID", "i4"), ("x_start", "f4"),
                            ("y_start", "f4"), ("t_start", "f8"),
                            ("t0_start", "f8"), ("t0_end", "f8"), ("t0", "f8"),
                            ("dx", "f4"), ("long_diff", "f4"),
@@ -28,12 +28,12 @@ segments_dtype = np.dtype([("eventID","u4"),("vertexID", "u8"), ("segment_id", "
                            ("n_photons","f4")], align=True)
 
 trajectories_dtype = np.dtype([("eventID","u4"), ("vertexID", "u8"),
-                               ("trackID", "u4"), ("local_trackID", "u4"), ("parentID", "i4"),
+                               ("trajID", "u4"), ("local_trajID", "u4"), ("parentID", "i4"),
                                ("E_start", "f4"), ("pxyz_start", "f4", (3,)),
                                ("xyz_start", "f4", (3,)), ("t_start", "f8"),
                                ("E_end", "f4"), ("pxyz_end", "f4", (3,)),
                                ("xyz_end", "f4", (3,)), ("t_end", "f8"),
-                               ("pdgId", "i4"), ("start_process", "u4"),
+                               ("pdgID", "i4"), ("start_process", "u4"),
                                ("start_subprocess", "u4"), ("end_process", "u4"),
                                ("end_subprocess", "u4")], align=True)
 
@@ -41,12 +41,12 @@ vertices_dtype = np.dtype([("eventID","u4"), ("vertexID","u8"),
                            ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
                            ("t_vert","f8"), ("t_event","f8")], align=True)
 
-genie_stack_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"), ("trackID", "i4"),
+genie_stack_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"), ("trajID", "i4"),
                               ("part_4mom", "f4", (4,)), ("part_pdg", "i4"),
                               ("part_status", "i4")], align=True)
 
 genie_hdr_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"),
-                            ("vertex", "f8", (4,)), ("target", "u4"),
+                            ("vertex", "f8", (4,)), ("target", "u4"), ("reaction", "i4"),
                             ("isCC", "?"), ("isQES", "?"), ("isMEC", "?"),
                             ("isRES", "?"), ("isDIS", "?"), ("isCOH", "?"),
                             ("Enu", "f4"), ("nu_4mom", "f4", (4,)), ("nu_pdg", "i4"),
@@ -164,7 +164,7 @@ def matchTrackID(traj_list, part_4mom, part_pdg):
         if traj["parentID"] != -1:
             continue
 
-        if traj["pdgId"] != part_pdg:
+        if traj["pdgID"] != part_pdg:
             continue
 
         p = traj["pxyz_start"]
@@ -172,10 +172,43 @@ def matchTrackID(traj_list, part_4mom, part_pdg):
         traj_4mom = np.array([p[0], p[1], p[2], E])
 
         if np.allclose(traj_4mom, part_4mom):
-            trackID = traj["trackID"]
+            trackID = traj["trajID"]
             break
 
     return trackID
+
+# Generate a reaction code number based on the GENIE reaction string
+# Reaction 0 used as an undefined or unknown reaction
+# Reactions [1, 5] used for basic CC reactions ([6,10] reserved for future use)
+# Reactions [11, 15] used for NC versions (+10 to CC reaction)
+# Reactions are positive for nu, negative for nubar
+def getReactionCode(genie_str, nu_pdg):
+    reaction = 0
+    if "NC" in genie_str:
+        is_nc = True
+    else:
+        is_nc = False
+
+    if "QES" in genie_str:
+        reaction = 1
+    elif "MEC" in genie_str:
+        reaction = 2
+    elif "RES" in genie_str:
+        reaction = 3
+    elif "DIS" in genie_str:
+        reaction = 4
+    elif "COH" in genie_str:
+        reaction = 5
+    else:
+        reaction = 0
+
+    if is_nc and reaction != 0:
+        reaction += 10
+
+    if nu_pdg < 0:
+        reaction *= -1
+
+    return reaction
 
 # Prep HDF5 file for writing
 def initHDF5File(output_file):
@@ -355,8 +388,8 @@ def dump(input_file, output_file, keep_all_dets=False):
             trajectories[iTraj]["eventID"] = spill_it
             trajectories[iTraj]["vertexID"] = globalVertexID
 
-            trajectories[iTraj]["trackID"] = fileTrackID
-            trajectories[iTraj]["local_trackID"] = trajectory.GetTrackId()
+            trajectories[iTraj]["trajID"] = fileTrackID
+            trajectories[iTraj]["local_trajID"] = trajectory.GetTrackId()
             trajectories[iTraj]["parentID"] = -1 if trajectory.GetParentId() == -1 \
                 else trackMap[trajectory.GetParentId()]
 
@@ -376,7 +409,7 @@ def dump(input_file, output_file, keep_all_dets=False):
             trajectories[iTraj]["start_subprocess"] = start_pt.GetSubprocess()
             trajectories[iTraj]["end_process"] = end_pt.GetProcess()
             trajectories[iTraj]["end_subprocess"] = end_pt.GetSubprocess()
-            trajectories[iTraj]["pdgId"] = trajectory.GetPDGCode()
+            trajectories[iTraj]["pdgID"] = trajectory.GetPDGCode()
 
         trajectories_list.append(trajectories)
 
@@ -389,10 +422,10 @@ def dump(input_file, output_file, keep_all_dets=False):
             for iHit, hitSegment in enumerate(hitSegments):
                 segment[iHit]["eventID"] = spill_it
                 segment[iHit]["vertexID"] = globalVertexID
-                segment[iHit]["segment_id"] = segment_id
+                segment[iHit]["segmentID"] = segment_id
                 segment_id += 1
                 try:
-                    segment[iHit]["trackID"] = trackMap[hitSegment.Contrib[0]]
+                    segment[iHit]["trajID"] = trackMap[hitSegment.Contrib[0]]
                 except IndexError as e:
                     print(e)
                     print("iHit:",iHit)
@@ -421,7 +454,7 @@ def dump(input_file, output_file, keep_all_dets=False):
                 segment[iHit]["t0"] = (segment[iHit]["t0_start"] + segment[iHit]["t0_end"]) / 2.
                 segment[iHit]["t"] = 0
                 segment[iHit]["dEdx"] = hitSegment.GetEnergyDeposit() / dx if dx > 0 else 0
-                segment[iHit]["pdgId"] = trajectories[hitSegment.Contrib[0]]["pdgId"]
+                segment[iHit]["pdgID"] = trajectories[hitSegment.Contrib[0]]["pdgID"]
                 segment[iHit]["n_electrons"] = 0
                 segment[iHit]["long_diff"] = 0
                 segment[iHit]["tran_diff"] = 0
@@ -452,7 +485,7 @@ def dump(input_file, output_file, keep_all_dets=False):
 
                 genie_stack[genie_idx]["eventID"] = spill_it
                 genie_stack[genie_idx]["vertexID"] = globalVertexID
-                genie_stack[genie_idx]["trackID"] = matchTrackID(trajectories_list[-1], part_4mom, part_pdg)
+                genie_stack[genie_idx]["trajID"] = matchTrackID(trajectories_list[-1], part_4mom, part_pdg)
                 genie_stack[genie_idx]["part_4mom"] = part_4mom
                 genie_stack[genie_idx]["part_pdg"] = part_pdg
                 genie_stack[genie_idx]["part_status"] = genieTree.StdHepStatus[p]
@@ -496,6 +529,7 @@ def dump(input_file, output_file, keep_all_dets=False):
         genie_hdr["isRES"] = "RES" in genie_str
         genie_hdr["isDIS"] = "DIS" in genie_str
         genie_hdr["isCOH"] = "COH" in genie_str
+        genie_hdr["reaction"] = getReactionCode(genie_str, nu_pdg)
         genie_hdr["vertex"] = np.array([genieTree.EvtVtx[0]*meter2cm, genieTree.EvtVtx[1]*meter2cm, genieTree.EvtVtx[2]*meter2cm, genieTree.EvtVtx[3]*edep2us])
         genie_hdr["target"] = int((target_pdg % 10000000) / 10000) #Extract Z value from PDG code
         genie_hdr["Enu"]  = nu_4mom[3]
