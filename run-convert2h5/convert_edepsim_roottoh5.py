@@ -14,11 +14,11 @@ import glob
 from ROOT import TG4Event, TFile, TMap
 
 # Output array datatypes
-segments_dtype = np.dtype([("eventID","u4"),("vertexID", "u8"), ("segmentID", "u4"),
-                           ("z_end", "f4"),("trajID", "u4"), ("tran_diff", "f4"),
+segments_dtype = np.dtype([("event_id","u4"),("vertex_id", "u8"), ("segment_id", "u4"),
+                           ("z_end", "f4"),("traj_id", "u4"), ("tran_diff", "f4"),
                            ("z_start", "f4"), ("x_end", "f4"),
                            ("y_end", "f4"), ("n_electrons", "u4"),
-                           ("pdgID", "i4"), ("x_start", "f4"),
+                           ("pdg_id", "i4"), ("x_start", "f4"),
                            ("y_start", "f4"), ("t_start", "f8"),
                            ("t0_start", "f8"), ("t0_end", "f8"), ("t0", "f8"),
                            ("dx", "f4"), ("long_diff", "f4"),
@@ -27,25 +27,25 @@ segments_dtype = np.dtype([("eventID","u4"),("vertexID", "u8"), ("segmentID", "u
                            ("y", "f4"), ("x", "f4"), ("z", "f4"),
                            ("n_photons","f4")], align=True)
 
-trajectories_dtype = np.dtype([("eventID","u4"), ("vertexID", "u8"),
-                               ("trajID", "u4"), ("local_trajID", "u4"), ("parentID", "i4"),
+trajectories_dtype = np.dtype([("event_id","u4"), ("vertex_id", "u8"),
+                               ("traj_id", "u4"), ("local_traj_id", "u4"), ("parent_id", "i4"),
                                ("E_start", "f4"), ("pxyz_start", "f4", (3,)),
                                ("xyz_start", "f4", (3,)), ("t_start", "f8"),
                                ("E_end", "f4"), ("pxyz_end", "f4", (3,)),
                                ("xyz_end", "f4", (3,)), ("t_end", "f8"),
-                               ("pdgID", "i4"), ("start_process", "u4"),
+                               ("pdg_id", "i4"), ("start_process", "u4"),
                                ("start_subprocess", "u4"), ("end_process", "u4"),
                                ("end_subprocess", "u4")], align=True)
 
-vertices_dtype = np.dtype([("eventID","u4"), ("vertexID","u8"),
+vertices_dtype = np.dtype([("event_id","u4"), ("vertex_id","u8"),
                            ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
                            ("t_vert","f8"), ("t_event","f8")], align=True)
 
-genie_stack_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"), ("trajID", "i4"),
+genie_stack_dtype = np.dtype([("event_id", "u4"), ("vertex_id", "u8"), ("traj_id", "i4"),
                               ("part_4mom", "f4", (4,)), ("part_pdg", "i4"),
                               ("part_status", "i4")], align=True)
 
-genie_hdr_dtype = np.dtype([("eventID", "u4"), ("vertexID", "u8"),
+genie_hdr_dtype = np.dtype([("event_id", "u4"), ("vertex_id", "u8"),
                             ("vertex", "f8", (4,)), ("target", "u4"), ("reaction", "i4"),
                             ("isCC", "?"), ("isQES", "?"), ("isMEC", "?"),
                             ("isRES", "?"), ("isDIS", "?"), ("isCOH", "?"),
@@ -161,10 +161,10 @@ def matchTrackID(traj_list, part_4mom, part_pdg):
 
     trackID = -999
     for traj in traj_list:
-        if traj["parentID"] != -1:
+        if traj["parent_id"] != -1:
             continue
 
-        if traj["pdgID"] != part_pdg:
+        if traj["pdg_id"] != part_pdg:
             continue
 
         p = traj["pxyz_start"]
@@ -172,7 +172,7 @@ def matchTrackID(traj_list, part_4mom, part_pdg):
         traj_4mom = np.array([p[0], p[1], p[2], E])
 
         if np.allclose(traj_4mom, part_4mom):
-            trackID = traj["trajID"]
+            trackID = traj["traj_id"]
             break
 
     return trackID
@@ -216,8 +216,8 @@ def initHDF5File(output_file):
         f.create_dataset('trajectories', (0,), dtype=trajectories_dtype, maxshape=(None,))
         f.create_dataset('segments', (0,), dtype=segments_dtype, maxshape=(None,))
         f.create_dataset('vertices', (0,), dtype=vertices_dtype, maxshape=(None,))
-        f.create_dataset('genie_stack', (0,), dtype=genie_stack_dtype, maxshape=(None,))
-        f.create_dataset('genie_hdr', (0,), dtype=genie_hdr_dtype, maxshape=(None,))
+        f.create_dataset('mc_stack', (0,), dtype=genie_stack_dtype, maxshape=(None,))
+        f.create_dataset('mc_hdr', (0,), dtype=genie_hdr_dtype, maxshape=(None,))
 
 # Resize HDF5 file and save output arrays
 def updateHDF5File(output_file, trajectories, segments, vertices, genie_s, genie_h):
@@ -239,14 +239,14 @@ def updateHDF5File(output_file, trajectories, segments, vertices, genie_s, genie
                 f['vertices'][nvert:] = vertices
 
             if len(genie_s):
-                ngenie_s = len(f['genie_stack'])
-                f['genie_stack'].resize((ngenie_s+len(genie_s),))
-                f['genie_stack'][ngenie_s:] = genie_s
+                ngenie_s = len(f['mc_stack'])
+                f['mc_stack'].resize((ngenie_s+len(genie_s),))
+                f['mc_stack'][ngenie_s:] = genie_s
 
             if len(genie_h):
-                ngenie_h = len(f['genie_hdr'])
-                f['genie_hdr'].resize((ngenie_h+len(genie_h),))
-                f['genie_hdr'][ngenie_h:] = genie_h
+                ngenie_h = len(f['mc_hdr'])
+                f['mc_hdr'].resize((ngenie_h+len(genie_h),))
+                f['mc_hdr'][ngenie_h:] = genie_h
 
 # Read a file and dump it.
 def dump(input_file, output_file, keep_all_dets=False):
@@ -364,8 +364,8 @@ def dump(input_file, output_file, keep_all_dets=False):
         vertices = np.empty(len(event.Primaries), dtype=vertices_dtype)
         for iVtx, primaryVertex in enumerate(event.Primaries):
             #printPrimaryVertex("PP", primaryVertex)
-            vertices[iVtx]["eventID"] = spill_it
-            vertices[iVtx]["vertexID"] = globalVertexID
+            vertices[iVtx]["event_id"] = spill_it
+            vertices[iVtx]["vertex_id"] = globalVertexID
             vertices[iVtx]["x_vert"] = primaryVertex.GetPosition().X() * edep2cm
             vertices[iVtx]["y_vert"] = primaryVertex.GetPosition().Y() * edep2cm
             vertices[iVtx]["z_vert"] = primaryVertex.GetPosition().Z() * edep2cm
@@ -385,12 +385,12 @@ def dump(input_file, output_file, keep_all_dets=False):
             trackMap[trajectory.GetTrackId()] = fileTrackID
 
             start_pt, end_pt = trajectory.Points[0], trajectory.Points[-1]
-            trajectories[iTraj]["eventID"] = spill_it
-            trajectories[iTraj]["vertexID"] = globalVertexID
+            trajectories[iTraj]["event_id"] = spill_it
+            trajectories[iTraj]["vertex_id"] = globalVertexID
 
-            trajectories[iTraj]["trajID"] = fileTrackID
-            trajectories[iTraj]["local_trajID"] = trajectory.GetTrackId()
-            trajectories[iTraj]["parentID"] = -1 if trajectory.GetParentId() == -1 \
+            trajectories[iTraj]["traj_id"] = fileTrackID
+            trajectories[iTraj]["local_traj_id"] = trajectory.GetTrackId()
+            trajectories[iTraj]["parent_id"] = -1 if trajectory.GetParentId() == -1 \
                 else trackMap[trajectory.GetParentId()]
 
             mass = trajectory.GetInitialMomentum().M()
@@ -409,7 +409,7 @@ def dump(input_file, output_file, keep_all_dets=False):
             trajectories[iTraj]["start_subprocess"] = start_pt.GetSubprocess()
             trajectories[iTraj]["end_process"] = end_pt.GetProcess()
             trajectories[iTraj]["end_subprocess"] = end_pt.GetSubprocess()
-            trajectories[iTraj]["pdgID"] = trajectory.GetPDGCode()
+            trajectories[iTraj]["pdg_id"] = trajectory.GetPDGCode()
 
         trajectories_list.append(trajectories)
 
@@ -420,12 +420,12 @@ def dump(input_file, output_file, keep_all_dets=False):
                 continue
             segment = np.empty(len(hitSegments), dtype=segments_dtype)
             for iHit, hitSegment in enumerate(hitSegments):
-                segment[iHit]["eventID"] = spill_it
-                segment[iHit]["vertexID"] = globalVertexID
-                segment[iHit]["segmentID"] = segment_id
+                segment[iHit]["event_id"] = spill_it
+                segment[iHit]["vertex_id"] = globalVertexID
+                segment[iHit]["segment_id"] = segment_id
                 segment_id += 1
                 try:
-                    segment[iHit]["trajID"] = trackMap[hitSegment.Contrib[0]]
+                    segment[iHit]["traj_id"] = trackMap[hitSegment.Contrib[0]]
                 except IndexError as e:
                     print(e)
                     print("iHit:",iHit)
@@ -454,7 +454,7 @@ def dump(input_file, output_file, keep_all_dets=False):
                 segment[iHit]["t0"] = (segment[iHit]["t0_start"] + segment[iHit]["t0_end"]) / 2.
                 segment[iHit]["t"] = 0
                 segment[iHit]["dEdx"] = hitSegment.GetEnergyDeposit() / dx if dx > 0 else 0
-                segment[iHit]["pdgID"] = trajectories[hitSegment.Contrib[0]]["pdgID"]
+                segment[iHit]["pdg_id"] = trajectories[hitSegment.Contrib[0]]["pdg_id"]
                 segment[iHit]["n_electrons"] = 0
                 segment[iHit]["long_diff"] = 0
                 segment[iHit]["tran_diff"] = 0
@@ -483,9 +483,9 @@ def dump(input_file, output_file, keep_all_dets=False):
                                       genieTree.StdHepP4[p*4 + 3]*gev2mev])
                 part_pdg = genieTree.StdHepPdg[p]
 
-                genie_stack[genie_idx]["eventID"] = spill_it
-                genie_stack[genie_idx]["vertexID"] = globalVertexID
-                genie_stack[genie_idx]["trajID"] = matchTrackID(trajectories_list[-1], part_4mom, part_pdg)
+                genie_stack[genie_idx]["event_id"] = spill_it
+                genie_stack[genie_idx]["vertex_id"] = globalVertexID
+                genie_stack[genie_idx]["traj_id"] = matchTrackID(trajectories_list[-1], part_4mom, part_pdg)
                 genie_stack[genie_idx]["part_4mom"] = part_4mom
                 genie_stack[genie_idx]["part_pdg"] = part_pdg
                 genie_stack[genie_idx]["part_status"] = genieTree.StdHepStatus[p]
@@ -521,8 +521,8 @@ def dump(input_file, output_file, keep_all_dets=False):
 
         #Create GENIE header/summary dataset
         genie_hdr = np.empty(1, dtype=genie_hdr_dtype)
-        genie_hdr["eventID"] = spill_it
-        genie_hdr["vertexID"] = globalVertexID
+        genie_hdr["event_id"] = spill_it
+        genie_hdr["vertex_id"] = globalVertexID
         genie_hdr["isCC"]  = "CC" in genie_str
         genie_hdr["isQES"] = "QES" in genie_str
         genie_hdr["isMEC"] = "MEC" in genie_str
