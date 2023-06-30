@@ -14,26 +14,26 @@ export ARCUBE_CONTAINER=sim2x2_genie_edep.LFG_testing.20230228.v2.sif
 export ARCUBE_DIR=$PWD
 export ARCUBE_CONTAINER_DIR=$ARCUBE_DIR/admin/containers
 
-# pushd run-edep-sim
-# ./install_edep_sim.sh
-# popd
+pushd run-edep-sim
+./install_edep_sim.sh
+popd
 
-# pushd run-spill-build
-# ./install_spill_build.sh
-# popd
+pushd run-spill-build
+./install_spill_build.sh
+popd
 
 pushd run-convert2h5
 ./install_convert2h5.sh
 popd
 
-# pushd run-larnd-sim
-# ./install_larnd_sim.sh
-# popd
+pushd run-larnd-sim
+./install_larnd_sim.sh
+popd
 
-# pushd run-ndlar-flow
-# ./install_ndlar_flow.sh
-# popd
+pushd run-ndlar-flow
+./install_ndlar_flow.sh
+popd
 
-# pushd validation
-# ./install_validation.sh
-# popd
+pushd validation
+./install_validation.sh
+popd
