@@ -15,6 +15,7 @@ if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
 elif [[ "$ARCUBE_RUNTIME" == "SINGULARITY" ]]; then
     # Or reload in Singularity
     if [[ "$SINGULARITY_NAME" != "$ARCUBE_CONTAINER" ]]; then
+        echo "Entering container..."
         singularity exec -B $ARCUBE_DIR $ARCUBE_CONTAINER_DIR/$ARCUBE_CONTAINER /bin/bash "$0" "$@"
         exit
     fi
@@ -28,7 +29,8 @@ echo "Setting up run-spill-build"
 echo "If this fails, inspect and modify run-spill-build/libTG4Event/MAKEP"
 echo "or regenerate MAKEP from an arbitrary edep-sim file (see makeLibTG4Event.sh)"
 
-source /environment
+# source /environment
+source $ARCUBE_DIR/admin/container_env.sh
 
 cd libTG4Event
 bash MAKEP
