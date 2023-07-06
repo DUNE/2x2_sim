@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export ARCUBE_RUNTIME='SHIFTER'
 export ARCUBE_CONTAINER='mjkramer/sim2x2:genie_edep.LFG_testing.20230228.v2'
 export ARCUBE_CHERRYPICK='0'
 export ARCUBE_DET_LOCATION='ProtoDUNE-ND'

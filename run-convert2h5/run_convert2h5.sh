@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
-    # shifter --image=$ARCUBE_CONTAINER --module=none -- "$0" "$@"
-    # exit
-# fi
-
 if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
     # Reload in Shifter
     if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then

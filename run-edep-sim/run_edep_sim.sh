@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-# Reload in Shifter if necessary
-# if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
-    # shifter --image=$ARCUBE_CONTAINER --module=none -- "$0" "$@"
-    # exit
-# fi
-
 if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
     # Reload in Shifter
     if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
@@ -16,7 +10,7 @@ if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
 elif [[ "$ARCUBE_RUNTIME" == "SINGULARITY" ]]; then
     # Or reload in Singularity
     if [[ "$SINGULARITY_NAME" != "$ARCUBE_CONTAINER" ]]; then
-        singularity exec -B $DUNE $ARCUBE_CONTAINER_DIR/$ARCUBE_CONTAINER /bin/bash "$0" "$@"
+        singularity exec -B $ARCUBE_DIR $ARCUBE_CONTAINER_DIR/$ARCUBE_CONTAINER /bin/bash "$0" "$@"
         exit
     fi
 
