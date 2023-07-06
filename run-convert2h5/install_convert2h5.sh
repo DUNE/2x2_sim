@@ -24,7 +24,8 @@ else
     exit
 fi
 
-source /environment             # from the container
+# source /environment             # from the container
+source $ARCUBE_DIR/admin/container_env.sh
 
 rm -rf convert.venv
 python3 -m venv convert.venv
