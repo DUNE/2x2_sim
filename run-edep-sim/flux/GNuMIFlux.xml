@@ -125,7 +125,7 @@
     <!-- position in ( user coords ) = ( beam coords ) -->
     <!-- CW: I *think* this is correct... if the rotation to the beam is done before this, I guess it's okay -->
     <!-- XML config must have already set the rotation matrix -->
-    <!-- Cryostat center is 13 m downstream from center of hall which is at z = 49.5892 m -->
+    <!-- Cryostat center is 13 m downstream from center of hall which is origin -->
     <!-- and 3.1 m below vertical centerline of hall -->
     <beampos> ( 0, -3.1, 13 ) = ( 0, 0, 1036.48837 ) </beampos>
 
@@ -138,6 +138,24 @@
 
     <!-- MK: don't bother with upstreamz (which may not even be respected in dk2nu mode) -->
     <!--     just let the ray start on the window -->
+  </param_set>
+
+  <param_set name="MiniRun4-Nu">
+    <using_param_set> MiniRun4 </using_param_set>
+    <window>
+      <point coord="det">  5, -5, 8 </point>
+      <point coord="det"> -5, -5, 8 </point>
+      <point coord="det">  5,  2, 8 </point>
+    </window>
+  </param_set>
+
+  <param_set name="MiniRun4-Rock">
+    <using_param_set> MiniRun4 </using_param_set>
+    <window>
+      <point coord="det">  10,  -5, -90 </point>
+      <point coord="det"> -10,  -5, -90 </point>
+      <point coord="det">  10,  15, -90 </point>
+    </window>
   </param_set>
 
   <param_set name="WindowStudy4">
