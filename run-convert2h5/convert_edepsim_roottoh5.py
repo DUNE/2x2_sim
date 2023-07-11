@@ -309,7 +309,9 @@ def dump(input_file, output_file):
 
         no_active_hits = True
         for containerName, hitSegments in event.SegmentDetectors:
-            if not containerName == 'volLArActive':
+            # If ARCUBE_CONTAINER_NAME is not set, default to previously hard 
+            # coded containerName. 
+            if not containerName == os.environ.get("ARCUBE_CONTAINER_NAME", "volLArActive"):
                 continue
             no_active_hits = False
         if no_active_hits:
@@ -376,7 +378,9 @@ def dump(input_file, output_file):
         # Dump the segment containers
         #print("Number of segment containers:", event.SegmentDetectors.size())
         for containerName, hitSegments in event.SegmentDetectors:
-            if not containerName == 'volLArActive':
+            # If ARCUBE_CONTAINER_NAME is not set, default to previously hard 
+            # coded containerName. 
+            if not containerName == os.environ.get("ARCUBE_CONTAINER_NAME", "volLArActive"):
                 continue
             segment = np.empty(len(hitSegments), dtype=segments_dtype)
             for iHit, hitSegment in enumerate(hitSegments):
