@@ -43,7 +43,7 @@ rm -f "$outFile"
 run simulate_pixels.py --input_filename "$inFile" \
     --output_filename "$outFile" \
     --detector_properties larnd-sim/larndsim/detector_properties/2x2.yaml \
-    --pixel_layout larnd-sim/larndsim/pixel_layouts/multi_tile_layout-2.3.16.yaml \
+    --pixel_layout larnd-sim/larndsim/pixel_layouts/multi_tile_layout-2.4.16.yaml \
     --response_file larnd-sim/larndsim/bin/response_44.npy \
     --light_lut_filename /global/cfs/cdirs/dune/www/data/2x2/simulation/larndsim_data/light_LUT_M123_v1/lightLUT_M123.npz \
     --light_det_noise_filename larnd-sim/larndsim/bin/light_noise_2x2_4mod_July2023.npy \
