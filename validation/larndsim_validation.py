@@ -84,10 +84,10 @@ def main(sim_file):
         plt.close()
 
         ### Plot interactions per spill
-        genie_hdr = sim_h5['genie_hdr']
-        n_vertices = np.zeros(genie_hdr['eventID'].max())
+        mc_hdr = sim_h5['mc_hdr']
+        n_vertices = np.zeros(mc_hdr['event_id'].max())
         for i in range(len(n_vertices)):
-            n_vertices[i] = np.count_nonzero(genie_hdr['eventID'] == i)
+            n_vertices[i] = np.count_nonzero(mc_hdr['event_id'] == i)
         plt.title('Total interactions per spill')
         plt.xlabel('Interactions')
         plt.ylabel('Counts')
@@ -96,13 +96,13 @@ def main(sim_file):
         plt.close()
 
         ### Plot hits per event
-        tracks = sim_h5['tracks']
+        tracks = sim_h5['segments']
         def get_eventIDs(event_packets, mc_packets_assn):
             """Takes as input the packets and mc_packets_assn fields, and
             returns the eventIDs that deposited that energy"""
     
             event_IDs = []
-            eventID = tracks['eventID'] # eventIDs associated to each track
+            eventID = tracks['event_id'] # eventIDs associated to each track
             track_id_assn = mc_packets_assn['track_ids'] # track indices corresponding to each packet
 
             # Loop over each packet
