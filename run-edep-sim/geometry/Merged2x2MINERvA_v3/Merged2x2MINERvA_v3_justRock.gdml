@@ -18952,7 +18952,7 @@
 			</physvol>
 		</assembly>
 		<volume name="volMinosNDHall">
-			<materialref ref="Air"/>
+			<materialref ref="NoGas"/>
 			<solidref ref="HallAirVolTemp2"/>
 			<!-- <physvol name="TheArgonCube_1"> -->
 			<!-- 	<volumeref ref="volArgonCubeDetector"/> -->
