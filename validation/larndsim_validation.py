@@ -401,15 +401,15 @@ def main(sim_file):
                     if trackid >= 0 and trackid not in plotted_tracks:
                         plotted_tracks.append(trackid)
                         if io_group==io_first:
-                            X = (tracks[trackid]['x_start']*10,tracks[trackid]['x_end']*10)
-                            Y = (tracks[trackid]['y_start']*10,tracks[trackid]['y_end']*10)
-                            Z = (tracks[trackid]['z_start']*10,tracks[trackid]['z_end']*10)
-                            axs1.plot(X,Y,c=colors[ios.index(io_first)],alpha=1,lw=1.5)
+                            X = (segments[trackid]['x_start']*10,segments[trackid]['x_end']*10)
+                            Y = (segments[trackid]['y_start']*10,segments[trackid]['y_end']*10)
+                            Z = (segments[trackid]['z_start']*10,segments[trackid]['z_end']*10)
+                            axs1.plot(Z,Y,c=colors[ios.index(io_first)],alpha=1,lw=1.5)
                         if io_group==io_second:
-                            X = (tracks[trackid]['x_start']*10,tracks[trackid]['x_end']*10)
-                            Y = (tracks[trackid]['y_start']*10,tracks[trackid]['y_end']*10)
-                            Z = (tracks[trackid]['z_start']*10,tracks[trackid]['z_end']*10)
-                            axs4.plot(X,Y,c=colors[ios.index(io_second)],alpha=1,lw=1.5)
+                            X = (segments[trackid]['x_start']*10,segments[trackid]['x_end']*10)
+                            Y = (segments[trackid]['y_start']*10,segments[trackid]['y_end']*10)
+                            Z = (segments[trackid]['z_start']*10,segments[trackid]['z_end']*10)
+                            axs4.plot(Z,Y,c=colors[ios.index(io_second)],alpha=1,lw=1.5)
                         else:
                             pass
             ## LABEL THE LIGHT PLOTS                            
@@ -465,23 +465,23 @@ def main(sim_file):
                 axs5[i].set_ylim(y_min,y_max)
                 axs5[i].yaxis.set_ticklabels([])
             ## COLOR THE CHARGE PLOTS
-            axs1.plot(-655,-240,c='navy',alpha=0.1)
-            axs4.plot(15,-240,c='navy',alpha=0.1)
-            tpc_rectL = plt.Rectangle((-655,-240), 640, 1340, linewidth=0.75, edgecolor='b', facecolor=cmap(0),zorder=-1)
-            tpc_rectR = plt.Rectangle((15,-240), 640, 1340, linewidth=0.75, edgecolor='b', facecolor=cmap(0),zorder=-1)
+            #axs1.plot(1234.5,-333,c='navy',alpha=0.1)
+            #axs4.plot(15,-333,c='navy',alpha=0.1)
+            tpc_rectL = plt.Rectangle((1234.5,-333), 64, 130, linewidth=0.75, edgecolor='b', facecolor=cmap(0),zorder=-1)
+            tpc_rectR = plt.Rectangle((1301.5,-333), 64, 130, linewidth=0.75, edgecolor='b', facecolor=cmap(0),zorder=-1)
             ## LABEL THE CHARGE PLOTS    
             axs1.add_patch(tpc_rectL)
             axs1.set_aspect("equal")
-            axs1.set_xlabel("z [mm]")
-            axs1.set_ylim(-240,1100)
-            axs1.set_xlim(-660, -10)
+            axs1.set_xlabel("z [cm]")
+            axs1.set_ylim(-334,-202)
+            axs1.set_xlim(1233.5, 1299.5)
             axs1.set_title(titles[ios.index(io_first)])
             axs1.yaxis.set_ticklabels([]) 
 
             axs4.add_patch(tpc_rectR) 
-            axs4.set_xlabel("z [mm]")
-            axs4.set_ylim(-240,1100)
-            axs4.set_xlim(10, 660)
+            axs4.set_xlabel("z [cm]")
+            axs4.set_ylim(-334,-202)
+            axs4.set_xlim(1300.5, 1366.5)
             axs4.set_aspect("equal")
             axs4.set_title(titles[ios.index(io_second)])
             axs4.yaxis.set_ticklabels([]) 
