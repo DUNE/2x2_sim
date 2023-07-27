@@ -401,14 +401,14 @@ def main(sim_file):
                     if trackid >= 0 and trackid not in plotted_tracks:
                         plotted_tracks.append(trackid)
                         if io_group==io_first:
-                            X = (segments[trackid]['x_start']*10,segments[trackid]['x_end']*10)
-                            Y = (segments[trackid]['y_start']*10,segments[trackid]['y_end']*10)
-                            Z = (segments[trackid]['z_start']*10,segments[trackid]['z_end']*10)
+                            X = (tracks[trackid]['x_start']*10,tracks[trackid]['x_end']*10)
+                            Y = (tracks[trackid]['y_start']*10,tracks[trackid]['y_end']*10)
+                            Z = (tracks[trackid]['z_start']*10,tracks[trackid]['z_end']*10)
                             axs1.plot(Z,Y,c=colors[ios.index(io_first)],alpha=1,lw=1.5)
                         if io_group==io_second:
-                            X = (segments[trackid]['x_start']*10,segments[trackid]['x_end']*10)
-                            Y = (segments[trackid]['y_start']*10,segments[trackid]['y_end']*10)
-                            Z = (segments[trackid]['z_start']*10,segments[trackid]['z_end']*10)
+                            X = (tracks[trackid]['x_start']*10,tracks[trackid]['x_end']*10)
+                            Y = (tracks[trackid]['y_start']*10,tracks[trackid]['y_end']*10)
+                            Z = (tracks[trackid]['z_start']*10,tracks[trackid]['z_end']*10)
                             axs4.plot(Z,Y,c=colors[ios.index(io_second)],alpha=1,lw=1.5)
                         else:
                             pass
