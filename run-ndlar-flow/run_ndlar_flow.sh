@@ -53,7 +53,12 @@ workflow7='yamls/proto_nd_flow/workflows/light/light_event_reconstruction.yaml'
 
 cd ndlar_flow
 
-h5flow -c $workflow1 $workflow2 $workflow3 $workflow4 $workflow5\
+# Ensure that the second h5flow doesn't run if the first one crashes. This also
+# ensures that we properly report the failure to the production system.
+set -o errexit
+
+run h5flow -c $workflow1 $workflow2 $workflow3 $workflow4 $workflow5\
     -i $inFile -o $outFile
-h5flow -c $workflow6 $workflow7\
+
+run h5flow -c $workflow6 $workflow7\
     -i $inFile -o $outFile

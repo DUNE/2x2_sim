@@ -19,13 +19,13 @@ cd ..
 git clone https://github.com/larpix/ndlar_flow.git
 cd ndlar_flow
 # used for first flow of MiniRun4
-git checkout 627f5761dbe5405c24c2a85aa4af85a7cf659bea
+git checkout 9c7cb131223026cf43d151679391dab68176d4ee
 pip install .
 cd ..
 
 datadir=ndlar_flow/data/proto_nd_flow
 
-cp static/multi_tile_layout-2.3.16.yaml $datadir
+cp static/multi_tile_layout-2.4.16.yaml $datadir
 cp static/runlist-2x2-mcexample.txt $datadir
 cp static/light_module_desc-0.0.0.yaml $datadir
 
