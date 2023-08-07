@@ -7,6 +7,11 @@
 /edep/db/set/lengthThreshold 0 mm
 /edep/db/set/gammaThreshold 0 MeV
 
+# This ensures that each hit segment in the LAr is only associated with one
+# trajectory. It must be run BEFORE /edep/update.
+# https://github.com/DUNE/2x2_sim/issues/20
+/edep/hitSeparation TPCActive_shape -1 mm
+
 /edep/update
 
 /generator/kinematics/set rooTracker
