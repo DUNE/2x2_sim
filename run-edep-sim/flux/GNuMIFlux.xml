@@ -111,7 +111,7 @@
   <param_set name="MiniRun4">
     <!-- verbosity of XML parsing -->
     <verbose> 0 </verbose>
-
+    
     <!-- setting user units should be first -->
     <units> m </units>
 
@@ -168,6 +168,109 @@
       <point coord="det"> -35.56, -34.66, -132.08 </point>
       <point coord="det">  35.56,  34.66, -132.08 </point>
     </window>
+  </param_set>
+
+  <!--
+  ****************************************************************************
+  **   Taken from ND_Production/generator/GNuMIFlux.xml at
+  **   5b47d65cf3aeb7fa1ae72b3e50aafdce6d4d766e.
+  ****************************************************************************
+  -->
+
+  <!--
+  ****************************************************************************
+  **   DUNE section
+  ****************************************************************************
+  -->
+
+  <param_set name="DUNEND">
+    <!-- setting user units should be first -->
+    <units> m </units>
+
+    <!-- beamdir must come before beam zero position -->
+    <!-- rotation matrix created by sequence of rotations -->
+    
+    <beamdir type="series">
+       <rotation axis="x" units="rad"> -0.101 </rotation>
+    </beamdir>
+
+
+    <!-- position in ( user coords ) = ( beam coords ) -->
+    <!-- Pick a point in the gdml file and fix it to a point in the beamline coordinate system -->
+    <!-- Center of LArActive volume in MPD_SPY_LAr geometry produced by E. Brianne -->
+    <!-- volArgonCubeActive center position as determined by Chris and Luke independently on 2020-5-12 -->
+    <!-- Using baseline from M. Leidner 2020-5-9 to LAr active volume center -->
+
+    <beampos> ( 0.0, 0.05387, 6.66 ) = ( 0, 0, 562.1179 ) </beampos>
+
+    <!-- define flux window in detector coords -->
+    <!-- need 3 positions to define a rectoid -->
+    <!-- first point is the base, 2nd & 3rd should be orthogonal points
+         (ie 2nd 3rd point should not be kitty-corner from 1st) -->
+    <!-- Should be larger than LAr volume ~8m x 4m -->
+
+    <window>
+      <point coord="det"> 6.0, -5.0, -1.0 </point>
+      <point coord="det"> -6.0,  -5.0, -1.0 </point>
+      <point coord="det">  6.0, 5.0, -1.0 </point>
+    </window>
+
+
+    <enumax> 120. 1.05 1.05 2500000 </enumax>
+
+    <!-- allow entry to be reused 10 times before moving on -->
+    <reuse> 10 </reuse>
+
+    <upstreamz> -3 </upstreamz>
+  </param_set>
+
+  <!--
+  ****************************************************************************
+  **   DUNEROCK section
+  ****************************************************************************
+  -->
+
+  <param_set name="DUNENDROCK">
+    <!-- setting user units should be first -->
+    <units> m </units>
+
+    <!-- beamdir must come before beam zero position -->
+    <!-- rotation matrix created by sequence of rotations -->
+
+    <beamdir type="series">
+       <rotation axis="x" units="rad"> -0.101 </rotation>
+    </beamdir>
+
+
+    <!-- position in ( user coords ) = ( beam coords ) -->
+    <!-- Pick a point in the gdml file and fix it to a point in the beamline coordinate system -->
+    <!-- Center of LArActive volume in MPD_SPY_LAr geometry produced by E. Brianne -->
+    <!-- volArgonCubeActive center position as determined by Chris and Luke independently on 2020-5-12 -->
+    <!-- Using baseline from M. Leidner 2020-5-9 to LAr active volume center -->
+
+    <beampos> ( 0.0, 0.05387, 6.66 ) = ( 0, 0, 562.1179 ) </beampos>
+
+    <!-- define flux window in detector coords -->
+    <!-- need 3 positions to define a rectoid -->
+    <!-- first point is the base, 2nd & 3rd should be orthogonal points
+         (ie 2nd 3rd point should not be kitty-corner from 1st) -->
+    <!-- Should be larger than LAr volume ~8m x 4m -->
+
+    <window>
+      <point coord="det"> 6.0, -15.0, -1.0 </point>
+      <point coord="det"> -6.0,  -15.0, -1.0 </point>
+      <point coord="det">  6.0, 15.0, -1.0 </point>
+    </window>
+
+
+    <enumax> 120. 1.05 1.05 2500000 </enumax>
+
+    <!-- allow entry to be reused 10 times before moving on -->
+    <reuse> 10 </reuse>
+
+    <upstreamz> -2e30 </upstreamz>
+  
+  
   </param_set>
 
 </gnumi_config>
