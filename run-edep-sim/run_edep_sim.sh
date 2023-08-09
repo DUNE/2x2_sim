@@ -60,7 +60,7 @@ pushd "$tmpDir"
 
 rm -f "$genieOutPrefix".*
 
-args_gevgen_fnal=( \
+run gevgen_fnal \
     -e "$ARCUBE_EXPOSURE" \
     -f "$dk2nuFile","$ARCUBE_DET_LOCATION" \
     -g "$ARCUBE_GEOM" \
@@ -69,14 +69,7 @@ args_gevgen_fnal=( \
     --cross-sections "$ARCUBE_XSEC_FILE" \
     --tune "$ARCUBE_TUNE" \
     --seed "$seed" \
-    -o "$genieOutPrefix" \
-    )
-
-[ ! -z "${ARCUBE_TOP_VOLUME}" ] && args_gevgen_fnal+=( -t "$ARCUBE_TOP_VOLUME" )
-[ ! -z "${ARCUBE_FID_CUT_STRING}" ] && args_gevgen_fnal+=( -F "$ARCUBE_FID_CUT_STRING" )
-[ ! -z "${ARCUBE_ZMIN}" ] && args_gevgen_fnal+=( -z "$ARCUBE_ZMIN" )
-
-run gevgen_fnal "${args_gevgen_fnal[@]}"
+    -o "$genieOutPrefix"
 
 mv genie-mcjob-0.status "$genieOutPrefix".status
 popd
