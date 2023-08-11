@@ -12,6 +12,7 @@ globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"
 
 outDir=$PWD/../run-edep-sim/output/$ARCUBE_OUT_NAME
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && outDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output/$ARCUBE_OUT_NAME
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
@@ -25,6 +26,7 @@ run() {
 }
 
 inDir=$PWD/../run-edep-sim/output/$ARCUBE_IN_NAME
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && inDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output/$ARCUBE_IN_NAME
 tmpfile=$(mktemp)
 
 for i in $(seq 0 $((ARCUBE_HADD_FACTOR - 1))); do

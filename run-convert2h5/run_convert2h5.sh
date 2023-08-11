@@ -18,6 +18,7 @@ globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && outDir=$ARCUBE_OUTDIR_BASE/run-convert2h5/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
 
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
@@ -35,9 +36,11 @@ run() {
 if [[ -n "$ARCUBE_SPILL_NAME" ]]; then
     inName=$ARCUBE_SPILL_NAME.$(printf "%05d" "$globalIdx")
     inFile=$PWD/../run-spill-build/output/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/${inName}.EDEPSIM_SPILLS.root
+    [ ! -z "${ARCUBE_OUTDIR_BASE}" ] && inFile=$ARCUBE_OUTDIR_BASE/run-spill-build/output/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/${inName}.EDEPSIM_SPILLS.root
 else
     inName=$ARCUBE_SINGLE_NAME.$(printf "%05d" "$globalIdx")
     inFile=$PWD/../run-edep-sim/output/${ARCUBE_SINGLE_NAME}/EDEPSIM/${inName}.EDEPSIM.root
+    [ ! -z "${ARCUBE_OUTDIR_BASE}" ] && inFile=$ARCUBE_OUTDIR_BASE/run-edep-sim/output/${ARCUBE_SINGLE_NAME}/EDEPSIM/${inName}.EDEPSIM.root
 fi
 
 h5OutDir=$outDir/EDEPSIM_H5

@@ -19,6 +19,7 @@ rockName=$ARCUBE_ROCK_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
 inBaseDir=$PWD/../run-edep-sim/output
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && outDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output
 nuInDir=$inBaseDir/$ARCUBE_NU_NAME
 rockInDir=$inBaseDir/$ARCUBE_ROCK_NAME
 
@@ -26,6 +27,7 @@ nuInFile=$nuInDir/EDEPSIM/${nuName}.EDEPSIM.root
 rockInFile=$rockInDir/EDEPSIM/${rockName}.EDEPSIM.root
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && outDir=$ARCUBE_OUTDIR_BASE/run-spill-build/output/$ARCUBE_OUT_NAME
 mkdir -p "$outDir"
 
 timeFile=$outDir/TIMING/$outName.time
