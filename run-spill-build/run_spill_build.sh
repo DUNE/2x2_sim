@@ -19,7 +19,7 @@ rockName=$ARCUBE_ROCK_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
 inBaseDir=$PWD/../run-edep-sim/output
-[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && outDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && inBaseDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output
 nuInDir=$inBaseDir/$ARCUBE_NU_NAME
 rockInDir=$inBaseDir/$ARCUBE_ROCK_NAME
 
