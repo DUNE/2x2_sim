@@ -1,0 +1,140 @@
+# ===============
+# mpvmpr_cfg.yaml
+# ===============
+
+# 2x2 geometry boundaries in mm
+#
+# MiniRun3 geometry  
+# X: -639.31 => 639.31 (drift)
+# Y: -198.543 => 1038.543
+# Z: -643.163 => 643.163 (beam)
+# 
+# In MiniRun4 geometry, the 2x2 LAr centre shifted 
+# from (0, 420, 0) to (0, -2680, 13000) 
+
+SEED: -1
+## with lepton, generate 4cm from the wall
+Generator1:
+  NumEvent: [0,1]
+  NumParticle: [1,10]
+  XRange: [-599.31,599.31] #mm
+  YRange: [-2418.543,-1261.457] # [-158,543,998.543] #mm
+  ZRange: [12396.837,13603.163] # [-603.163,604.163] #mm
+  TRange: [0,10000] #ns
+  AddParent: True
+  Particles:
+    -
+      PDG:      [11,-11,13,-13]
+      NumRange: [1,1]
+      KERange:  [0.01,4.]
+      UseMom:   True
+      Weight:   1
+    -
+      PDG:      [211,-211]
+      NumRange: [0,2]
+      KERange:  [0.01,4.]
+      UseMom:   True
+      Weight:   1
+
+    -
+      PDG:      [22,111]
+      NumRange: [0,2]
+      KERange:  [0.01,4.]
+      UseMom:   True
+      Weight:   1
+
+    -
+      PDG:      [2212,2112]
+      NumRange: [0,5]
+      KERange:  [0.02,3.]
+      UseMom:   True
+      Weight:   1
+
+    -
+      PDG:      [130, 321, -321, 310]
+      NumRange: [0,1]
+      KERange:  [0.01,4.]
+      UseMom:   True
+      Weight:   0.25
+
+# NC
+Generator2:
+  NumEvent: [0,1]
+  NumParticle: [1,10]
+  XRange: [-599.31,599.31] #mm
+  YRange: [-2418.543,-1261.457] # [-158,543,998.543] #mm
+  ZRange: [12396.837,13603.163] # [-603.163,604.163] #mm
+  TRange: [0,10000] #ns
+  AddParent: True
+  Particles:
+    -
+      PDG:      [211,-211]
+      NumRange: [0,2]
+      KERange:  [0.01,4.]
+      UseMom:   True
+      Weight:   1
+
+    -
+      PDG:      [22,111]
+      NumRange: [0,2]
+      KERange:  [0.01,4.]
+      UseMom:   True
+      Weight:   1
+
+    -
+      PDG:      [2212,2112]
+      NumRange: [0,5]
+      KERange:  [0.02,3.]
+      UseMom:   True
+      Weight:   1
+
+    -
+      PDG:      [130, 321, -321, 310]
+      NumRange: [0,1]
+      KERange:  [0.01,4.]
+      UseMom:   True
+      Weight:   0.25
+
+
+Singles:
+  NumEvent: [1,6]
+  NumParticle: [1,1]
+  XRange: [-679.31,679.31] #mm
+  YRange: [-2418.543,-1261.457] # [-158,543,998.543] #mm
+  ZRange: [12396.837,13603.163] # [-603.163,604.163] #mm
+  TRange: [0,10000] #ns
+  Particles:
+    -
+      PDG:  [13,-13]
+      NumRange: [0,2]
+      KERange:  [0.05,4.]
+      UseMom:   True
+      Weight:   1
+
+    -
+      PDG:  [13]
+      NumRange: [0,1]
+      KERange:  [0.01,0.05]
+      UseMom:   True
+      Weight:   1
+
+    -
+      PDG:  [211,-211]
+      NumRange: [0,1]
+      KERange:  [0.01,4.]
+      UseMom:   True
+      Weight:   0.5
+
+    -
+      PDG:  [2212]
+      NumRange: [0,1]
+      KERange:  [0.1,0.4]
+      UseMom:   True
+      Weight:   0.5
+
+    -
+      PDG:  [2112]
+      NumRange: [0,2]
+      KERange:  [0.,0.4]
+      UseMom:   True
+      Weight:   1
