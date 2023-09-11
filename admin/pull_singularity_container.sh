@@ -17,10 +17,15 @@ fi
 export SINGULARITY_CACHEDIR=$ARCUBE_CONTAINER_DIR/.singularity
 export SINGULARITY_TMPDIR=$ARCUBE_CONTAINER_DIR/.singularity/tmp
 
-mkdir $SINGULARITY_TMPDIR
+# edit to pull a different container
+CONTAINER_NAME='sim2x2:genie_edep.LFG_testing.20230228.v2'
+
+mkdir -p $SINGULARITY_TMPDIR
 
 echo "Pulling container... this will take O(1 hour)..."
-singularity pull docker://mjkramer/sim2x2:genie_edep.LFG_testing.20230228.v2
+echo "Container name: ${CONTAINER_NAME}"
 
-mv sim2x2_genie_edep.LFG_testing.20230228.v2.sif $ARCUBE_CONTAINER_DIR
+singularity pull docker://mjkramer/${CONTAINER_NAME}
+
+mv ${CONTAINER_NAME//:/_}.sif $ARCUBE_CONTAINER_DIR
 echo "Finished."
