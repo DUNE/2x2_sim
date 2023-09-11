@@ -1,11 +1,26 @@
 #!/usr/bin/env bash
 
-if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
-    shifter --image=$ARCUBE_CONTAINER --module=none -- "$0" "$@"
+if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
+    # Reload in Shifter
+    if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
+        shifter --image=$ARCUBE_CONTAINER --module=none -- "$0" "$@"
+        exit
+    fi
+
+elif [[ "$ARCUBE_RUNTIME" == "SINGULARITY" ]]; then
+    # Or reload in Singularity
+    if [[ "$SINGULARITY_NAME" != "$ARCUBE_CONTAINER" ]]; then
+        singularity exec -B $ARCUBE_DIR $ARCUBE_CONTAINER_DIR/$ARCUBE_CONTAINER /bin/bash "$0" "$@"
+        exit
+    fi
+
+else
+    echo "Unsupported \$ARCUBE_RUNTIME"
     exit
 fi
 
-source /environment             # provided by the container
+# source /environment             # provided by the container
+source $ARCUBE_DIR/admin/container_env.sh
 
 # in the container, install numpy fire h5py tqdm
 source convert.venv/bin/activate
