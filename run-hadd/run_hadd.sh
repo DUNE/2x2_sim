@@ -19,8 +19,15 @@ else
     exit
 fi
 
-# source /environment             # provided by the container
-source $ARCUBE_DIR/admin/container_env.sh
+if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
+    source /environment         # provided by the container
+elif [[ "$ARCUBE_RUNTIME" == "SINGULARITY" ]]; then
+    # "singularity pull" overwrites /environment
+    source "$ARCUBE_DIR"/admin/container_env."$ARCUBE_CONTAINER".sh
+else
+    echo "Unsupported \$ARCUBE_RUNTIME"
+    exit
+fi
 
 globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"

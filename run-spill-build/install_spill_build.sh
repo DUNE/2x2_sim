@@ -29,8 +29,15 @@ echo "Setting up run-spill-build"
 echo "If this fails, inspect and modify run-spill-build/libTG4Event/MAKEP"
 echo "or regenerate MAKEP from an arbitrary edep-sim file (see makeLibTG4Event.sh)"
 
-# source /environment
-source $ARCUBE_DIR/admin/container_env.sh
+if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
+    source /environment         # provided by the container
+elif [[ "$ARCUBE_RUNTIME" == "SINGULARITY" ]]; then
+    # "singularity pull" overwrites /environment
+    source "$ARCUBE_DIR"/admin/container_env."$ARCUBE_CONTAINER".sh
+else
+    echo "Unsupported \$ARCUBE_RUNTIME"
+    exit
+fi
 
 cd libTG4Event
 bash MAKEP
