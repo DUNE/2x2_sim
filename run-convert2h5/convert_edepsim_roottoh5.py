@@ -372,8 +372,6 @@ def dump(input_file, output_file, keep_all_dets=False):
         # Dump the primary vertices
         vertices = np.zeros(len(event.Primaries), dtype=vertices_dtype)
 
-        traj_loop_start = time.time()
-
         trackMap = {}
 
         # Dump the trajectories
@@ -382,8 +380,6 @@ def dump(input_file, output_file, keep_all_dets=False):
             fileTrackID = trackCounter
             trackCounter += 1
             trackMap[trajectory.GetTrackId()] = fileTrackID
-
-        traj_loop_end = time.time()
 
         # Dump the segment containers
         #print("Number of segment containers:", event.SegmentDetectors.size())
