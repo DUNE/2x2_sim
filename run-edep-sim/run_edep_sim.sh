@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# assume Shifter if ARCUBE_RUNTIME is unset
+export ARCUBE_RUNTIME=${ARCUBE_RUNTIME:-SHIFTER}
+
 if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
     # Reload in Shifter
     if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then

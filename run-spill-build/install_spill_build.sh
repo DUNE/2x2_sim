@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# assume Shifter if ARCUBE_RUNTIME is unset
+export ARCUBE_RUNTIME=${ARCUBE_RUNTIME:-SHIFTER}
+
 if [[ -z "$ARCUBE_CONTAINER" ]]; then
     echo "Set \$ARCUBE_CONTAINER to the GENIE+edep-sim container"
     exit 1
