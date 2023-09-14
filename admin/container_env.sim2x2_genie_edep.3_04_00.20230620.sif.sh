@@ -1,6 +1,7 @@
 #!/bin/sh
 # Custom environment shell code should follow
 
+    set +o posix
 
     export SINGULARITY_SHELL=/bin/bash
     export GEN_DIR=/opt/generators
