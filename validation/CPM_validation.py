@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+# This assumes the cryostat is near the origin.
+
 ########################################################################
 # Script:      Charged Particle Multiplicity validation plots
 # Analyzer:    Aleena Rafique
@@ -38,7 +41,7 @@ def main(flow_file):
     mcpendx = mcpendxyz[:, 0]
     mcpendy = mcpendxyz[:, 1]
     mcpendz = mcpendxyz[:, 2]
-    mcppdgid = mcparticles['pdgId']
+    mcppdgid = mcparticles['pdg_id']
         
     tot_mcpar = len(mcpstartx)
 

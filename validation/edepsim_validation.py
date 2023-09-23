@@ -20,14 +20,14 @@ def main(sim_file, input_type):
         print('Number of',key,'entries in file:', len(sim_h5[key]))
     print('------------------------------------------------\n')
 
+    segment_key_name = 'segments'
+
     # Logic to load the correct dataset name in the h5 file
     # Key name if input file is from larndsim
     if input_type == 'larnd':
-        segment_key_name = 'tracks'
         output_pdf_tag = '_EDEPTRUTH'
     # Key name if input file is from edep-sim via dumpTree
     elif input_type == 'edep':
-        segment_key_name = 'segments'
         output_pdf_tag = '_DUMPTREE'
     # Yell at the screen if somehow a different option is given
     else:
@@ -73,7 +73,7 @@ def main(sim_file, input_type):
 
         ### Plot the outgoing muon momentum
         traj = sim_h5['trajectories']
-        muon_mask = (np.abs(traj['pdgId']) == 13) & (traj['parentID'] == -1)
+        muon_mask = (np.abs(traj['pdg_id']) == 13) & (traj['parent_id'] == -1)
         muon_pvec = traj['pxyz_start'][muon_mask]
         muon_pmag = np.linalg.norm(muon_pvec, axis=1)
         plt.hist(muon_pmag, bins=20, range=[0, 20000])
@@ -205,7 +205,7 @@ def main(sim_file, input_type):
             
         ### Plot the interaction vertex positions. The distinction from the above is that
         ### this includes events that did not produce muons. (NC events?)
-        vertex = sim_h5['genie_hdr']['vertex']
+        vertex = sim_h5['mc_hdr']['vertex']
         for i, coord in enumerate(['x_vert', 'y_vert', 'z_vert']):
             counts, bins, _ = plt.hist(vertex[:, i], bins=200)
 
@@ -265,16 +265,16 @@ def main(sim_file, input_type):
         plt.close()
 
         ### Plot total number of primary tracks from the vertex
-        event_ids = np.unique(traj['vertexID'])
+        event_ids = np.unique(traj['vertex_id'])
         n_primaries = np.zeros(event_ids.size)
         current_evt = 0
-        current_id = traj['vertexID'][0]
+        current_id = traj['vertex_id'][0]
         for trk in traj:
-            if trk['vertexID'] != current_id:
-                current_id = trk['vertexID']
+            if trk['vertex_id'] != current_id:
+                current_id = trk['vertex_id']
                 current_evt += 1
 
-            if trk['parentID'] == -1:
+            if trk['parent_id'] == -1:
                 n_primaries[current_evt] += 1
 
         plt.hist(n_primaries, bins=40, range=[0, 40])
