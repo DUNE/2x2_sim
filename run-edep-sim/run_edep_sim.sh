@@ -89,6 +89,9 @@ dk2nuFile=$(realpath "$dk2nuFile")
 ARCUBE_GEOM=$(realpath "$ARCUBE_GEOM")
 ARCUBE_XSEC_FILE=$(realpath "$ARCUBE_XSEC_FILE")
 
+runOffset=${ARCUBE_RUN_OFFSET:-0}
+runNo=$((globalIdx + runOffset))
+
 tmpDir=$(mktemp -d)
 pushd "$tmpDir"
 
@@ -98,6 +101,7 @@ args_gevgen_fnal=( \
     -e "$ARCUBE_EXPOSURE" \
     -f "$dk2nuFile","$ARCUBE_DET_LOCATION" \
     -g "$ARCUBE_GEOM" \
+    -r "$runNo" \
     -L cm -D g_cm3 \
     --cross-sections "$ARCUBE_XSEC_FILE" \
     --tune "$ARCUBE_TUNE" \
@@ -112,20 +116,23 @@ args_gevgen_fnal=( \
 
 run gevgen_fnal "${args_gevgen_fnal[@]}"
 
-mv genie-mcjob-0.status "$genieOutPrefix".status
+mv genie-mcjob-"$runNo".status "$genieOutPrefix".status
 popd
 rmdir "$tmpDir"
 
-run gntpc -i "$genieOutPrefix".0.ghep.root -f rootracker \
-    -o "$genieOutPrefix".0.gtrac.root
+# use consistent naming convention w/ rest of sim chain
+mv "$genieOutPrefix"."$runNo".ghep.root "$genieOutPrefix".GHEP.root
+
+run gntpc -i "$genieOutPrefix".GHEP.root -f rootracker \
+    -o "$genieOutPrefix".GTRAC.root
 # rm "$genieOutPrefix".0.ghep.root
 
 if [[ "$ARCUBE_CHERRYPICK" == 1 ]]; then
-    run ./cherrypicker.py -i "$genieOutPrefix".0.gtrac.root \
-        -o "$genieOutPrefix".0.gtrac.cherry.root
-    genieFile="$genieOutPrefix".0.gtrac.cherry.root
+    run ./cherrypicker.py -i "$genieOutPrefix".GTRAC.root \
+        -o "$genieOutPrefix".GTRAC_CHERRY.root
+    genieFile="$genieOutPrefix".GTRAC_CHERRY.root
 else
-    genieFile="$genieOutPrefix".0.gtrac.root
+    genieFile="$genieOutPrefix".GTRAC.root
 fi
 
 rootCode='
@@ -138,7 +145,7 @@ mkdir -p "$(dirname "$edepRootFile")"
 rm -f "$edepRootFile"
 
 edepCode="/generator/kinematics/rooTracker/input $genieFile
-/edep/runId $ARCUBE_INDEX"
+/edep/runId $runNo"
 
 export ARCUBE_GEOM_EDEP=${ARCUBE_GEOM_EDEP:-$ARCUBE_GEOM}
 

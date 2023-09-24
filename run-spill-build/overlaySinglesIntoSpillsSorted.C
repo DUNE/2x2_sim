@@ -140,11 +140,6 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
       out_branch->SetAddress(&edep_evt); // why the &? what is meaning of life
       // new_tree->SetBranchAddress("Event", &edep_evt);
 
-      // Indicate that the event comes from a rock run (instead of a nu run) by
-      // tweaking the RunId
-      if (not is_nu)
-        edep_evt->RunId = int(1E9) + edep_evt->RunId;
-
       int globalSpillId = int(1E3)*spillFileId + spillN;
 
       std::string event_string = std::to_string(edep_evt->RunId) + " "
