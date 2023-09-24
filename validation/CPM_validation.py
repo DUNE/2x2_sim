@@ -29,7 +29,7 @@ def main(flow_file):
         print('Number of',key,'entries in file:', len(flow_h5[key]))
     print('------------------------------------------------\n')
     
-    output_pdf_name = flow_file.split('.h5')[0]+'_validations_CPM.pdf'
+    output_pdf_name = flow_file.split('.hdf5')[0]+'_validations_CPM.pdf'
     output_pdf_name = output_pdf_name.split('/')[-1] # !!
     mcparticles = flow_h5['mc_truth/trajectories/data']
     print(flow_h5['mc_truth/trajectories/data'].dtype.names)

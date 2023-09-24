@@ -1,2 +1,2 @@
 e_field charge_filename light_filename charge_thresholds light_samples
-500 LARNDSIM.h5 INSERT_LIGHT_FILE_HERE high 256
+500 LARNDSIM.hdf5 INSERT_LIGHT_FILE_HERE high 256

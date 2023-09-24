@@ -35,7 +35,7 @@ def main(sim_file, input_type):
         # Should we just exit here if we (somehow) get invalid input?
         # Or keep going to see if the trajectories dataset is valid?
 
-    output_pdf_name = sim_file.split('.h5')[0]+output_pdf_tag+'_validations.pdf'
+    output_pdf_name = sim_file.split('.hdf5')[0]+output_pdf_tag+'_validations.pdf'
     # temperarily, put output in this directory, not the same as the
     # simulation file itself
     output_pdf_name = output_pdf_name.split('/')[-1] # !!

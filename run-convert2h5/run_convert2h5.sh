@@ -68,7 +68,7 @@ fi
 h5OutDir=$outDir/EDEPSIM_H5
 mkdir -p $h5OutDir
 
-outFile=$h5OutDir/${outName}.EDEPSIM.h5
+outFile=$h5OutDir/${outName}.EDEPSIM.hdf5
 rm -f $outFile
 
 if [[ "$ARCUBE_KEEP_ALL_DETS" == "1" ]]; then

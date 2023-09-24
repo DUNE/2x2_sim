@@ -32,12 +32,12 @@ run() {
     time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
-inFile=$inDir/EDEPSIM_H5/${inName}.EDEPSIM.h5
+inFile=$inDir/EDEPSIM_H5/${inName}.EDEPSIM.hdf5
 
 larndOutDir=$outDir/LARNDSIM
 mkdir -p $larndOutDir
 
-outFile=$larndOutDir/${outName}.LARNDSIM.h5
+outFile=$larndOutDir/${outName}.LARNDSIM.hdf5
 rm -f "$outFile"
 
 [ -z "$ARCUBE_LARNDSIM_DETECTOR_PROPERTIES" ] && export ARCUBE_LARNDSIM_DETECTOR_PROPERTIES="larnd-sim/larndsim/detector_properties/2x2.yaml"

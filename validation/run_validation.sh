@@ -22,9 +22,9 @@ edepDir=$PWD/../run-convert2h5/output/${ARCUBE_EDEP_NAME}/EDEPSIM_H5
 larndDir=$PWD/../run-larnd-sim/output/${ARCUBE_LARND_NAME}/LARNDSIM
 flowDir=$PWD/../run-ndlar-flow/output/${ARCUBE_FLOW_NAME}/FLOW
 
-edepFile=$edepDir/${ARCUBE_EDEP_NAME}.$(printf "%05d" "$globalIdx").EDEPSIM.h5
-larndFile=$larndDir/${ARCUBE_LARND_NAME}.$(printf "%05d" "$globalIdx").LARNDSIM.h5
-flowFile=$flowDir/${ARCUBE_FLOW_NAME}.$(printf "%05d" "$globalIdx").FLOW.h5
+edepFile=$edepDir/${ARCUBE_EDEP_NAME}.$(printf "%05d" "$globalIdx").EDEPSIM.hdf5
+larndFile=$larndDir/${ARCUBE_LARND_NAME}.$(printf "%05d" "$globalIdx").LARNDSIM.hdf5
+flowFile=$flowDir/${ARCUBE_FLOW_NAME}.$(printf "%05d" "$globalIdx").FLOW.hdf5
 
 timeFile=$outDir/TIMING/${outName}.time
 mkdir -p "$(dirname "$timeFile")"

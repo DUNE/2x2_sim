@@ -32,12 +32,12 @@ run() {
     time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
 }
 
-inFile=$inDir/LARNDSIM/${inName}.LARNDSIM.h5
+inFile=$inDir/LARNDSIM/${inName}.LARNDSIM.hdf5
 
 flowOutDir=$outDir/FLOW
 mkdir -p $flowOutDir
 
-outFile=$flowOutDir/${outName}.FLOW.h5
+outFile=$flowOutDir/${outName}.FLOW.hdf5
 rm -f "$outFile"
 
 # charge workflows

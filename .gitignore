@@ -10,4 +10,5 @@ slurm-*.out
 *.bak*
 *.venv
 *.h5
+*.hdf5
 *.root
