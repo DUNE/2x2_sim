@@ -111,7 +111,7 @@
   <param_set name="MiniRun4">
     <!-- verbosity of XML parsing -->
     <verbose> 0 </verbose>
-    
+
     <!-- setting user units should be first -->
     <units> m </units>
 
@@ -189,9 +189,9 @@
 
     <!-- beamdir must come before beam zero position -->
     <!-- rotation matrix created by sequence of rotations -->
-    
+
     <beamdir type="series">
-       <rotation axis="x" units="rad"> -0.101 </rotation>
+      <rotation axis="x" units="rad"> -0.101 </rotation>
     </beamdir>
 
 
@@ -238,7 +238,7 @@
     <!-- rotation matrix created by sequence of rotations -->
 
     <beamdir type="series">
-       <rotation axis="x" units="rad"> -0.101 </rotation>
+      <rotation axis="x" units="rad"> -0.101 </rotation>
     </beamdir>
 
 
@@ -269,8 +269,8 @@
     <reuse> 10 </reuse>
 
     <upstreamz> -2e30 </upstreamz>
-  
-  
+
+
   </param_set>
 
 </gnumi_config>

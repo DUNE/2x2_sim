@@ -55,6 +55,7 @@ echo "dk2nuIdx is $dk2nuIdx"
 echo "dk2nuFile is $dk2nuFile"
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && outDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output/$ARCUBE_OUT_NAME
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
@@ -69,6 +70,15 @@ run() {
 
 export GXMLPATH=$PWD/flux            # contains GNuMIFlux.xml
 maxPathFile=$PWD/maxpath/$(basename "$ARCUBE_GEOM" .gdml).$ARCUBE_TUNE.maxpath.xml
+USE_MAXPATH=1
+if [ ! -f $maxPathFile ]; then
+    echo ""
+    echo "WARNING!!! .maxpath.xml file not found. Is this what you intended???"
+    echo "           I WILL CONTINUE WITH NO maxPathFile"
+    echo ""
+    USE_MAXPATH=0
+fi
+
 genieOutPrefix=$outDir/GENIE/$outName
 mkdir -p "$(dirname "$genieOutPrefix")"
 
@@ -88,7 +98,6 @@ args_gevgen_fnal=( \
     -e "$ARCUBE_EXPOSURE" \
     -f "$dk2nuFile","$ARCUBE_DET_LOCATION" \
     -g "$ARCUBE_GEOM" \
-    -m "$maxPathFile" \
     -L cm -D g_cm3 \
     --cross-sections "$ARCUBE_XSEC_FILE" \
     --tune "$ARCUBE_TUNE" \
@@ -96,6 +105,7 @@ args_gevgen_fnal=( \
     -o "$genieOutPrefix" \
     )
 
+[ "${USE_MAXPATH}" == 1 ] && args_gevgen_fnal+=( -m "$maxPathFile" )
 [ ! -z "${ARCUBE_TOP_VOLUME}" ] && args_gevgen_fnal+=( -t "$ARCUBE_TOP_VOLUME" )
 [ ! -z "${ARCUBE_FID_CUT_STRING}" ] && args_gevgen_fnal+=( -F "$ARCUBE_FID_CUT_STRING" )
 [ ! -z "${ARCUBE_ZMIN}" ] && args_gevgen_fnal+=( -z "$ARCUBE_ZMIN" )

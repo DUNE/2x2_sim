@@ -4,27 +4,27 @@
 
 <path_length_list>
 
-   <path_length pdgc="1000010010">    421.509 </path_length> <!-- [   H1] -->
-   <path_length pdgc="1000050110">    17.3119 </path_length> <!-- [  B11] -->
-   <path_length pdgc="1000060120">     111636 </path_length> <!-- [  C12] -->
-   <path_length pdgc="1000070140">    79.2422 </path_length> <!-- [  N14] -->
-   <path_length pdgc="1000080160"> 1.55311e+06 </path_length> <!-- [  O16] -->
-   <path_length pdgc="1000110230">    12358.5 </path_length> <!-- [ Na23] -->
-   <path_length pdgc="1000120240">      89655 </path_length> <!-- [ Mg24] -->
-   <path_length pdgc="1000130270">     170512 </path_length> <!-- [ Al27] -->
-   <path_length pdgc="1000140280">     773846 </path_length> <!-- [ Si28] -->
-   <path_length pdgc="1000150310">    960.226 </path_length> <!-- [  P31] -->
-   <path_length pdgc="1000160320">    58463.2 </path_length> <!-- [  S32] -->
-   <path_length pdgc="1000180400">      14134 </path_length> <!-- [ Ar40] -->
-   <path_length pdgc="1000190390">    85.6211 </path_length> <!-- [  K39] -->
-   <path_length pdgc="1000200400">    85812.7 </path_length> <!-- [ Ca40] -->
-   <path_length pdgc="1000220480">    30.4523 </path_length> <!-- [ Ti48] -->
-   <path_length pdgc="1000240520">    12447.9 </path_length> <!-- [ Cr52] -->
-   <path_length pdgc="1000250550">    99.7137 </path_length> <!-- [ Mn55] -->
-   <path_length pdgc="1000260560">     294489 </path_length> <!-- [ Fe56] -->
-   <path_length pdgc="1000280590">    6251.74 </path_length> <!-- [ Ni59] -->
-   <path_length pdgc="1000290640">    3497.99 </path_length> <!-- [ Cu64] -->
-   <path_length pdgc="1000300650">    91.9827 </path_length> <!-- [ Zn65] -->
-   <path_length pdgc="1000822070">    19225.6 </path_length> <!-- [Pb207] -->
+   <path_length pdgc="1000010010">    702.775 </path_length> <!-- [   H1] -->
+   <path_length pdgc="1000050110">    99.1337 </path_length> <!-- [  B11] -->
+   <path_length pdgc="1000060120">     113263 </path_length> <!-- [  C12] -->
+   <path_length pdgc="1000070140">    98.5983 </path_length> <!-- [  N14] -->
+   <path_length pdgc="1000080160"> 1.57572e+06 </path_length> <!-- [  O16] -->
+   <path_length pdgc="1000110230">    12538.5 </path_length> <!-- [ Na23] -->
+   <path_length pdgc="1000120240">    90960.4 </path_length> <!-- [ Mg24] -->
+   <path_length pdgc="1000130270">     172995 </path_length> <!-- [ Al27] -->
+   <path_length pdgc="1000140280">     785114 </path_length> <!-- [ Si28] -->
+   <path_length pdgc="1000150310">    974.207 </path_length> <!-- [  P31] -->
+   <path_length pdgc="1000160320">    59314.5 </path_length> <!-- [  S32] -->
+   <path_length pdgc="1000180400">    16820.2 </path_length> <!-- [ Ar40] -->
+   <path_length pdgc="1000190390">    490.294 </path_length> <!-- [  K39] -->
+   <path_length pdgc="1000200400">    87062.2 </path_length> <!-- [ Ca40] -->
+   <path_length pdgc="1000220480">     174.38 </path_length> <!-- [ Ti48] -->
+   <path_length pdgc="1000240520">    41464.5 </path_length> <!-- [ Cr52] -->
+   <path_length pdgc="1000250550">    1327.94 </path_length> <!-- [ Mn55] -->
+   <path_length pdgc="1000260560">     343722 </path_length> <!-- [ Fe56] -->
+   <path_length pdgc="1000280590">    20824.8 </path_length> <!-- [ Ni59] -->
+   <path_length pdgc="1000290640">    14104.9 </path_length> <!-- [ Cu64] -->
+   <path_length pdgc="1000300650">    526.722 </path_length> <!-- [ Zn65] -->
+   <path_length pdgc="1000822070">    25639.8 </path_length> <!-- [Pb207] -->
 
 </path_length_list>

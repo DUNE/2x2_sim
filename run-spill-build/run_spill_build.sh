@@ -43,6 +43,7 @@ rockName=$ARCUBE_ROCK_NAME.$(printf "%05d" "$globalIdx")
 echo "outName is $outName"
 
 inBaseDir=$PWD/../run-edep-sim/output
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && inBaseDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output
 nuInDir=$inBaseDir/$ARCUBE_NU_NAME
 rockInDir=$inBaseDir/$ARCUBE_ROCK_NAME
 
@@ -50,6 +51,7 @@ nuInFile=$nuInDir/EDEPSIM/${nuName}.EDEPSIM.root
 rockInFile=$rockInDir/EDEPSIM/${rockName}.EDEPSIM.root
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && outDir=$ARCUBE_OUTDIR_BASE/run-spill-build/output/$ARCUBE_OUT_NAME
 mkdir -p "$outDir"
 
 timeFile=$outDir/TIMING/$outName.time
@@ -90,6 +92,11 @@ libpath_remove /opt/generators/edep-sim/install/lib
 
 [ -z "${ARCUBE_SPILL_POT}" ] && export ARCUBE_SPILL_POT=5e13
 [ -z "${ARCUBE_SPILL_PERIOD}" ] && export ARCUBE_SPILL_PERIOD=1.2
+
+if [[ "$ARCUBE_USE_GHEP_POT" == "1" ]]; then
+  read -r ARCUBE_NU_POT < $nuInDir/POT/${nuName}.pot
+  read -r ARCUBE_ROCK_POT < $rockInDir/POT/${rockName}.pot
+fi
 
 # run root -l -b -q \
 #     -e "gInterpreter->AddIncludePath(\"libTG4Event\")" \
