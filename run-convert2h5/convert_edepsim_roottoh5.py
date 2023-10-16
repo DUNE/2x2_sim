@@ -223,16 +223,6 @@ def updateHDF5File(output_file, trajectories, segments, vertices):
                 f['vertices'].resize((nvert+len(vertices),))
                 f['vertices'][nvert:] = vertices
 
-            # if len(genie_s):
-            #     ngenie_s = len(f['genie_stack'])
-            #     f['genie_stack'].resize((ngenie_s+len(genie_s),))
-            #     f['genie_stack'][ngenie_s:] = genie_s
-
-            # if len(genie_h):
-            #     ngenie_h = len(f['genie_hdr'])
-            #     f['genie_hdr'].resize((ngenie_h+len(genie_h),))
-            #     f['genie_hdr'][ngenie_h:] = genie_h
-
 # Read a file and dump it.
 def dump(input_file, output_file, keep_all_dets=False):
 
@@ -288,8 +278,6 @@ def dump(input_file, output_file, keep_all_dets=False):
     # For assigning unique-in-file track IDs:
     trackCounter = 0
 
-
-    cutOnActiveLAr = os.getenv('ARCUBE_NO_ACTIVE_LAR_CUT') is None
 
     for jentry in tqdm(range(entries)):
         #print(jentry,"/",entries)
