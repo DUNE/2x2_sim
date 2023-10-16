@@ -2,14 +2,27 @@
 # mpvmpr_cfg.yaml
 # ===============
 
+# 2x2 geometry boundaries in mm
+#
+# MiniRun3 geometry
+# X: -639.31 => 639.31 (drift)
+# Y: -198.543 => 1038.543
+# Z: -643.163 => 643.163 (beam)
+#
+# In MiniRun4 geometry, the 2x2 LAr centre shifted
+# from (0, 420, 0) to (0, -2680, 13000)
+
 SEED: -1
 ## CC
 GeneratorMPV:
   NumEvent: [1,2]
   NumParticle: [1,10]
-  XRange: [-640,640] #mm
-  YRange: [-200,1100] #mm
-  ZRange: [-640,640] #mm
+  # XRange: [-640,640] #mm
+  # YRange: [-200,1100] #mm
+  # ZRange: [-640,640] #mm
+  XRange: [-679.31,679.31] #mm
+  YRange: [-2418.543,-1261.457] # [-158,543,998.543] #mm
+  ZRange: [12396.837,13603.163] # [-603.163,604.163] #mm
   TRange: [0,10] #ns
   AddParent: True
   Particles:
@@ -51,9 +64,12 @@ GeneratorMPV:
 GeneratorMPV:
   NumEvent: [0,1]
   NumParticle: [1,8]
-  XRange: [-640,640] #mm
-  YRange: [-200,1100] #mm
-  ZRange: [-640,640] #mm
+  # XRange: [-640,640] #mm
+  # YRange: [-200,1100] #mm
+  # ZRange: [-640,640] #mm
+  XRange: [-679.31,679.31] #mm
+  YRange: [-2418.543,-1261.457] # [-158,543,998.543] #mm
+  ZRange: [12396.837,13603.163] # [-603.163,604.163] #mm
   TRange: [0,10] #ns
   AddParent: True
   Particles:
@@ -88,9 +104,12 @@ GeneratorMPV:
 GeneratorMPR:
   NumEvent: [1,5]
   NumParticle: [1,1]
-  XRange: [-640,640] #mm
-  YRange: [-200,1100] #mm
-  ZRange: [-640,640] #mm
+  # XRange: [-640,640] #mm
+  # YRange: [-200,1100] #mm
+  # ZRange: [-640,640] #mm
+  XRange: [-679.31,679.31] #mm
+  YRange: [-2418.543,-1261.457] # [-158,543,998.543] #mm
+  ZRange: [12396.837,13603.163] # [-603.163,604.163] #mm
   TRange: [0,10] #ns
   Particles:
     -
