@@ -366,7 +366,6 @@ def dump(input_file, output_file, keep_all_dets=False):
         #print("Event number:", event.EventId)
 
         # Count total number of vertices and trajectories
-        n_vtx = 0
         n_traj = 0
 
         # Dump the primary vertices
