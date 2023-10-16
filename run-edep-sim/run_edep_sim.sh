@@ -72,3 +72,41 @@ export ARCUBE_GEOM_EDEP=${ARCUBE_GEOM_EDEP:-$ARCUBE_GEOM}
 
 run edep-sim -C -g "$ARCUBE_GEOM_EDEP" -o "$edepRootFile" -e "$ARCUBE_NEVENTS" \
     <(echo "$edepCode") "$ARCUBE_EDEP_MAC"
+
+
+cd ../run-convert2h5
+
+source convert.venv/bin/activate
+
+if [[ "$NERSC_HOST" == "cori" ]]; then
+    export HDF5_USE_FILE_LOCKING=FALSE
+fi
+
+ARCUBE_EDEP_NAME=$ARCUBE_OUT_NAME
+
+ARCUBE_OUT_NAME=$(basename $ARCUBE_EDEP_NAME .edep).convert2h5
+outDir=$PWD/output/$ARCUBE_OUT_NAME
+mkdir -p $outDir
+
+outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
+inName=$ARCUBE_EDEP_NAME.$(printf "%05d" "$globalIdx")
+echo "outName is $outName"
+
+timeFile=$outDir/TIMING/$outName.time
+mkdir -p "$(dirname "$timeFile")"
+timeProg=$PWD/../run-edep-sim/tmp_bin/time      # container is missing /usr/bin/time
+
+run() {
+    echo RUNNING "$@"
+    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
+}
+
+inFile=$PWD/../run-edep-sim/output/${ARCUBE_EDEP_NAME}/EDEPSIM/${inName}.EDEPSIM.root
+
+h5OutDir=$outDir/EDEPSIM_H5
+mkdir -p $h5OutDir
+
+outFile=$h5OutDir/${outName}.EDEPSIM.h5
+rm -f $outFile
+
+run ./convert_edepsim_roottoh5.py --input_file $inFile --output_file $outFile
