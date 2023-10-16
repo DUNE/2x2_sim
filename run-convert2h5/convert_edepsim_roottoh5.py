@@ -288,6 +288,9 @@ def dump(input_file, output_file, keep_all_dets=False):
     # For assigning unique-in-file track IDs:
     trackCounter = 0
 
+
+    cutOnActiveLAr = os.getenv('ARCUBE_NO_ACTIVE_LAR_CUT') is None
+
     for jentry in tqdm(range(entries)):
         #print(jentry,"/",entries)
         nb = inputTree.GetEntry(jentry)
