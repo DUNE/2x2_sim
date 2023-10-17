@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ARCUBE_CONTAINER=mjkramer/sim2x2:genie_edep.LFG_testing.20230228.v2
+ARCUBE_CONTAINER=mjkramer/sim2x2:genie_edep.3_04_00.20230912
 
 # Reload in Shifter if necessary
 if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then

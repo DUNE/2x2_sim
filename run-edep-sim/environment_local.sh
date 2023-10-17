@@ -9,7 +9,7 @@
     cd ${ROOTSYS}/bin; source thisroot.sh; cd -
 
     export GEN_DIR=/opt/generators
-    export GENIE=${GEN_DIR}/GENIE/LFG_testing.20230228
+    export GENIE=${GEN_DIR}/GENIE/R-3_04_00
     export LHAPATH=${GEN_DIR}/LHAPDF/lhapdf-5.9.1_build/include/LHAPDF
     export PYTHIA6=${GEN_DIR}/root/lib
     export GSL_LIB=/usr/lib64
@@ -28,6 +28,7 @@
 
     ## Use G4's script because it sets so many variables
     cd ${GEN_DIR}/geant4/install/bin; source geant4.sh; cd -
+
 
     # export EDEPSIM=${GEN_DIR}/edep-sim/install
     # export PATH=${EDEPSIM}/bin:${PATH}
