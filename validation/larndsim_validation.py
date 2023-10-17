@@ -26,7 +26,7 @@ def main(sim_file):
         print('Number of',key,'entries in file:', len(sim_h5[key]))
     print('------------------------------------------------\n')
 
-    output_pdf_name = sim_file.split('.hdf5')[0]+'_validations.pdf'
+    output_pdf_name = sim_file.split('.hdf5')[0]+'_validations_changepps.pdf'
     # temperarily, put output in this directory, not the same as the
     # simulation file itself
     output_pdf_name = output_pdf_name.split('/')[-1] # !!
@@ -53,8 +53,44 @@ def main(sim_file):
         output.savefig()
         plt.close()
 
+        ### Plot time structure of packets zommed in: 
+        plt.plot(packets['timestamp'][data_packet_mask],packet_index[data_packet_mask],'o',label='data packets',linestyle='None')
+        plt.plot(packets['timestamp'][trig_packet_mask],packet_index[trig_packet_mask],'o',label='lrs triggers',linestyle='None')
+        plt.plot(packets['timestamp'][sync_packet_mask],packet_index[sync_packet_mask],'o',label='PPS packets',linestyle='None')
+        plt.plot(packets['timestamp'][other_packet_mask],packet_index[other_packet_mask],'o',label='other',linestyle='None')
+        plt.plot(packets['timestamp'][rollover_packet_mask],packet_index[rollover_packet_mask],'o',label='rollover packets',linestyle='None')        
+        plt.xlabel('timestamp zoom')
+        plt.ylabel('packet index')
+        plt.xlim(0.1999*10**7, 0.2003*10**7)
+        output.savefig()
+        plt.xlim(0.3999*10**7, 0.4003*10**7)
+        output.savefig()
+        plt.xlim(0.5999*10**7, 0.6003*10**7)
+        output.savefig()
+        plt.xlim(0.7999*10**7, 0.8003*10**7)
+        output.savefig()
+        plt.xlim(0.9999*10**7, 1.000*10**7)    
+        plt.legend()
+        output.savefig()
+        plt.close()
+
+
         plt.hist(packets['timestamp'],bins=100)
         plt.xlabel('timestamp')
+        output.savefig()
+        plt.close()
+
+        plt.hist(packets['timestamp'],bins=10000)
+        plt.xlabel('timestamp zoom')
+        plt.xlim(0.1999*10**7, 0.2003*10**7)
+        output.savefig()
+        plt.xlim(0.3999*10**7, 0.4003*10**7)
+        output.savefig()
+        plt.xlim(0.5999*10**7, 0.6003*10**7)
+        output.savefig()
+        plt.xlim(0.7999*10**7, 0.8003*10**7)
+        output.savefig()
+        plt.xlim(0.9999*10**7, 1.0003*10**7)
         output.savefig()
         plt.close()
 
@@ -64,6 +100,17 @@ def main(sim_file):
         plt.plot(packets['receipt_timestamp'][other_packet_mask],packet_index[other_packet_mask],'o',label='other',linestyle='None')
         plt.xlabel('receipt_timestamp')
         plt.ylabel('packet index')
+        plt.legend()
+        output.savefig()
+        plt.xlim(0.1999*10**7, 0.2003*10**7)
+        output.savefig()
+        plt.xlim(0.3999*10**7, 0.4003*10**7)
+        output.savefig()
+        plt.xlim(0.5999*10**7, 0.6003*10**7)
+        output.savefig()
+        plt.xlim(0.7999*10**7, 0.8003*10**7)
+        output.savefig()
+        plt.xlim(0.9999*10**7, 1.000*10**7)    
         plt.legend()
         output.savefig()
         plt.close()
@@ -150,12 +197,19 @@ def main(sim_file):
         tstamp_trig7 = packets['timestamp'][trig_packet_mask]
         ## IDENTIFY THE INDEX WHERE THE TURNOVER OCCURS
         try:
-            charge_cutoff = np.where(tstamp_trig0 > 1.999**31)[0][-1]
-            light_cutoff = np.where(tstamp_trig7 > 1.999**31)[0][-1]
-            wvfm_cutoff = np.where(light_trig['ts_sync'] > 1.999**31)[0][-1]
-            tstamp_real_trig0 = np.concatenate((tstamp_trig0[:(charge_cutoff+1)],((2**31)+tstamp_trig0[(charge_cutoff+1):])))
-            tstamp_real_trig7 = np.concatenate((tstamp_trig7[:(light_cutoff+1)],((2**31)+tstamp_trig7[(light_cutoff+1):])))
-            l_tsync_real = np.concatenate((light_trig['ts_sync'][:(wvfm_cutoff+1)],((2**31)+light_trig['ts_sync'][(wvfm_cutoff+1):])))
+            #charge_cutoff = np.where(tstamp_trig0 > 1.999**31)[0][-1]
+            #light_cutoff = np.where(tstamp_trig7 > 1.999**31)[0][-1]
+            #wvfm_cutoff = np.where(light_trig['ts_sync'] > 1.999**31)[0][-1]
+            #stamp_real_trig0 = np.concatenate((tstamp_trig0[:(charge_cutoff+1)],((2**31)+tstamp_trig0[(charge_cutoff+1):])))
+            #tstamp_real_trig7 = np.concatenate((tstamp_trig7[:(light_cutoff+1)],((2**31)+tstamp_trig7[(light_cutoff+1):])))
+            #l_tsync_real = np.concatenate((light_trig['ts_sync'][:(wvfm_cutoff+1)],((2**31)+light_trig['ts_sync'][(wvfm_cutoff+1):])))
+            # Try chnaging the pps rollover here, rather than the default 2**31 rollover
+            charge_cutoff = np.where(tstamp_trig0 > 9.999**7)[0][-1]
+            light_cutoff = np.where(tstamp_trig7 > 9.999**7)[0][-1]
+            wvfm_cutoff = np.where(light_trig['ts_sync'] > 9.999**7)[0][-1]
+            tstamp_real_trig0 = np.concatenate((tstamp_trig0[:(charge_cutoff+1)],((10**7)+tstamp_trig0[(charge_cutoff+1):])))
+            tstamp_real_trig7 = np.concatenate((tstamp_trig7[:(light_cutoff+1)],((10**7)+tstamp_trig7[(light_cutoff+1):])))
+            l_tsync_real = np.concatenate((light_trig['ts_sync'][:(wvfm_cutoff+1)],((10**7)+light_trig['ts_sync'][(wvfm_cutoff+1):])))
         except: 
             tstamp_real_trig0 = tstamp_trig0
             tstamp_real_trig7 = tstamp_trig7
@@ -173,16 +227,28 @@ def main(sim_file):
         fig = plt.figure(figsize=(18,6))
         plt.plot(tstamp_real_trig0,indices_0, "o", color='dodgerblue', label='larpix')
         plt.plot(tstamp_real_trig7,indices_7,".", color='tomato', label='light')
-        plt.axvline(x=(2**31), label='LArPix Clock Rollover')
+        #plt.axvline(x=(2**31), label='LArPix Clock Rollover')
+        plt.axvline(x=(10**7), label='LArPix PPS Rollover')
         plt.title('Larpix (Spill) Trigger vs. Light Trigger\n', fontsize=18)
         plt.xlabel(r'Timestamp [0.01$\mu$s]', fontsize=14)
         plt.ylabel('Packet Index', fontsize=16)
-        plt.legend(fontsize=16)
+        plt.legend(fontsize=16)    
+        output.savefig()
+        plt.xlim(0.1999*10**7, 0.2003*10**7)
+        output.savefig()
+        plt.xlim(0.3999*10**7, 0.4003*10**7)
+        output.savefig()
+        plt.xlim(0.5999*10**7, 0.6003*10**7)
+        output.savefig()
+        plt.xlim(0.7999*10**7, 0.8003*10**7)
+        output.savefig()
+        plt.xlim(0.9999*10**7, 1.0003*10**7)
         output.savefig()
         plt.close()     
         
         ## INSPECT PACMAN VS LIGHT TRIGGERS PER SPILL
         fig = plt.figure(figsize=(14,6))
+        print("packet7 spill ids min", min(packet7_spillIDs), " max", max(packet7_spillIDs))
         bins = np.linspace(min(packet7_spillIDs),max(packet7_spillIDs),392)
         bin_width = bins[2] - bins[1]
         counts, bins = np.histogram(np.array(light_spillIDs), bins=bins)
