@@ -106,7 +106,7 @@ inFile=$PWD/../run-edep-sim/output/${ARCUBE_EDEP_NAME}/EDEPSIM/${inName}.EDEPSIM
 h5OutDir=$outDir/EDEPSIM_H5
 mkdir -p $h5OutDir
 
-outFile=$h5OutDir/${outName}.EDEPSIM.h5
+outFile=$h5OutDir/${outName}.EDEPSIM.hdf5
 rm -f $outFile
 
 run ./convert_edepsim_roottoh5.py --input_file $inFile --output_file $outFile
