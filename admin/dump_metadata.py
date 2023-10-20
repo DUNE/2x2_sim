@@ -7,6 +7,7 @@
 import argparse
 import json
 from multiprocessing import Pool
+import os
 from pathlib import Path
 import zlib
 
@@ -14,7 +15,8 @@ import h5py
 import numpy as np
 import ROOT as R
 
-R.gSystem.Load('libTG4Event/libTG4Event.so')
+g4evtdir = os.getenv('LIBTG4EVENT_DIR', 'libTG4Event')
+R.gSystem.Load(f'{g4evtdir}/libTG4Event.so')
 
 
 def get_event_stats_edep(datapath: Path):
