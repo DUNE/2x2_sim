@@ -16,7 +16,7 @@ seed=$((1 + ARCUBE_INDEX))
 globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"
 
-inDir=/pscratch/sd/a/abooth/MiniProdN1p1-v1r1/run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
+inDir=/dvs_ro/cfs/cdirs/dune/users/abooth/231027_for_testing/MiniProdN1p1-v1r1/run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
@@ -41,7 +41,6 @@ mkdir -p $larndOutDir
 
 outFile=$larndOutDir/${outName}.LARNDSIM.h5
 rm -f "$outFile"
-
 
 ARCUBE_LARNDSIM_DETECTOR_PROPERTIES="larnd-sim/larndsim/detector_properties/ndlar-module.yaml"
 ARCUBE_LARNDSIM_PIXEL_LAYOUT="larnd-sim/larndsim/pixel_layouts/multi_tile_layout-3.0.40.yaml"
