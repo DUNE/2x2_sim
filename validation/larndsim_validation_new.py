@@ -15,6 +15,7 @@ from validation_utils import rasterize_plots
 rasterize_plots()
 
 SPILL_PERIOD = 1.2e7 # units = ticks
+PPS_CYCLE= 10**7
 
 def main(sim_file):
 
@@ -26,7 +27,7 @@ def main(sim_file):
         print('Number of',key,'entries in file:', len(sim_h5[key]))
     print('------------------------------------------------\n')
 
-    output_pdf_name = sim_file.split('.hdf5')[0]+'_validations.pdf'
+    output_pdf_name = sim_file.split('.hdf5')[0]+'_validations_changepps_lite.pdf'
     # temperarily, put output in this directory, not the same as the
     # simulation file itself
     output_pdf_name = output_pdf_name.split('/')[-1] # !!
@@ -40,6 +41,7 @@ def main(sim_file):
         sync_packet_mask = packets['packet_type'] == 4
         rollover_packet_mask = (packets['packet_type'] == 6) & (packets['trigger_type'] == 83)
         other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask | rollover_packet_mask)
+
         ### Plot time structure of packets: 
         plt.plot(packets['timestamp'][data_packet_mask],packet_index[data_packet_mask],'o',label='data packets',linestyle='None')
         plt.plot(packets['timestamp'][trig_packet_mask],packet_index[trig_packet_mask],'o',label='lrs triggers',linestyle='None')
@@ -194,54 +196,116 @@ def main(sim_file):
         light_trig = sim_h5['light_trig']
         tstamp_trig0 = packets['timestamp'][data_packet_mask]
         tstamp_trig7 = packets['timestamp'][trig_packet_mask]
-        tstamp_rollover = packets['timestamp'][rollover_packet_mask]
-        ## IDENTIFY THE INDEX WHERE THE TURNOVER OCCURS
-        try:
-            charge_cutoff = np.where(tstamp_trig0 > 1.999**31)[0][-1]
-            light_cutoff = np.where(tstamp_trig7 > 1.999**31)[0][-1]
-            wvfm_cutoff = np.where(light_trig['ts_sync'] > 1.999**31)[0][-1]
-            tstamp_real_trig0 = np.concatenate((tstamp_trig0[:(charge_cutoff+1)],((2**31)+tstamp_trig0[(charge_cutoff+1):])))
-            tstamp_real_trig7 = np.concatenate((tstamp_trig7[:(light_cutoff+1)],((2**31)+tstamp_trig7[(light_cutoff+1):])))
-            l_tsync_real = np.concatenate((light_trig['ts_sync'][:(wvfm_cutoff+1)],((2**31)+light_trig['ts_sync'][(wvfm_cutoff+1):])))
-            # Try chnaging the pps rollover here, rather than the default 2**31 rollover
-            #charge_cutoff = np.where(tstamp_trig0 > 9.999**7)[0][-1]
-            #light_cutoff = np.where(tstamp_trig7 > 9.999**7)[0][-1]
-            #wvfm_cutoff = np.where(light_trig['ts_sync'] > 9.999**7)[0][-1]
-            #tstamp_real_trig0 = np.concatenate((tstamp_trig0[:(charge_cutoff+1)],((10**7)+tstamp_trig0[(charge_cutoff+1):])))
-            #tstamp_real_trig7 = np.concatenate((tstamp_trig7[:(light_cutoff+1)],((10**7)+tstamp_trig7[(light_cutoff+1):])))
-            #l_tsync_real = np.concatenate((light_trig['ts_sync'][:(wvfm_cutoff+1)],((10**7)+light_trig['ts_sync'][(wvfm_cutoff+1):])))
-        except: 
-            tstamp_real_trig0 = tstamp_trig0
-            tstamp_real_trig7 = tstamp_trig7
-            l_tsync_real = light_trig['ts_sync']
-        ## DEFINE SPILLID (EVENTID) FOR PACKETS AND LIGHT
-        light_spillIDs = (np.rint(l_tsync_real/SPILL_PERIOD)).astype(int)
-        packet0_spillIDs = (np.rint(tstamp_real_trig0/SPILL_PERIOD)).astype(int)
-        packet7_spillIDs = (np.rint(tstamp_real_trig7/SPILL_PERIOD)).astype(int)
-        list_spillIDs = np.unique(light_spillIDs)
-        ## DEFINE THE INDICES OF EACH TIMESTAMP
-        indices = np.arange(0,len(packets['timestamp']),1)
-        indices_0 = indices[data_packet_mask]
-        indices_7 = indices[trig_packet_mask]
-
+        tstamp_pps = packets['timestamp'][rollover_packet_mask]
         print('light_trig ', light_trig['ts_sync'])
-        print('tstamp trig 0 (charge)', tstamp_trig0[500:1000])
+        print('tstamp trig 0 (charge)', tstamp_trig0[1500:2000])
         print('tstamp trig 7', tstamp_trig7)
-        print('tstamp rollover', tstamp_rollover)
+        print('tstamp pps', tstamp_pps[0:1000])
+        
+        ## IDENTIFY THE INDEX WHERE THE TURNOVER OCCURS
+        print("Shape of the array = ",np.shape(tstamp_trig0))
+        print('tstamp_trig0[0]',tstamp_trig0[0])
+        charge_cutoff=[0]
+        for i in range(len(tstamp_trig0)):               
+            if tstamp_trig0[i]< tstamp_trig0[i-1] and i>0:
+                #print('tstamp ',i ,'is ',tstamp_trig0[i], 'and previous was ',tstamp_trig0[i-1])
+                charge_cutoff.append(i)  
+        print('>>>>>>>>>>>charge_cutoff')
+        print( charge_cutoff[0:200])
+        light_cutoff=[0]
+        for i in range(len(tstamp_trig7)):              
+            if tstamp_trig7[i]<tstamp_trig7[i-1] and i >0:
+                print('tstamp ',i ,'is ',tstamp_trig7[i], 'and previous was ',tstamp_trig7[i-1])
+                light_cutoff.append(i)
+        print('>>>>>>>>>>>>light_cutoff')
+        print( light_cutoff)
+        wvfm_cutoff=[0]
+        for i in range(len(light_trig['ts_sync'])):               
+            if light_trig['ts_sync'][i]< light_trig['ts_sync'][i-1] and i>0:
+                print('tstamp ',i ,'is ',light_trig['ts_sync'][i], 'and previous was ',tstamp_trig0[i-1])
+                wvfm_cutoff.append(i)
+        print('>>>>>>>>>>>wvfm_cutoff')
+        print( wvfm_cutoff)
+        tstamp_real_trig0=[]
+        tstamp_real_trig7=[]
+        l_tsync_real=[]
+        #tstamp_real_trig0 = np.concatenate((tstamp_trig0[:(charge_cutoff+1)],((10**7)+tstamp_trig0[(charge_cutoff+1):])))
+        #tstamp_real_trig7 = np.concatenate((tstamp_trig7[:(light_cutoff+1)],((10**7)+tstamp_trig7[(light_cutoff+1):])))
+        #l_tsync_real = np.concatenate((light_trig['ts_sync'][:(wvfm_cutoff+1)],((10**7)+light_trig['ts_sync'][(wvfm_cutoff+1):])))
+        #now concatenate I guess in a loop?
+
+        #NEED TO ADD SOME PPS SYNC FOR PLACING THINGS 
+      
+        for i in range(len(charge_cutoff)):
+            # first case 
+            #tstamp_real_trig0 = tstamp_trig0[:charge_cutoff[0]]
+            if(i+1 < len(charge_cutoff)):
+                #print('at cuttoff',charge_cutoff[i], ': concat ',charge_cutoff[i]+1,'to',charge_cutoff[i+1])    
+                #print('tstamp at', charge_cutoff[i] ,'is ',tstamp_trig0[charge_cutoff[i]], 'and next is',tstamp_trig0[charge_cutoff[i+1]])     
+                if i<100:
+                    print('at cuttoff',charge_cutoff[i], ': concat ',charge_cutoff[i],'to',charge_cutoff[i+1]-1)    
+                    print('tstamp at', charge_cutoff[i] ,'is ',tstamp_trig0[charge_cutoff[i]], 'and prev is',tstamp_trig0[charge_cutoff[i]-1])         
+                tstamp_real_trig0 = np.concatenate(  (tstamp_real_trig0, ((10**7)*i+tstamp_trig0[ (charge_cutoff[i]): (charge_cutoff[i+1])]) )  )
+            else:
+               # print('the last bit is at i=',i)
+                #print('(no multiplier) concatenating ',tstamp_trig0[(charge_cutoff[i]+1):])
+                tstamp_real_trig0 = np.concatenate(  (tstamp_real_trig0, ((10**7)*i+tstamp_trig0[ (charge_cutoff[i]):])))
+       # print('real trig 0 tstamps', tstamp_real_trig0)
+        print('==== processing real light timestamps')
+        for i in range(len(light_cutoff)):
+            #print(i)
+            if(i+1 < len(light_cutoff)):
+                print('at cuttoff',light_cutoff[i], ': concat ',light_cutoff[i],'to',light_cutoff[i+1]-1)    
+                print('tstamp at', light_cutoff[i] ,'is ',tstamp_trig7[light_cutoff[i]], 'and prev is',tstamp_trig7[light_cutoff[i]-1])  
+                tstamp_real_trig7=np.concatenate(  (tstamp_real_trig7, ((10**7)*i+tstamp_trig7[ (light_cutoff[i]): (light_cutoff[i+1])]) )  )
+                print('tstamp_real_trig7 len is',len(tstamp_real_trig7))
+            else:
+                print('the last bit is at i=',i, 'light_cutoff=',light_cutoff[i])
+                print('(no multiplier) concatenating ',tstamp_trig7[ (light_cutoff[i]): ])
+                tstamp_real_trig7 = np.concatenate(  (tstamp_real_trig7, ((10**7)*i+tstamp_trig7[ (light_cutoff[i]):])))
+                print('tstamp_real_trig7 len is',len(tstamp_real_trig7))
+                #tstamp_real_trig7.append( ((10**7)*i+tstamp_trig7[ (light_cutoff[i]+1): (light_cutoff[i+1])]) )
+            #counter +=1
+        print('real trig 7 tstamps', tstamp_real_trig7)
+        print('==== processing light trig timestamps')
+        for i in range(len(wvfm_cutoff)):
+            #print(i)
+            if (i+1< len(wvfm_cutoff)):
+                print('at cuttoff',wvfm_cutoff[i], ': concat ',wvfm_cutoff[i],'to',wvfm_cutoff[i+1]-1)    
+                print('light trig at', wvfm_cutoff[i] ,'is ',light_trig['ts_sync'][wvfm_cutoff[i]], 'and prev is',light_trig['ts_sync'][wvfm_cutoff[i]-1])  
+                l_tsync_real=np.concatenate(  (l_tsync_real, ((10**7)*i+light_trig['ts_sync'][ (wvfm_cutoff[i]): (wvfm_cutoff[i+1])]) )  )
+            else:
+                print('the last bit is at i=',i, 'wvfm_cutoff=',wvfm_cutoff[i])
+                print('(no multiplier) concatenating ',light_trig['ts_sync'][ (wvfm_cutoff[i]):])
+                l_tsync_real=np.concatenate(  (l_tsync_real, ((10**7)*i+light_trig['ts_sync'][ (wvfm_cutoff[i]): ]) )  )
+                #l_tsync_real.append( ((10**7)*i+light_trig['ts_sync'][ (wvfm_cutoff[i]+1): (wvfm_cutoff[i+1])]) )
+
+        #print('real light tsync', l_tsync_real)
+
 
         print('size of tstamp_trig0 =',len(tstamp_trig0), 'size of tstamp_real_trig0', len(tstamp_real_trig0))
         print('size of tstamp_trig7 =',len(tstamp_trig7), 'size of tstamp_real_trig7', len(tstamp_real_trig7))
         print('size of light_trig[ts_sync] =',len(light_trig['ts_sync']), 'size of l_tsync_real', len(l_tsync_real))
-        print('size of  rollover = ',len(tstamp_rollover))
+        print('size of pps rollover = ',len(tstamp_pps))
 
 
+
+
+        ## DEFINE SPILLID (EVENTID) FOR PACKETS AND LIGHT
+        light_spillIDs = (np.rint(l_tsync_real/(SPILL_PERIOD-PPS_CYCLE ))).astype(int)
+        packet0_spillIDs = (np.rint(tstamp_real_trig0/(SPILL_PERIOD-PPS_CYCLE))).astype(int)
+        packet7_spillIDs = (np.rint(tstamp_real_trig7/(SPILL_PERIOD-PPS_CYCLE))).astype(int)
+        list_spillIDs = np.unique(light_spillIDs)
         print('Light Spill ids ', light_spillIDs)
         print('packet0_spillIDs ',packet0_spillIDs)
         print('packet7_spillIDs ',packet7_spillIDs)
         print('Spill IDs list', list_spillIDs)
+        ## DEFINE THE INDICES OF EACH TIMESTAMP
+        indices = np.arange(0,len(packets['timestamp']),1)
         print('indices ',indices)
-        
-        ## PLOT INDICE VS. TIMESTAMP
+        indices_0 = indices[data_packet_mask]
+        indices_7 = indices[trig_packet_mask]
+        ## PLOT INDICE VS. TIMESTAMP WITH ROLLOUT CORRECTION 
         fig = plt.figure(figsize=(18,6))
         plt.plot(tstamp_real_trig0,indices_0, "o", color='dodgerblue', label='larpix')
         plt.plot(tstamp_real_trig7,indices_7,".", color='tomato', label='light')
@@ -263,6 +327,28 @@ def main(sim_file):
         plt.xlim(0.9999*10**7, 1.0003*10**7)
         output.savefig()
         plt.close()     
+
+        ## PLOT INDICs VS. TIMESTAMP BEFORE ROLLOUT CORRECTION
+        fig = plt.figure(figsize=(18,6))
+        plt.plot(tstamp_trig0,indices_0, "o", color='dodgerblue', label='larpix')
+        plt.plot(tstamp_trig7,indices_7,".", color='tomato', label='light')
+        #plt.axvline(x=(2**31), label='LArPix Clock Rollover')
+        plt.axvline(x=(10**7), label='LArPix PPS Rollover')
+        plt.title('Larpix (Spill) Trigger vs. Light Trigger\n', fontsize=18)
+        plt.xlabel(r'Timestamp [0.01$\mu$s]', fontsize=14)
+        plt.ylabel('Packet Index', fontsize=16)
+        plt.legend(fontsize=16) 
+        plt.xlim(0.1999*10**7, 0.2003*10**7)
+        output.savefig()
+        plt.xlim(0.3999*10**7, 0.4003*10**7)
+        output.savefig()
+        plt.xlim(0.5999*10**7, 0.6003*10**7)
+        output.savefig()
+        plt.xlim(0.7999*10**7, 0.8003*10**7)
+        output.savefig()
+        plt.xlim(0.9999*10**7, 1.0003*10**7)
+        output.savefig()   
+        output.savefig()
         
         ## INSPECT PACMAN VS LIGHT TRIGGERS PER SPILL
         fig = plt.figure(figsize=(14,6))
@@ -286,6 +372,7 @@ def main(sim_file):
         light_wvfm = sim_h5['light_wvfm']
         SAMPLES = len(light_wvfm[0][0])
         BIT = min(x for x in abs(light_wvfm[0][0]) if x != 0)
+        print('BIT',BIT)
         fig = plt.figure(figsize=(10,4))
         plt.plot(np.linspace(0,SAMPLES-1,SAMPLES),light_wvfm[0][0]/BIT, label='Opt. Chan. 0')
         plt.title('Module 1, Event '+str(light_spillIDs[0])+', Optical Channel 1', fontsize=16)
@@ -296,8 +383,9 @@ def main(sim_file):
 
         ## INSPECT PRE-TRIGGER NOISE FOR 150 SPILLS
         PRE_NOISE = 65
-        #NUM_LIGHT_EVENTS = len(light_wvfm)
-        NUM_LIGHT_EVENTS = 150 # Save processing time
+        NUM_LIGHT_EVENTS = len(light_wvfm)
+        print('Num light events (light_wvfm)', len(light_wvfm))
+        #NUM_LIGHT_EVENTS = 150 # Save processing time
         THRESHOLD = 50 # change this if you want to exclude events from noise analysis
         SAMPLE_RATE = 1e8
         ## SEPARATE WAVEFORMS FROM LCM AND ACL
@@ -400,7 +488,7 @@ def main(sim_file):
         power_spec_plots(ACL_dataset, ACL_maxes, LCM_dataset, LCM_maxes, PRE_NOISE)
 
         ## SELECT ONE EVENT TO INSPECT
-        SPILL = 8
+        SPILL = 1 #8
         ## ASSIGN "SUM CHANNEL" POSITIONS (this would be one side of one TPC)
         SiPM_struct = np.array([0,0,0,0,0,0,
                                 1,1,1,1,1,1,
