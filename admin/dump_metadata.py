@@ -108,11 +108,11 @@ def get_parents(datapath: Path, args: argparse.Namespace):
         case 'run-larnd-sim':
             if not (base := args.parents):
                 base = f'{basename}.spill'
-            return [f'{base}.EDEPSIM_SPILLS.root']
+            return [f'{base}.{fileno}.EDEPSIM_SPILLS.root']
         case 'run-ndlar-flow':
             if not (base := args.parents):
                 base = f'{basename}.larnd'
-            return [f'{base}.LARNDSIM.hdf5']
+            return [f'{base}.{fileno}.LARNDSIM.hdf5']
 
 
 def get_runno(datapath: Path):
