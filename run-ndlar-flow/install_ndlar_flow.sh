@@ -2,7 +2,8 @@
 
 set -o errexit
 
-module load python
+module unload python 2>/dev/null
+module load python/3.9-anaconda-2021.11
 
 python -m venv flow.venv
 source flow.venv/bin/activate
