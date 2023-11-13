@@ -385,7 +385,7 @@ def dump(input_file, output_file, keep_all_dets=False):
         trackMap = {}
 
         # Dump the trajectories
-        trajectories = np.zeros(len(event.Trajectories), dtype=trajectories_dtype)
+        trajectories = np.full(len(event.Trajectories), np.iinfo('u4').max, dtype=trajectories_dtype)
         for iTraj, trajectory in enumerate(event.Trajectories):
             fileTrackID = trackCounter
             trackCounter += 1
