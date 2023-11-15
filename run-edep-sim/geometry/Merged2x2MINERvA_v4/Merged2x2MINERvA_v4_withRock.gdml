@@ -1895,6 +1895,7 @@
 			<position name="HallAirVolTemp2_translation" x="-210.82" y="-165.1" z="3771.9" unit="cm"/>
 			<rotation name="HallAirVolTemp2_rotation" x="0" y="-11.2" z="0" unit="degree"/>
 		</union>
+		<box name="World" x="7112.52" y="7348.2562" z="30000.0" lunit="cm"/>
 		<box name="pln_fib127_box_x0x40394b0" x="2142.5408" y="4257" z="18.5" lunit="mm"/>
 		<box name="pln_fib127_box_u0x4039640" x="2128.4" y="4257" z="18.5" lunit="mm"/>
 		<intersection name="pln_fib127_box_x*ChildForpln_fib127_int20x40396e0">
@@ -20273,13 +20274,15 @@
 				<rotationref ref="Rotation000847"/>
 			</physvol>
 		</volume>
-		<assembly name="volWorld">
+		<volume name="volWorld">
+			<materialref ref="Vac"/>
+			<solidref ref="World"/>
 			<physvol name="volhall_2x2_air_volume_PV">
 				<volumeref ref="volhall_2x2_air_volume"/>
 				<positionref ref="volhall_2x2_air_volume_pos"/>
 				<rotationref ref="volhall_2x2_air_volume_rot"/>
 			</physvol>
-		</assembly>
+		</volume>
 	</structure>
 	<setup name="Default" version="1.0">
 		<world ref="volWorld"/>
