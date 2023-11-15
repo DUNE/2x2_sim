@@ -771,18 +771,16 @@
 			<composite ref="oxygen" n="3"/>
 		</material>
 		<material name="Rock">
-			<D value="2.82"/>
-			<fraction ref="SiO2" n="0.5267"/>
-			<fraction ref="FeO" n="0.1174"/>
-			<fraction ref="Al2O3" n="0.1025"/>
-			<fraction ref="oxygen" n="0.0771"/>
-			<fraction ref="MgO" n="0.0473"/>
-			<fraction ref="CO2" n="0.0422"/>
-			<fraction ref="CaO" n="0.0382"/>
-			<fraction ref="carbon" n="0.024"/>
-			<fraction ref="sulfur" n="0.0186"/>
-			<fraction ref="Na2O" n="0.0053"/>
-			<fraction ref="P2O5" n="0.0007"/>
+			<D value="2.33"/>
+			<fraction ref="hydrogen" n="0.0147547"/>
+			<fraction ref="carbon" n="0.0114328"/>
+			<fraction ref="oxygen" n="0.5637993"/>
+			<fraction ref="calcium" n="0.0431255"/>
+			<fraction ref="sodium" n="0.0028548"/>
+			<fraction ref="aluminum" n="0.094692"/>
+			<fraction ref="iron" n="0.0179492"/>
+			<fraction ref="silicon" n="0.242014"/>
+			<fraction ref="potassium" n="0.0093778"/>
 		</material>
 		<material name="Dirt">
 			<D value="1.7"/>
