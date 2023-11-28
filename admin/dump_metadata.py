@@ -162,6 +162,8 @@ def dump_metadata(datapath: Path, args: argparse.Namespace):
     meta['DUNE_MC.name'] = args.campaign
     meta['DUNE_MC.TopVolume'] = args.top_vol
     meta['LBNF_MC.HornCurrent'] = args.horn_current
+    # TODO: Do we want the genie tune? Does the field 
+    # exist already?
 
     meta['data_tier'] = get_data_tier(args)
     meta['runs'] = [[get_runno(datapath), 1, get_runtype(args)]]
