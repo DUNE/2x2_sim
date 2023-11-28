@@ -22,7 +22,7 @@ def main(flow_file):
         print('Number of',key,'entries in file:', len(flow_h5[key]))
     print('------------------------------------------------\n')
 
-    output_pdf_name = flow_file.split('.h5')[0]+'_original_validations.pdf'
+    output_pdf_name = flow_file.split('.h5')[0]+'_validations.pdf'
     # temperarily, put output in this directory, not the same as the
     # simulation file itself
     output_pdf_name = output_pdf_name.split('/')[-1] # !!
