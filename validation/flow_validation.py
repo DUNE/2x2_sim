@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import matplotlib as mlp
 import matplotlib.pyplot as plt
@@ -22,7 +22,7 @@ def main(flow_file):
         print('Number of',key,'entries in file:', len(flow_h5[key]))
     print('------------------------------------------------\n')
 
-    output_pdf_name = flow_file.split('.hdf5')[0]+'_validations.pdf'
+    output_pdf_name = flow_file.split('.h5')[0]+'_original_validations.pdf'
     # temperarily, put output in this directory, not the same as the
     # simulation file itself
     output_pdf_name = output_pdf_name.split('/')[-1] # !!
@@ -46,9 +46,9 @@ def main(flow_file):
                    #norm=mpl.colors.LogNorm())#, cmap='Greys')
         fig.colorbar(dat,ax=ax,label="detected charge",shrink=0.5)
         ax.set_title("edep-sim + larnd-sim + proto_nd_flow",fontsize=20)
-        ax.set_xlabel('z [mm]')
-        ax.set_ylabel('x [mm]')
-        ax.set_zlabel('y [mm]')
+        ax.set_xlabel('z [cm]')
+        ax.set_ylabel('x [cm]')
+        ax.set_zlabel('y [cm]')
         del ax, fig
         output.savefig()
         plt.close()
@@ -68,9 +68,9 @@ def main(flow_file):
             #                  shrink=0.5, location='left', pad = 0.)
             #cb.ax.yaxis.set_ticks([matplotlib.ticker.FixedLocator([])])
             ax[a].set_title(f"spill {a+1}",fontsize=12)
-            ax[a].set_xlabel('z [mm]')
-            ax[a].set_ylabel('x [mm]')
-            ax[a].set_zlabel('y [mm]')
+            ax[a].set_xlabel('z [cm]')
+            ax[a].set_ylabel('x [cm]')
+            ax[a].set_zlabel('y [cm]')
         output.savefig()
         plt.close()
 
@@ -86,49 +86,49 @@ def main(flow_file):
         
         #ax1.hist2d(hits['z'],hits['y'],weights=hits['E'],bins=(300,300))
         ax4.scatter(hits['z'],hits['y'],s=0.5,alpha=0.1)
-        ax1.set_xlabel(r'z [mm]')
-        ax1.set_ylabel(r'y [mm]')
-        ax4.set_xlabel(r'z [mm]')
-        ax4.set_ylabel(r'y [mm]')
+        ax1.set_xlabel(r'z [cm]')
+        ax1.set_ylabel(r'y [cm]')
+        ax4.set_xlabel(r'z [cm]')
+        ax4.set_ylabel(r'y [cm]')
         #ax2.hist2d(hits['x'],hits['z'],weights=hits['E'],bins=(300,300))
         ax5.scatter(hits['x'],hits['z'],s=0.5,alpha=0.1)
-        ax2.set_xlabel(r'x [mm]')
-        ax2.set_ylabel(r'z [mm]')
-        ax5.set_xlabel(r'x [mm]')
-        ax5.set_ylabel(r'z [mm]')
+        ax2.set_xlabel(r'x [cm]')
+        ax2.set_ylabel(r'z [cm]')
+        ax5.set_xlabel(r'x [cm]')
+        ax5.set_ylabel(r'z [cm]')
         #ax3.hist2d(hits['x'],hits['y'],weights=hits['E'],bins=(300,300))
         ax6.scatter(hits['x'],hits['y'],s=0.5,alpha=0.1)
-        ax3.set_xlabel(r'x [mm]')
-        ax3.set_ylabel(r'y [mm]')
-        ax6.set_xlabel(r'x [mm]')
-        ax6.set_ylabel(r'y [mm]')
+        ax3.set_xlabel(r'x [cm]')
+        ax3.set_ylabel(r'y [cm]')
+        ax6.set_xlabel(r'x [cm]')
+        ax6.set_ylabel(r'y [cm]')
         output.savefig()
         plt.close()
 
         ### Hit level 1D position distributions
-        plt.hist(hits['z'],bins=300)
+        plt.hist(hits['z'],bins=298) # assuming hits at min/max z, each bin is approx 1 pixel = 0.434 cm
         plt.title('/charge/calib_prompt_hits/data')
         plt.xlabel('z [cm]')
-        plt.ylabel('number of packets per bin')
+        plt.ylabel('number of hits per bin')
         plt.yscale('log')
         plt.ylim([1,2e3])
         output.savefig()
         plt.close()
 
         plt.show()
-        plt.hist(hits['y'],bins=300)
+        plt.hist(hits['y'],bins=287) # assuming hits at min/max y, each bin is approx 1 pixel = 0.434 cm
         plt.title('/charge/calib_prompt_hits/data')
         plt.xlabel('y [cm]')
-        plt.ylabel('number of packets per bin')
+        plt.ylabel('number of hits per bin')
         plt.yscale('log')
         plt.ylim([1,2e3])
         output.savefig()
         plt.close()
 
-        plt.hist(hits['x'],bins=300)
+        plt.hist(hits['x'],bins=256) # assuming hits at min/max x, each bin is approx 0.5 cm
         plt.title('/charge/calib_prompt_hits/data')
         plt.xlabel('x [cm]')
-        plt.ylabel('number of packets per bin')
+        plt.ylabel('number of hits per bin')
         plt.yscale('log')
         plt.ylim([1,2e3])
         output.savefig()
@@ -203,37 +203,37 @@ def main(flow_file):
         
         ax1.hist(flow_h5['charge/calib_prompt_hits/data']['x'],bins=100,alpha=0.5,label='prompt hits')
         ax1.hist(flow_h5['charge/calib_final_hits/data']['x'],bins=100,alpha=0.5,label='merged hits')
-        ax1.set_xlabel('x [mm]')
+        ax1.set_xlabel('x [cm]')
         ax1.set_ylabel('N hits')
         #ax1.legend()
         
         ax2.hist(flow_h5['charge/calib_prompt_hits/data']['y'],bins=100,alpha=0.5,label='prompt hits')
         ax2.hist(flow_h5['charge/calib_final_hits/data']['y'],bins=100,alpha=0.5,label='merged hits')
-        ax2.set_xlabel('y [mm]')
+        ax2.set_xlabel('y [cm]')
         ax2.set_ylabel('N hits')
         ax2.legend()
         
         ax3.hist(flow_h5['charge/calib_prompt_hits/data']['z'],bins=100,alpha=0.5,label='prompt hits')
         ax3.hist(flow_h5['charge/calib_final_hits/data']['z'],bins=100,alpha=0.5,label='merged hits')
-        ax3.set_xlabel('z [mm]')
+        ax3.set_xlabel('z [cm]')
         ax3.set_ylabel('N hits')
         #ax3.legend()
         
         ax4.hist(flow_h5['charge/calib_prompt_hits/data']['x'],weights=flow_h5['charge/calib_prompt_hits/data']['E'],bins=100,alpha=0.5,label='prompt hits')
         ax4.hist(flow_h5['charge/calib_final_hits/data']['x'],weights=flow_h5['charge/calib_final_hits/data']['E'],bins=100,alpha=0.5,label='merged hits')
-        ax4.set_xlabel('x [mm]')
+        ax4.set_xlabel('x [cm]')
         ax4.set_ylabel('Energy [MeV]')
         #ax4.legend()
         
         ax5.hist(flow_h5['charge/calib_prompt_hits/data']['y'],weights=flow_h5['charge/calib_prompt_hits/data']['E'],bins=100,alpha=0.5,label='prompt hits')
         ax5.hist(flow_h5['charge/calib_final_hits/data']['y'],weights=flow_h5['charge/calib_final_hits/data']['E'],bins=100,alpha=0.5,label='merged hits')
-        ax5.set_xlabel('y [mm]')
+        ax5.set_xlabel('y [cm]')
         ax5.set_ylabel('Energy [MeV]')
         #ax5.legend()
         
         ax6.hist(flow_h5['charge/calib_prompt_hits/data']['z'],weights=flow_h5['charge/calib_prompt_hits/data']['E'],bins=100,alpha=0.5,label='prompt hits')
         ax6.hist(flow_h5['charge/calib_final_hits/data']['z'],weights=flow_h5['charge/calib_final_hits/data']['E'],bins=100,alpha=0.5,label='merged hits')
-        ax6.set_xlabel('z [mm]')
+        ax6.set_xlabel('z [cm]')
         ax6.set_ylabel('Energy [MeV]')
         #ax6.legend()
         
