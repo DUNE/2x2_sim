@@ -170,6 +170,53 @@
     </window>
   </param_set>
 
+  <param_set name="MiniRun5">
+    <!-- verbosity of XML parsing -->
+    <verbose> 0 </verbose>
+
+    <!-- setting user units should be first -->
+    <units> m </units>
+
+    <!-- beamdir must come before beam zero position -->
+    <!-- rotation matrix created by sequence of rotations -->
+    <!-- CW: this is the same as MINOS-ND -->
+    <beamdir type="series">
+       <rotation axis="x" units="rad"> -0.0582977560 </rotation>
+    </beamdir>
+
+    <!-- position in ( user coords ) = ( beam coords ) -->
+    <!-- Set -42cm below TPC center to be consistent with past geometries -->
+    <beampos> ( 0, -0.42, 0 ) = ( 0, 0, 1036.48837 ) </beampos>
+
+    <!-- CW: default enumax... -->
+    <enumax> 120. 1.05 1.05 2500000 </enumax>
+
+    <!-- CW: allow entry to be reused 1000 times -->
+    <!-- CW: maybe too much, but I'm following the NOvA files here -->
+    <reuse> 1000 </reuse>
+
+    <!-- MK: don't bother with upstreamz (which may not even be respected in dk2nu mode) -->
+    <!--     just let the ray start on the window -->
+  </param_set>
+
+  <param_set name="MiniRun5-Nu">
+    <using_param_set> MiniRun5 </using_param_set>
+    <window>
+      <point coord="det">  5, -3, -5 </point>
+      <point coord="det"> -5, -3, -5 </point>
+      <point coord="det">  5,  3, -5 </point>
+    </window>
+  </param_set>
+
+  <param_set name="MiniRun5-Rock">
+    <using_param_set> MiniRun5 </using_param_set>
+    <window>
+      <point coord="det">  10,  -3, -103 </point>
+      <point coord="det"> -10,  -3, -103 </point>
+      <point coord="det">  10,  17, -103 </point>
+    </window>
+  </param_set>
+
   <!--
   ****************************************************************************
   **   Taken from ND_Production/generator/GNuMIFlux.xml at
