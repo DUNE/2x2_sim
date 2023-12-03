@@ -106,7 +106,10 @@ fi
 #     -e "gSystem->Load(\"libTG4Event/libTG4Event.so\")" \
 #     "overlaySinglesIntoSpills.C(\"$nuInFile\", \"$rockInFile\", \"$spillFile\", $ARCUBE_NU_POT, $ARCUBE_ROCK_POT, $ARCUBE_SPILL_POT)"
 
+# LIBTG4EVENT_DIR is provided by the podman-built containers
+# If unset, fall back to the local build provided by install_spill_build.sh
+LIBTG4EVENT_DIR=${LIBTG4EVENT_DIR:-libTG4Event}
 
 run root -l -b -q \
-    -e "gSystem->Load(\"libTG4Event/libTG4Event.so\")" \
+    -e "gSystem->Load(\"$LIBTG4EVENT_DIR/libTG4Event.so\")" \
     "overlaySinglesIntoSpillsSorted.C(\"$nuInFile\", \"$rockInFile\", \"$spillFile\", $globalIdx, $ARCUBE_NU_POT, $ARCUBE_ROCK_POT, $ARCUBE_SPILL_POT, $ARCUBE_SPILL_PERIOD)"
