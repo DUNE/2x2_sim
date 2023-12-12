@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
 
-source ../util/container_util.inc.sh
-
-## HACK: This will not wait for other tasks on the node to complete
-# if [[ "$SLURM_LOCALID" == 0 ]]; then
-#     monitorFile=monitor-$SLURM_JOBID.$SLURM_NODEID.txt
-#     ./monitor.sh >logs/"$ARCUBE_OUT_NAME"/"$SLURM_JOBID"/"$monitorFile" &
-# fi
+source ../util/reload_in_container.inc.sh
 
 # Start seeds at 1 instead of 0, just in case GENIE does something
 # weird when given zero (e.g. use the current time)

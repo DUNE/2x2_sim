@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
-module unload python
-module load python/3.9-anaconda-2021.11
+if [[ $ARCUBE_RUNTIME == "PODMAN-HPC" ]]; then
+    source ../util/reload_in_container.inc.sh
+else
+    # The old setup (without a container)
+    module unload python
+    module load python/3.9-anaconda-2021.11
 
-source flow.venv/bin/activate
-
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    export HDF5_USE_FILE_LOCKING=FALSE
+    source flow.venv/bin/activate
 fi
+# TODO: Apptainer
 
 # TODO actually use this seed
 seed=$((1 + ARCUBE_INDEX))
