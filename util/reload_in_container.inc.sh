@@ -26,6 +26,7 @@ elif [[ "$ARCUBE_RUNTIME" == "PODMAN-HPC" ]]; then
     if [[ "$(id -u)" != "0" ]]; then
         podman-hpc run --rm --env-file <(env | grep ARCUBE) --gpu -w "$(realpath $(dirname "$0"))" \
             -v "$arcube_dir:$arcube_dir" -v "$SCRATCH:$SCRATCH" -v /dvs_ro/cfs:/dvs_ro/cfs \
+            -v /opt/nvidia/hpc_sdk/Linux_x86_64/23.9:/opt/cuda \
             "$ARCUBE_CONTAINER" "$(realpath "$0")" "$@"
         exit
     fi
@@ -35,9 +36,17 @@ else
     exit
 fi
 
+# The below runs in the "reloaded" process
+
 if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
     source /environment         # provided by the container
 elif [[ "$ARCUBE_RUNTIME" == "SINGULARITY" ]]; then
     # "singularity pull" overwrites /environment
     source "$ARCUBE_DIR"/admin/container_env."$ARCUBE_CONTAINER".sh
+elif [[ "$ARCUBE_RUNTIME" == "PODMAN-HPC" ]]; then
+    # Ideally, we'd just tell podman-hpc to overlay the host's libcudart and
+    # libcudablas into the container's /usr/lib64, but that currently produces a
+    # useless error. So for now we just bind mount /opt/cuda (above) and set
+    # LD_LIBRARY_PATH here.
+    export LD_LIBRARY_PATH=/opt/cuda/math_libs/12.2/targets/x86_64-linux/lib:/opt/cuda/cuda/12.2/lib64:$LD_LIBRARY_PATH
 fi
