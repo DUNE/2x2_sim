@@ -39,7 +39,11 @@ fi
 # The below runs in the "reloaded" process
 
 if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
-    source /environment         # provided by the container
+    if [[ -e /opt/environment ]]; then
+        source /opt/environment # podman-built containters
+    else
+        source /environment     # singularity-built containers
+    fi
 elif [[ "$ARCUBE_RUNTIME" == "SINGULARITY" ]]; then
     # "singularity pull" overwrites /environment
     source "$ARCUBE_DIR"/admin/container_env."$ARCUBE_CONTAINER".sh
