@@ -15,8 +15,10 @@ globalIdx=$ARCUBE_INDEX
 echo "globalIdx is $globalIdx"
 
 inDir=$PWD/../run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && inDir=$ARCUBE_OUTDIR_BASE/run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
 
 outDir=$PWD/output/$ARCUBE_OUT_NAME
+[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && outDir=$ARCUBE_OUTDIR_BASE/run-larnd-sim/output/$ARCUBE_OUT_NAME
 mkdir -p $outDir
 
 outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
@@ -52,7 +54,8 @@ run simulate_pixels.py --input_filename "$inFile" \
     --detector_properties "$ARCUBE_LARNDSIM_DETECTOR_PROPERTIES" \
     --pixel_layout "$ARCUBE_LARNDSIM_PIXEL_LAYOUT" \
     --response_file "$ARCUBE_LARNDSIM_RESPONSE_FILE" \
-    --light_lut_filename  "$ARCUBE_LARNDSIM_LUT_FILENAME" \
-    --light_det_noise_filename "$ARCUBE_LARNDSIM_LIGHT_DET_NOISE_FILENAME" \
     --rand_seed $seed \
-    --simulation_properties "$ARCUBE_LARNDSIM_SIMULATION_PROPERTIES"
+    --simulation_properties "$ARCUBE_LARNDSIM_SIMULATION_PROPERTIES" \
+    --light_lut_filename  "$ARCUBE_LARNDSIM_LUT_FILENAME" \
+    --light_det_noise_filename "$ARCUBE_LARNDSIM_LIGHT_DET_NOISE_FILENAME" 
+
