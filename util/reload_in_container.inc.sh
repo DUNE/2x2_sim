@@ -6,7 +6,7 @@ export ARCUBE_RUNTIME=${ARCUBE_RUNTIME:-SHIFTER}
 if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
     # Reload in Shifter
     if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
-        shifter --image=$ARCUBE_CONTAINER --module=none -- "$0" "$@"
+        shifter --image=$ARCUBE_CONTAINER --module=cvmfs,gpu -- "$0" "$@"
         exit
     fi
 
@@ -42,6 +42,9 @@ if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
     if [[ -e /environment ]]; then
         source /environment # apptainer-built containters
     fi
+    # See comments below re podman-hpc and cuda
+    cudadir=/global/common/software/dune/cuda-23.9
+    export LD_LIBRARY_PATH="$cudadir"/math_libs/12.2/targets/x86_64-linux/lib:"$cudadir"/cuda/12.2/lib64:$LD_LIBRARY_PATH
 elif [[ "$ARCUBE_RUNTIME" == "SINGULARITY" ]]; then
     # "singularity pull" overwrites /environment
     source "$ARCUBE_DIR"/admin/container_env."$ARCUBE_CONTAINER".sh
