@@ -28,7 +28,7 @@ segments_dtype = np.dtype([("event_id","u4"),("vertex_id", "u8"), ("segment_id",
                            ("n_photons","f4")], align=True)
 
 trajectories_dtype = np.dtype([("event_id","u4"), ("vertex_id", "u8"),
-                               ("traj_id", "u4"), ("local_traj_id", "u4"), ("parent_id", "i4"),
+                               ("traj_id", "u4"), ("file_traj_id", "u4"), ("parent_id", "i4"),
                                ("E_start", "f4"), ("pxyz_start", "f4", (3,)),
                                ("xyz_start", "f4", (3,)), ("t_start", "f8"),
                                ("E_end", "f4"), ("pxyz_end", "f4", (3,)),
@@ -405,28 +405,29 @@ def dump(input_file, output_file, keep_all_dets=False):
                 segment[iHit]["segment_id"] = segment_id
                 segment_id += 1
                 try:
-                    segment[iHit]["traj_id"] = trackMap[hitSegment.Contrib[0]]
-                    seg_local_traj_id = hitSegment.Contrib[0]
+                    segment[iHit]["traj_id"] = hitSegment.Contrib[0]
+                    seg_traj_id = hitSegment.Contrib[0]
                     if segment[iHit]["traj_id"] not in trajectories["traj_id"]:
                         # Given event.Trajectories is ordered by traj_id (trajectory.GetTrackId())
-                        trajectory = event.Trajectories[seg_local_traj_id]
+                        trajectory = event.Trajectories[seg_traj_id]
+                        # Trace back in the family tree
                         while trajectory.GetParentId() >= -1:
-                            if trackMap[trajectory.GetTrackId()] in trajectories["traj_id"]:
+                            if trajectory.GetTrackId() in trajectories["traj_id"]:
                                 if trajectory.GetParentId() == -1:
                                     break
                                 else:
-                                    local_parent_id = trajectory.GetParentId()
-                                    trajectory = event.Trajectories[local_parent_id]
+                                    parent_traj_id = trajectory.GetParentId()
+                                    trajectory = event.Trajectories[parent_traj_id]
                                 continue
 
                             start_pt, end_pt = trajectory.Points[0], trajectory.Points[-1]
                             trajectories[n_traj]["event_id"] = spill_it
                             trajectories[n_traj]["vertex_id"] = globalVertexID
 
-                            trajectories[n_traj]["traj_id"] = trackMap[trajectory.GetTrackId()]
-                            trajectories[n_traj]["local_traj_id"] = trajectory.GetTrackId()
+                            trajectories[n_traj]["traj_id"] = trajectory.GetTrackId()
+                            trajectories[n_traj]["file_traj_id"] = trackMap[trajectory.GetTrackId()]
                             trajectories[n_traj]["parent_id"] = -1 if trajectory.GetParentId() == -1 \
-                                else trackMap[trajectory.GetParentId()]
+                                else trajectory.GetParentId()
 
                             mass = trajectory.GetInitialMomentum().M()
                             p_start = (start_pt.GetMomentum().X(), start_pt.GetMomentum().Y(), start_pt.GetMomentum().Z())
@@ -449,8 +450,8 @@ def dump(input_file, output_file, keep_all_dets=False):
                             if trajectories[n_traj-1]["parent_id"] == -1:
                                 break
                             else:
-                                local_parent_id = trajectory.GetParentId()
-                                trajectory = event.Trajectories[local_parent_id]
+                                parent_traj_id = trajectory.GetParentId()
+                                trajectory = event.Trajectories[parent_traj_id]
 
                 except IndexError as e:
                     print(e)
@@ -481,6 +482,7 @@ def dump(input_file, output_file, keep_all_dets=False):
                 segment[iHit]["t0"] = (segment[iHit]["t0_start"] + segment[iHit]["t0_end"]) / 2.
                 segment[iHit]["t"] = 0
                 segment[iHit]["dEdx"] = hitSegment.GetEnergyDeposit() / dx if dx > 0 else 0
+                #segment[iHit]["pdg_id"] = trajectories[trajectories["traj_id"]==hitSegment.Contrib[0]]["pdg_id"]
                 segment[iHit]["pdg_id"] = trajectories[hitSegment.Contrib[0]]["pdg_id"]
                 segment[iHit]["n_electrons"] = 0
                 segment[iHit]["long_diff"] = 0
