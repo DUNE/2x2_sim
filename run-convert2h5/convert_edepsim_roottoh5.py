@@ -28,7 +28,7 @@ segments_dtype = np.dtype([("event_id","u4"),("vertex_id", "u8"), ("segment_id",
                            ("n_photons","f4")], align=True)
 
 trajectories_dtype = np.dtype([("event_id","u4"), ("vertex_id", "u8"),
-                               ("traj_id", "u4"), ("file_traj_id", "u4"), ("parent_id", "i4"),
+                               ("traj_id", "u4"), ("file_traj_id", "u4"), ("parent_id", "i4"), ("primary", "?"),
                                ("E_start", "f4"), ("pxyz_start", "f4", (3,)),
                                ("xyz_start", "f4", (3,)), ("t_start", "f8"),
                                ("E_end", "f4"), ("pxyz_end", "f4", (3,)),
@@ -398,8 +398,8 @@ def dump(input_file, output_file, keep_all_dets=False):
 
                 trajectories[n_traj]["traj_id"] = trajectory.GetTrackId()
                 trajectories[n_traj]["file_traj_id"] = trackMap[trajectory.GetTrackId()]
-                trajectories[n_traj]["parent_id"] = -1 if trajectory.GetParentId() == -1 \
-                    else trajectory.GetParentId()
+                trajectories[n_traj]["parent_id"] = trajectory.GetParentId()
+                trajectories[n_traj]["primary"] = True if trajectory.GetParentId() == -1 else False # primary particle parents trajectory id are -1
 
                 mass = trajectory.GetInitialMomentum().M()
                 p_start = (start_pt.GetMomentum().X(), start_pt.GetMomentum().Y(), start_pt.GetMomentum().Z())
@@ -459,8 +459,8 @@ def dump(input_file, output_file, keep_all_dets=False):
 
                             trajectories[n_traj]["traj_id"] = trajectory.GetTrackId()
                             trajectories[n_traj]["file_traj_id"] = trackMap[trajectory.GetTrackId()]
-                            trajectories[n_traj]["parent_id"] = -1 if trajectory.GetParentId() == -1 \
-                                else trajectory.GetParentId()
+                            trajectories[n_traj]["parent_id"] = trajectory.GetParentId()
+                            trajectories[n_traj]["primary"] = True if trajectory.GetParentId() == -1 else False # primary particle parents trajectory id are -1
 
                             mass = trajectory.GetInitialMomentum().M()
                             p_start = (start_pt.GetMomentum().X(), start_pt.GetMomentum().Y(), start_pt.GetMomentum().Z())
