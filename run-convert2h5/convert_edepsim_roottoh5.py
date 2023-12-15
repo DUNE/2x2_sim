@@ -15,7 +15,7 @@ from ROOT import TG4Event, TFile, TMap
 
 # Output array datatypes
 segments_dtype = np.dtype([("event_id","u4"),("vertex_id", "u8"), ("segment_id", "u4"),
-                           ("z_end", "f4"),("traj_id", "u4"), ("tran_diff", "f4"),
+                           ("z_end", "f4"),("traj_id", "u4"), ("file_traj_id", "u4"), ("tran_diff", "f4"),
                            ("z_start", "f4"), ("x_end", "f4"),
                            ("y_end", "f4"), ("n_electrons", "u4"),
                            ("pdg_id", "i4"), ("x_start", "f4"),
@@ -439,6 +439,7 @@ def dump(input_file, output_file, keep_all_dets=False):
                 segment_id += 1
                 try:
                     segment[iHit]["traj_id"] = hitSegment.Contrib[0]
+                    segment[iHit]["file_traj_id"] = trackMap[hitSegment.Contrib[0]]
                     seg_traj_id = hitSegment.Contrib[0]
                     if segment[iHit]["traj_id"] not in trajectories["traj_id"]:
                         # Given event.Trajectories is ordered by traj_id (trajectory.GetTrackId())
