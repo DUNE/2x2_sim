@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 
-module unload python
-module load python/3.9-anaconda-2021.11
-
-source flow.venv/bin/activate
-
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    export HDF5_USE_FILE_LOCKING=FALSE
+# By default, run on the host
+# By default (i.e. if ARCUBE_RUNTIME isn't set), run on the host
+if [[ -z "$ARCUBE_RUNTIME" || "$ARCUBE_RUNTIME" == "NONE" ]]; then
+    module unload python 2>/dev/null
+    module load python/3.11
+    source flow.venv/bin/activate
+else
+    source ../util/reload_in_container.inc.sh
+    if [[ -n "$ARCUBE_USE_LOCAL_PRODUCT" && "$ARCUBE_USE_LOCAL_PRODUCT" != "0" ]]; then
+        # Allow overriding the container's version
+        source flow.venv/bin/activate
+    fi
 fi
 
 # TODO actually use this seed
