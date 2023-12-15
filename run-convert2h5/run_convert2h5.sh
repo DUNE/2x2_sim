@@ -2,8 +2,12 @@
 
 source ../util/reload_in_container.inc.sh
 
-# in the container, install numpy fire h5py tqdm
-source convert.venv/bin/activate
+
+# If we're using a container, it's responsible for the Python libraries. With no
+# container, use a venv.
+if [[ "$ARCUBE_RUNTIME" == "NONE" ]]; then
+    source convert.venv/bin/activate
+fi
 
 if [[ "$NERSC_HOST" == "cori" ]]; then
     export HDF5_USE_FILE_LOCKING=FALSE

@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
+setup_cuda() {
+    module unload cudatoolkit 2>/dev/null
+    module load cudatoolkit/12.2
+}
+
 # assume Shifter if ARCUBE_RUNTIME is unset
 export ARCUBE_RUNTIME=${ARCUBE_RUNTIME:-SHIFTER}
 
 if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
     # Reload in Shifter
     if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
+        setup_cuda
         shifter --image=$ARCUBE_CONTAINER --module=cvmfs,gpu -- "$0" "$@"
         exit
     fi
@@ -24,6 +30,7 @@ elif [[ "$ARCUBE_RUNTIME" == "PODMAN-HPC" ]]; then
     # This will break if you run 2x2_sim as the true superuser, but why would
     # you do that?
     if [[ "$(id -u)" != "0" ]]; then
+        setup_cuda
         podman-hpc run --rm --env-file <(env | grep ARCUBE) --gpu -w "$(realpath $(dirname "$0"))" \
             -v "$arcube_dir:$arcube_dir" -v "$SCRATCH:$SCRATCH" -v /dvs_ro/cfs:/dvs_ro/cfs \
             -v /opt/nvidia/hpc_sdk/Linux_x86_64/23.9:/opt/cuda \
@@ -31,9 +38,13 @@ elif [[ "$ARCUBE_RUNTIME" == "PODMAN-HPC" ]]; then
         exit
     fi
 
+elif [[ "$ARCUBE_RUNTIME" == "NONE" ]]; then
+    echo "\$ARCUBE_RUNTIME is NONE; running in host environment"
+    return
+
 else
     echo "Unsupported \$ARCUBE_RUNTIME"
-    exit
+    exit 1
 fi
 
 # The below runs in the "reloaded" process
@@ -41,9 +52,12 @@ fi
 if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then
     if [[ -e /environment ]]; then
         source /environment # apptainer-built containters
+        # Our podman-built containers automagically load the env via $BASH_ENV
+        # In their case the file of interest is /opt/environment
     fi
     # See comments below re podman-hpc and cuda
     cudadir=/global/common/software/dune/cuda-23.9
+    # TODO: Extend this until larnd-sim actually runs
     export LD_LIBRARY_PATH="$cudadir"/math_libs/12.2/targets/x86_64-linux/lib:"$cudadir"/cuda/12.2/lib64:$LD_LIBRARY_PATH
 elif [[ "$ARCUBE_RUNTIME" == "SINGULARITY" ]]; then
     # "singularity pull" overwrites /environment

@@ -1,22 +1,19 @@
 #!/usr/bin/env bash
 
-if [[ $ARCUBE_RUNTIME == "PODMAN-HPC" ]]; then
-    # Load the CUDA libraries; they'll be mounted in the container using
-    # podman-hpc's --gpu flag
-    module unload cudatoolkit 2>/dev/null
-    module load cudatoolkit/12.2
-    source ../util/reload_in_container.inc.sh
-else
-    # The old setup (without a container)
+# By default (i.e. if ARCUBE_RUNTIME isn't set), run on the host
+if [[ -z "$ARCUBE_RUNTIME" || "$ARCUBE_RUNTIME" == "NONE" ]]; then
     module unload python 2>/dev/null
     module unload cudatoolkit 2>/dev/null
-
-    module load cudatoolkit/11.7
-    module load python/3.9-anaconda-2021.11
-
+    module load cudatoolkit/12.2
+    module load python/3.11
     source larnd.venv/bin/activate
+else
+    source ../util/reload_in_container.inc.sh
+    if [[ -n "$ARCUBE_USE_LOCAL_PRODUCT" && "$ARCUBE_USE_LOCAL_PRODUCT" != "0" ]]; then
+        # Allow overriding the container's version
+        source larnd.venv/bin/activate
+    fi
 fi
-# TODO: Apptainer
 
 seed=$((1 + ARCUBE_INDEX))
 
