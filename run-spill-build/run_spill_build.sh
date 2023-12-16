@@ -1,35 +1,18 @@
 #!/usr/bin/env bash
 
 source ../util/reload_in_container.inc.sh
+source ../util/init.inc.sh
 
-globalIdx=$ARCUBE_INDEX
-echo "globalIdx is $globalIdx"
-
-outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
-nuName=$ARCUBE_NU_NAME.$(printf "%05d" "$globalIdx")
-rockName=$ARCUBE_ROCK_NAME.$(printf "%05d" "$globalIdx")
+nuName=$ARCUBE_NU_NAME.$globalIdx
+rockName=$ARCUBE_ROCK_NAME.$globalIdx
 echo "outName is $outName"
 
-inBaseDir=$PWD/../run-edep-sim/output
-[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && inBaseDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output
+inBaseDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output
 nuInDir=$inBaseDir/$ARCUBE_NU_NAME
 rockInDir=$inBaseDir/$ARCUBE_ROCK_NAME
 
 nuInFile=$nuInDir/EDEPSIM/${nuName}.EDEPSIM.root
 rockInFile=$rockInDir/EDEPSIM/${rockName}.EDEPSIM.root
-
-outDir=$PWD/output/$ARCUBE_OUT_NAME
-[ ! -z "${ARCUBE_OUTDIR_BASE}" ] && outDir=$ARCUBE_OUTDIR_BASE/run-spill-build/output/$ARCUBE_OUT_NAME
-mkdir -p "$outDir"
-
-timeFile=$outDir/TIMING/$outName.time
-mkdir -p "$(dirname "$timeFile")"
-timeProg=$PWD/../run-edep-sim/tmp_bin/time      # container is missing /usr/bin/time
-
-run() {
-    echo RUNNING "$@"
-    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
-}
 
 spillOutDir=$outDir/EDEPSIM_SPILLS
 mkdir -p "$spillOutDir"
@@ -48,22 +31,14 @@ rm -f "$spillFile"
 # would lead to a conflict with the ones from the edep-sim installation. Hence
 # we unload the latter. Fun. See makeLibTG4Event.sh
 
-function libpath_remove {
-  LD_LIBRARY_PATH=":$LD_LIBRARY_PATH:"
-  LD_LIBRARY_PATH=${LD_LIBRARY_PATH//":"/"::"}
-  LD_LIBRARY_PATH=${LD_LIBRARY_PATH//":$1:"/}
-  LD_LIBRARY_PATH=${LD_LIBRARY_PATH//"::"/":"}
-  LD_LIBRARY_PATH=${LD_LIBRARY_PATH#:}; LD_LIBRARY_PATH=${LD_LIBRARY_PATH%:}
-}
-
 libpath_remove /opt/generators/edep-sim/install/lib
 
 [ -z "${ARCUBE_SPILL_POT}" ] && export ARCUBE_SPILL_POT=5e13
 [ -z "${ARCUBE_SPILL_PERIOD}" ] && export ARCUBE_SPILL_PERIOD=1.2
 
 if [[ "$ARCUBE_USE_GHEP_POT" == "1" ]]; then
-  read -r ARCUBE_NU_POT < $nuInDir/POT/${nuName}.pot
-  read -r ARCUBE_ROCK_POT < $rockInDir/POT/${rockName}.pot
+  read -r ARCUBE_NU_POT < "$nuInDir"/POT/"$nuName".pot
+  read -r ARCUBE_ROCK_POT < "$rockInDir"/POT/"$rockName".pot
 fi
 
 # run root -l -b -q \

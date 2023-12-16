@@ -2,30 +2,21 @@
 
 set -o errexit
 
-module unload python 2>/dev/null
-module load python/3.9-anaconda-2021.11
+source ../util/reload_in_container.inc.sh
+source ../util/init.inc.sh
 
-source validation.venv/bin/activate
-
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    export HDF5_USE_FILE_LOCKING=FALSE
+if [[ "$ARCUBE_RUNTIME" == "NONE" ]]; then
+    module load python/3.11
+    source validation.venv/bin/activate
 fi
 
-globalIdx=$ARCUBE_INDEX
-echo "globalIdx is $globalIdx"
+edepDir=${ARCUBE_OUTDIR_BASE}/run-convert2h5/output/${ARCUBE_EDEP_NAME}/EDEPSIM_H5
+larndDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/output/${ARCUBE_LARND_NAME}/LARNDSIM
+flowDir=${ARCUBE_OUTDIR_BASE}/run-ndlar-flow/output/${ARCUBE_FLOW_NAME}/FLOW
 
-outDir=$PWD/output/$ARCUBE_OUT_NAME
-mkdir -p "$outDir"
-
-outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
-
-edepDir=$PWD/../run-convert2h5/output/${ARCUBE_EDEP_NAME}/EDEPSIM_H5
-larndDir=$PWD/../run-larnd-sim/output/${ARCUBE_LARND_NAME}/LARNDSIM
-flowDir=$PWD/../run-ndlar-flow/output/${ARCUBE_FLOW_NAME}/FLOW
-
-edepFile=$edepDir/${ARCUBE_EDEP_NAME}.$(printf "%05d" "$globalIdx").EDEPSIM.hdf5
-larndFile=$larndDir/${ARCUBE_LARND_NAME}.$(printf "%05d" "$globalIdx").LARNDSIM.hdf5
-flowFile=$flowDir/${ARCUBE_FLOW_NAME}.$(printf "%05d" "$globalIdx").FLOW.hdf5
+edepFile=$edepDir/${ARCUBE_EDEP_NAME}.${globalIdx}.EDEPSIM.hdf5
+larndFile=$larndDir/${ARCUBE_LARND_NAME}.${globalIdx}.LARNDSIM.hdf5
+flowFile=$flowDir/${ARCUBE_FLOW_NAME}.${globalIdx}.FLOW.hdf5
 
 timeFile=$outDir/TIMING/${outName}.time
 mkdir -p "$(dirname "$timeFile")"

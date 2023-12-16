@@ -12,3 +12,4 @@ slurm-*.out
 *.h5
 *.hdf5
 *.root
+tmp_bin

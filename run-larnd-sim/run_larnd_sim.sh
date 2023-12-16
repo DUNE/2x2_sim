@@ -15,33 +15,14 @@ else
     fi
 fi
 
-seed=$((1 + ARCUBE_INDEX))
+source ../util/init.inc.sh
 
-globalIdx=$ARCUBE_INDEX
-echo "globalIdx is $globalIdx"
-
-inDir=$PWD/../run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
-
-outDir=$PWD/output/$ARCUBE_OUT_NAME
-mkdir -p $outDir
-
-outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
-inName=$ARCUBE_CONVERT2H5_NAME.$(printf "%05d" "$globalIdx")
-echo "outName is $outName"
-
-timeFile=$outDir/TIMING/$outName.time
-mkdir -p "$(dirname "$timeFile")"
-timeProg=/usr/bin/time
-
-run() {
-    echo RUNNING "$@"
-    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
-}
-
+inDir=${ARCUBE_OUTDIR_BASE}/run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
+inName=$ARCUBE_CONVERT2H5_NAME.$globalIdx
 inFile=$inDir/EDEPSIM_H5/${inName}.EDEPSIM.hdf5
 
 larndOutDir=$outDir/LARNDSIM
-mkdir -p $larndOutDir
+mkdir -p "$larndOutDir"
 
 outFile=$larndOutDir/${outName}.LARNDSIM.hdf5
 rm -f "$outFile"

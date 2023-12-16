@@ -14,34 +14,14 @@ else
     fi
 fi
 
-# TODO actually use this seed
-seed=$((1 + ARCUBE_INDEX))
+source ../util/init.inc.sh
 
-globalIdx=$ARCUBE_INDEX
-echo "globalIdx is $globalIdx"
-
-inDir=$PWD/../run-larnd-sim/output/$ARCUBE_IN_NAME
-
-outDir=$PWD/output/$ARCUBE_OUT_NAME
-mkdir -p $outDir
-
-outName=$ARCUBE_OUT_NAME.$(printf "%05d" "$globalIdx")
+inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/output/$ARCUBE_IN_NAME
 inName=$ARCUBE_IN_NAME.$(printf "%05d" "$globalIdx")
-echo "outName is $outName"
-
-timeFile=$outDir/TIMING/$outName.time
-mkdir -p "$(dirname "$timeFile")"
-timeProg=/usr/bin/time
-
-run() {
-    echo RUNNING "$@"
-    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
-}
-
 inFile=$inDir/LARNDSIM/${inName}.LARNDSIM.hdf5
 
 flowOutDir=$outDir/FLOW
-mkdir -p $flowOutDir
+mkdir -p "$flowOutDir"
 
 outFile=$flowOutDir/${outName}.FLOW.hdf5
 rm -f "$outFile"
@@ -64,7 +44,7 @@ cd ndlar_flow
 set -o errexit
 
 run h5flow -c $workflow1 $workflow2 $workflow3 $workflow4 $workflow5\
-    -i $inFile -o $outFile
+    -i "$inFile" -o "$outFile"
 
 run h5flow -c $workflow6 $workflow7\
-    -i $inFile -o $outFile
+    -i "$inFile" -o "$outFile"
