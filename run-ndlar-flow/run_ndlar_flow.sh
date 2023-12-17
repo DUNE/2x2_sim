@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 
+export ARCUBE_INSTALL_DIR=${ARCUBE_INSTALL_DIR:-.}
+venvDir="$ARCUBE_INSTALL_DIR"/flow.venv
+
 # By default, run on the host
 # By default (i.e. if ARCUBE_RUNTIME isn't set), run on the host
 if [[ -z "$ARCUBE_RUNTIME" || "$ARCUBE_RUNTIME" == "NONE" ]]; then
     module unload python 2>/dev/null
     module load python/3.11
-    source flow.venv/bin/activate
+    source "$venvDir"/bin/activate
 else
     source ../util/reload_in_container.inc.sh
     if [[ -n "$ARCUBE_USE_LOCAL_PRODUCT" && "$ARCUBE_USE_LOCAL_PRODUCT" != "0" ]]; then
         # Allow overriding the container's version
-        source flow.venv/bin/activate
+        source "$venvDir"/bin/activate
     fi
 fi
 
@@ -18,12 +21,12 @@ source ../util/init.inc.sh
 
 inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/output/$ARCUBE_IN_NAME
 inName=$ARCUBE_IN_NAME.$(printf "%05d" "$globalIdx")
-inFile=$inDir/LARNDSIM/${inName}.LARNDSIM.hdf5
+inFile=$(realpath $inDir/LARNDSIM/${inName}.LARNDSIM.hdf5)
 
 flowOutDir=$outDir/FLOW
 mkdir -p "$flowOutDir"
 
-outFile=$flowOutDir/${outName}.FLOW.hdf5
+outFile=$(realpath $flowOutDir/${outName}.FLOW.hdf5)
 rm -f "$outFile"
 
 # charge workflows
@@ -37,7 +40,7 @@ workflow5='yamls/proto_nd_flow/workflows/charge/final_calibration.yaml'
 workflow6='yamls/proto_nd_flow/workflows/light/light_event_building_mc.yaml'
 workflow7='yamls/proto_nd_flow/workflows/light/light_event_reconstruction.yaml'
 
-cd ndlar_flow
+cd "$ARCUBE_INSTALL_DIR"/ndlar_flow
 
 # Ensure that the second h5flow doesn't run if the first one crashes. This also
 # ensures that we properly report the failure to the production system.

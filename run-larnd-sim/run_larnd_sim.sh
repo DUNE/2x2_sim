@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 
-# By default (i.e. if ARCUBE_RUNTIME isn't set), run on the host
+export ARCUBE_INSTALL_DIR=${ARCUBE_INSTALL_DIR:-.}
+venvDir="$ARCUBE_INSTALL_DIR"/larnd.venv
+
+# By default (i.e. if ARCUBE_RUNTIME isn't set), run on the host's venv
 if [[ -z "$ARCUBE_RUNTIME" || "$ARCUBE_RUNTIME" == "NONE" ]]; then
     module unload python 2>/dev/null
     module unload cudatoolkit 2>/dev/null
     module load cudatoolkit/12.2
     module load python/3.11
-    source larnd.venv/bin/activate
+    source "$venvDir"/bin/activate
 else
     source ../util/reload_in_container.inc.sh
     if [[ -n "$ARCUBE_USE_LOCAL_PRODUCT" && "$ARCUBE_USE_LOCAL_PRODUCT" != "0" ]]; then
-        # Allow overriding the container's version
-        source larnd.venv/bin/activate
+        # Allow overriding the container's /opt/venv
+        source "$venvDir"/bin/activate
     fi
 fi
 
@@ -19,13 +22,15 @@ source ../util/init.inc.sh
 
 inDir=${ARCUBE_OUTDIR_BASE}/run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
 inName=$ARCUBE_CONVERT2H5_NAME.$globalIdx
-inFile=$inDir/EDEPSIM_H5/${inName}.EDEPSIM.hdf5
+inFile=$(realpath $inDir/EDEPSIM_H5/${inName}.EDEPSIM.hdf5)
 
 larndOutDir=$outDir/LARNDSIM
 mkdir -p "$larndOutDir"
 
-outFile=$larndOutDir/${outName}.LARNDSIM.hdf5
+outFile=$(realpath $larndOutDir/${outName}.LARNDSIM.hdf5)
 rm -f "$outFile"
+
+cd "$ARCUBE_INSTALL_DIR"
 
 [ -z "$ARCUBE_LARNDSIM_DETECTOR_PROPERTIES" ] && export ARCUBE_LARNDSIM_DETECTOR_PROPERTIES="larnd-sim/larndsim/detector_properties/2x2.yaml"
 [ -z "$ARCUBE_LARNDSIM_PIXEL_LAYOUT" ] && export ARCUBE_LARNDSIM_PIXEL_LAYOUT="larnd-sim/larndsim/pixel_layouts/multi_tile_layout-2.4.16.yaml"
