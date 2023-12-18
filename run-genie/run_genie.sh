@@ -5,7 +5,7 @@ source ../util/init.inc.sh
 
 dk2nuAll=("$ARCUBE_DK2NU_DIR"/*.dk2nu)
 dk2nuCount=${#dk2nuAll[@]}
-dk2nuIdx=$((globalIdx % dk2nuCount))
+dk2nuIdx=$((ARCUBE_INDEX % dk2nuCount))
 dk2nuFile=${dk2nuAll[$dk2nuIdx]}
 echo "dk2nuIdx is $dk2nuIdx"
 echo "dk2nuFile is $dk2nuFile"

@@ -15,11 +15,15 @@ baseDir=$(realpath "$PWD"/..)
 seed=$((1 + ARCUBE_INDEX))
 echo "Seed is $seed"
 
+# NOTE: ARCUBE_INDEX is a "number" while globalIdx is the zero-padded string
+# representation of that number. Don't do math with globalIdx! Bash may parse it
+# as an octal number.
+
 globalIdx=$(printf "%05d" "$ARCUBE_INDEX")
 echo "globalIdx is $globalIdx"
 
 runOffset=${ARCUBE_RUN_OFFSET:-0}
-runNo=$((globalIdx + runOffset))
+runNo=$((ARCUBE_INDEX + runOffset))
 echo "runNo is $runNo"
 
 # Default to the root of the 2x2_sim repo (but ideally this should be set to
@@ -32,7 +36,7 @@ stepname=$(basename "$PWD")
 outDir=$ARCUBE_OUTDIR_BASE/${stepname}/output/$ARCUBE_OUT_NAME
 outName=$ARCUBE_OUT_NAME.$globalIdx
 echo "outName is $outName"
-mkdr -p "$outDir"
+mkdir -p "$outDir"
 
 timeFile=$outDir/TIMING/$outName.time
 mkdir -p "$(dirname "$timeFile")"

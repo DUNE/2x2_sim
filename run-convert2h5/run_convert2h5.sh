@@ -15,10 +15,10 @@ if [[ "$NERSC_HOST" == "cori" ]]; then
 fi
 
 if [[ -n "$ARCUBE_SPILL_NAME" ]]; then
-    inName=$ARCUBE_SPILL_NAME.$(printf "%05d" "$globalIdx")
+    inName=$ARCUBE_SPILL_NAME.$globalIdx
     inFile=$ARCUBE_OUTDIR_BASE/run-spill-build/output/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/${inName}.EDEPSIM_SPILLS.root
 else
-    inName=$ARCUBE_SINGLE_NAME.$(printf "%05d" "$globalIdx")
+    inName=$ARCUBE_SINGLE_NAME.$globalIdx
     inFile=$ARCUBE_OUTDIR_BASE/run-edep-sim/output/${ARCUBE_SINGLE_NAME}/EDEPSIM/${inName}.EDEPSIM.root
 fi
 

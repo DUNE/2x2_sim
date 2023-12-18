@@ -20,7 +20,7 @@ fi
 source ../util/init.inc.sh
 
 inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/output/$ARCUBE_IN_NAME
-inName=$ARCUBE_IN_NAME.$(printf "%05d" "$globalIdx")
+inName=$ARCUBE_IN_NAME.$globalIdx
 inFile=$(realpath $inDir/LARNDSIM/${inName}.LARNDSIM.hdf5)
 
 flowOutDir=$outDir/FLOW
