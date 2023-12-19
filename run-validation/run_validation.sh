@@ -18,15 +18,6 @@ edepFile=$edepDir/${ARCUBE_EDEP_NAME}.${globalIdx}.EDEPSIM.hdf5
 larndFile=$larndDir/${ARCUBE_LARND_NAME}.${globalIdx}.LARNDSIM.hdf5
 flowFile=$flowDir/${ARCUBE_FLOW_NAME}.${globalIdx}.FLOW.hdf5
 
-timeFile=$outDir/TIMING/${outName}.time
-mkdir -p "$(dirname "$timeFile")"
-timeProg=/usr/bin/time
-
-run() {
-    echo RUNNING "$@"
-    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
-}
-
 codeDir=$PWD
 
 plotOutDir=$outDir/PLOTS
