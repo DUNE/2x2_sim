@@ -34,4 +34,9 @@ else
     keepAllDets=""
 fi
 
+# After going from ROOT 6.14.06 to 6.28.06, apparently we need to point CPATH to
+# the edepsim-io headers. Otherwise convert2h5 fails. (This "should" be set in
+# the container already.)
+export CPATH=$EDEPSIM/include/EDepSim:$CPATH
+
 run ./convert_edepsim_roottoh5.py --input_file "$inFile" --output_file "$outFile" "$keepAllDets"
