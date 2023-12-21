@@ -29,6 +29,7 @@ def main(flow_file):
     with PdfPages(output_pdf_name) as output:
 
         hits = flow_h5['/charge/calib_prompt_hits/data']
+        final_hits = flow_h5['/charge/calib_final_hits/data']
         # optionally, use this mask to select a time window and key in on a
         # subset of spills
         spill_mask = (hits['ts_pps'] > 0) & (hits['ts_pps'] < 9999999999999)
@@ -134,8 +135,10 @@ def main(flow_file):
         output.savefig()
         plt.close()
 
-        # get the packet data and create some masks:
+        # get the packet data, references to calib_prompt_hits, and create some masks:
         packets = flow_h5['/charge/packets/data']
+        packets_hits_ref = flow_h5['charge/calib_prompt_hits/ref/charge/packets/ref']
+        packets_hits = packets[:][packets_hits_ref[:,1]]
         packet_index = np.array(list(range(0,len(packets))))
         data_packet_mask = packets['packet_type'] == 0
         trig_packet_mask = packets['packet_type'] == 7
@@ -246,6 +249,114 @@ def main(flow_file):
         #ax4.set_ylabel('N hits')
         #ax4.legend()
 
+        # Add if statement for io_group hit dataset validations for backwards compatibility
+        if 'io_group' in list(hits.dtype.names):
+            fig = plt.figure(figsize=(10,8), layout='constrained')
+            gs = fig.add_gridspec(2,1)
+            ax1 = fig.add_subplot(gs[0,0])
+            ax2 = fig.add_subplot(gs[1,0])
+
+            # Histograms of io_group in hits and packet datasets
+            ax1.set_ylim(0,30000)
+            ax1.hist(packets_hits['io_group'], 
+                     label="packets", bins=8, 
+                     alpha=1.0, color='#377eb8', 
+                     edgecolor='#377eb8', linestyle='-')
+            ax1.hist(hits['io_group'], 
+                     label="calib_prompt_hits", bins=8, 
+                     alpha=1.0, color='#ff7f00', 
+                     edgecolor='#ff7f00', linestyle='-', 
+                     linewidth=1.5,fill=False)
+            ax1.hist(final_hits['io_group'], 
+                     label="calib_final_hits", bins=8, 
+                     alpha=0.8, color='#4daf4a', 
+                     edgecolor='#4daf4a', linestyle='--', 
+                     linewidth=1.5,fill=False)
+            ax1.set_title("Hits per IO Group Distribution in Different Datasets")
+            ax1.set_xlabel("IO Group")
+            ax1.set_xlim(1,8)
+            ax1.set_ylabel("Hits / IO Group")
+            ax1.legend()
+
+            p_iog, p_iog_bins = np.histogram(hits['io_group'], bins=8)
+            f_iog, f_iog_bins = np.histogram(final_hits['io_group'], bins=8)
+            iog_resid = 100*(p_iog - f_iog)/p_iog
+            mean_iog_resid = np.mean(iog_resid)
+            final_prompt_resid = 100*(len(hits['io_group']) - len(final_hits['io_group']))/len(hits['io_group'])
+
+            ax2.set_ylim(0,np.max(iog_resid)+10)
+            ax2.set_xlim(1,8)
+            ax2.plot(np.arange(80)-5, np.ones(80)*mean_iog_resid, \
+                     linestyle='--', color='blue', \
+                     label="Mean % Decr. over IO Groups ("+str(round(mean_iog_resid, 1))+"%)")
+            ax2.plot(np.arange(80)-5, np.ones(80)*final_prompt_resid, \
+                     linestyle='--', color='black', \
+                     label="Total % Decr. Prompt to Final Hits ("+str(round(final_prompt_resid, 1))+"%)")
+            ax2.hist(np.arange(8)+1.0, weights=iog_resid, bins=8,
+                    alpha=1.0, color='#f781bf', 
+                    edgecolor='#f781bf', linestyle='-', 
+                    linewidth=1.5)
+            ax2.set_title("Percent Decrease in Hits per IO Group from Prompt to Final Hits")
+            ax2.set_xlabel("IO Group")
+            ax2.set_ylabel("Percent Decrease in Hits / IO Group")
+            ax2.legend()
+
+            output.savefig()
+            plt.close()
+
+        # Add if statement for io_channel hit dataset validations for backwards compatibility
+        if 'io_channel' in list(hits.dtype.names):
+            fig = plt.figure(figsize=(10,8), layout='constrained')
+            gs = fig.add_gridspec(2,1)
+            ax1 = fig.add_subplot(gs[0,0])
+            ax2 = fig.add_subplot(gs[1,0])
+
+            # Histograms of io_channel in hits datasets
+            ax1.set_ylim(0,12000)
+            ax1.set_xlim(1,32)
+            ax1.hist(packets_hits['io_channel'], 
+                     label="packets", bins=32, 
+                     alpha=1.0, color='#377eb8', 
+                     edgecolor='#377eb8', linestyle='-')
+            ax1.hist(hits['io_channel'], 
+                     label="calib_prompt_hits", bins=32, 
+                     alpha=1.0, color='#ff7f00', 
+                     edgecolor='#ff7f00', linestyle='-', 
+                     linewidth=1.5,fill=False)
+            ax1.hist(final_hits['io_channel'], 
+                     label="calib_final_hits", bins=32, 
+                     alpha=0.8, color='#4daf4a', 
+                     edgecolor='#4daf4a', linestyle='--', 
+                     linewidth=1.5,fill=False)
+            ax1.set_title("Hits per IO Channel Distribution in Different Datasets")
+            ax1.set_xlabel("IO Channel")
+            ax1.set_ylabel("Hits / IO Channel")
+            ax1.legend()
+
+            p_io_channel, p_io_channel_bins = np.histogram(hits['io_channel'], bins=32)
+            f_io_channel, f_io_channel_bins = np.histogram(final_hits['io_channel'], bins=32)
+            io_channel_resid = 100* (p_io_channel - f_io_channel)/p_io_channel
+            mean_io_channel_resid = np.mean(io_channel_resid)
+
+            ax2.set_ylim(0,np.max(io_channel_resid)+10)
+            ax2.set_xlim(1,32)
+            ax2.plot(np.arange(80)-5, np.ones(80)*mean_io_channel_resid, \
+                     linestyle='--', color='blue', \
+                     label="Mean % Decr. over IO Channels ("+str(round(mean_io_channel_resid, 1))+"%)")
+            ax2.plot(np.arange(80)-5, np.ones(80)*final_prompt_resid, \
+                     linestyle='--', color='black', \
+                     label="Total % Decr. Prompt to Final Hits ("+str(round(final_prompt_resid, 1))+"%)")
+            ax2.hist(np.arange(32)+1.0, weights=io_channel_resid, bins=32,
+                     alpha=1.0, color='#f781bf', 
+                     edgecolor='#f781bf', linestyle='-', 
+                     linewidth=1.5)
+            ax2.set_title("Percent Decrease in Hits per IO Channel from Prompt to Final Hits")
+            ax2.set_xlabel("IO Channel")
+            ax2.set_ylabel("Percent Decrease in Hits / IO Channel")
+            ax2.legend()
+
+            output.savefig()
+            plt.close()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
