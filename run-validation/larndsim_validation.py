@@ -42,18 +42,49 @@ def main(sim_file):
         other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask | rollover_packet_mask)
 
         ### Plot time structure of packets: 
-        plt.plot(packets['timestamp'][data_packet_mask],packet_index[data_packet_mask],'o',label='data packets',linestyle='None')
-        plt.plot(packets['timestamp'][trig_packet_mask],packet_index[trig_packet_mask],'o',label='lrs triggers',linestyle='None')
-        plt.plot(packets['timestamp'][sync_packet_mask],packet_index[sync_packet_mask],'o',label='PPS packets',linestyle='None')
-        plt.plot(packets['timestamp'][other_packet_mask],packet_index[other_packet_mask],'o',label='other',linestyle='None')
-        plt.plot(packets['timestamp'][rollover_packet_mask],packet_index[rollover_packet_mask],'o',label='rollover packets',linestyle='None')
-        plt.xlabel('timestamp')
-        plt.ylabel('packet index')
+        fig = plt.figure(figsize=(10,10))
+        gs = fig.add_gridspec(ncols=1,nrows=8)
+        fig.subplots_adjust(left=0.075,bottom=0.075,wspace=None, hspace=0.)
+        ax = []
+        for iog in range(8):
+            if iog==0: ax.append(fig.add_subplot(gs[iog,0]))
+            else: ax.append(fig.add_subplot(gs[iog,0],sharex=ax[0]))
+            iog_mask = packets['io_group'] == iog+1
+            temp_mask = np.logical_and(iog_mask,data_packet_mask)
+            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='data packets',linestyle='None',ms=2)
+            temp_mask = np.logical_and(iog_mask,trig_packet_mask)
+            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='lrs triggers',linestyle='None',ms=2)
+            temp_mask = np.logical_and(iog_mask,sync_packet_mask)
+            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='PPS packets',linestyle='None',ms=2)
+            temp_mask = np.logical_and(iog_mask,other_packet_mask)
+            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='other',linestyle='None',ms=2)
+            temp_mask = np.logical_and(iog_mask,rollover_packet_mask)
+            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='rollover packets',linestyle='None',ms=2)
+            ax[iog].grid()
+            temp_ax = ax[iog].twinx()
+            temp_ax.set_ylabel('io_group = '+str(iog+1))
+            temp_ax.tick_params(labelright=False)
+            temp_ax.tick_params(axis='y',rotation=180)
+
+        for i in range(0,7,1): ax[i].tick_params(labelbottom=False)
+        ax[7].set_xlabel('packet index',fontsize=10) 
+        ax[3].set_ylabel('packet timestamp',fontsize=10)
+        output.savefig()
+        plt.close()
+
+        plt.plot(packet_index[data_packet_mask],packets['timestamp'][data_packet_mask],'o',label='data packets',linestyle='None',ms=1)
+        plt.plot(packet_index[trig_packet_mask],packets['timestamp'][trig_packet_mask],'o',label='lrs triggers',linestyle='None',ms=1)
+        plt.plot(packet_index[sync_packet_mask],packets['timestamp'][sync_packet_mask],'o',label='PPS packets',linestyle='None',ms=1)
+        plt.plot(packet_index[other_packet_mask],packets['timestamp'][other_packet_mask],'o',label='other',linestyle='None',ms=1)
+        plt.plot(packet_index[rollover_packet_mask],packets['timestamp'][rollover_packet_mask],'o',label='rollover packets',linestyle='None',ms=1)
+        plt.ylabel('timestamp')
+        plt.xlabel('packet index')
+        plt.xlim([0,10000])
         plt.legend()
         output.savefig()
         plt.close()
 
-        plt.hist(packets['timestamp'],bins=100)
+        plt.hist(packets['timestamp'][data_packet_mask],bins=100)
         plt.xlabel('timestamp')
         output.savefig()
         plt.close()
@@ -103,6 +134,7 @@ def main(sim_file):
     
             event_IDs = []
             eventID = tracks['event_id'] # eventIDs associated to each track
+            #track_id_assn = mc_packets_assn['segment_ids'] # track indices corresponding to each packet
             track_id_assn = mc_packets_assn['track_ids'] # track indices corresponding to each packet
 
             # Loop over each packet
