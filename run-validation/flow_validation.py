@@ -15,11 +15,16 @@ SPILL_PERIOD = 1.2e7 # units = ticks
 def main(flow_file):
 
     flow_h5 = h5py.File(flow_file,'r')
+    plt.rcParams["figure.figsize"] = (10,8)
+
     print('\n----------------- File content -----------------')
     print('File:',flow_file)
     print('Keys in file:',list(flow_h5.keys()))
     for key in flow_h5.keys():
         print('Number of',key,'entries in file:', len(flow_h5[key]))
+        for key2 in flow_h5[key].keys():
+            full_key = key+'/'+key2+'/data'
+            print('  ** ',full_key,'entries in file:', len(flow_h5[full_key]))
     print('------------------------------------------------\n')
 
     output_pdf_name = flow_file.split('.h5')[0]+'_validations.pdf'
@@ -30,9 +35,6 @@ def main(flow_file):
 
         hits = flow_h5['/charge/calib_prompt_hits/data']
         final_hits = flow_h5['/charge/calib_final_hits/data']
-        # optionally, use this mask to select a time window and key in on a
-        # subset of spills
-        spill_mask = (hits['ts_pps'] > 0) & (hits['ts_pps'] < 9999999999999)
 
         ### Event display
 
@@ -41,29 +43,135 @@ def main(flow_file):
         ax = fig.add_subplot(projection='3d')
         ax.set_facecolor('none')
         fig.tight_layout()        
-        dat = ax.scatter(hits[spill_mask]['z'],hits[spill_mask]['x'],
-                   hits[spill_mask]['y'],c=hits[spill_mask]['Q'],
-                   s=3,cmap='viridis',norm=mlp.colors.LogNorm())
+        dat = ax.scatter(hits['z'],hits['x'],
+                   hits['y'],c=hits['Q'],
+                   s=1,cmap='viridis',norm=mlp.colors.LogNorm())
                    #norm=mpl.colors.LogNorm())#, cmap='Greys')
         fig.colorbar(dat,ax=ax,label="detected charge",shrink=0.5)
-        ax.set_title("edep-sim + larnd-sim + proto_nd_flow",fontsize=20)
+        ax.set_title("charge hits",fontsize=20)
         ax.set_xlabel('z [cm]')
         ax.set_ylabel('x [cm]')
         ax.set_zlabel('y [cm]')
+        #ax.set_xlim([-65.,65])
+        #ax.set_ylim([-65.,65])
+        #ax.set_zlim([-65.,65])
+        del ax, fig
+        output.savefig()
+        plt.close()
+        # 2D hit projections
+        fig = plt.figure(figsize=(10,6))
+        gs  = fig.add_gridspec(1,3)
+        ax1 = fig.add_subplot(gs[0,0],aspect=1.0)
+        ax2 = fig.add_subplot(gs[0,1],aspect=1.0)
+        ax3 = fig.add_subplot(gs[0,2],aspect=1.0)
+
+        for iog in range(1,9,1):
+            iog_mask = hits['io_group'] == iog
+            iog_hits = hits[iog_mask]      
+            ax1.scatter(iog_hits['z'],iog_hits['y'],s=0.5,alpha=0.1,label='IO Group'+str(iog))
+            ax1.set_xlabel(r'z [cm]')
+            ax1.set_ylabel(r'y [cm]')
+
+            ax2.scatter(iog_hits['x'],iog_hits['z'],s=0.5,alpha=0.1)#,label='IO Group'+str(iog))
+            ax2.set_xlabel(r'x [cm]')
+            ax2.set_ylabel(r'z [cm]')
+
+            ax3.scatter(iog_hits['x'],iog_hits['y'],s=0.5,alpha=0.1)#,label='IO Group'+str(iog))
+            ax3.set_xlabel(r'x [cm]')
+            ax3.set_ylabel(r'y [cm]')
+
+        leg = fig.legend(bbox_to_anchor=(0.2, 0.8), loc='lower left', ncols=4, markerscale=10.,fontsize=13)
+        for lh in leg.legend_handles:
+            lh.set_alpha(1)
+        plt.tight_layout()
+        output.savefig()
+        plt.close()
+
+        ### Hit level 1D position distributions
+        fig = plt.figure(figsize=(10,10),layout="constrained")
+        gs = fig.add_gridspec(2,2)
+        ax_x = fig.add_subplot(gs[0,0])
+        ax_y = fig.add_subplot(gs[0,1])
+        ax_z = fig.add_subplot(gs[1,0])
+        #fig.title('/charge/calib_prompt_hits/data')
+
+        ax_z.hist(hits['z'],bins=298) # assuming hits at min/max z, each bin is approx 1 pixel = 0.434 cm
+        ax_z.set_xlabel('z [cm]',fontsize=16)
+        ax_z.set_ylabel('number of hits per bin',fontsize=16)
+        ax_z.set_yscale('log')
+        ax_z.set_ylim([1,2e3])
+
+        ax_y.hist(hits['y'],bins=287) # assuming hits at min/max y, each bin is approx 1 pixel = 0.434 cm
+        ax_y.set_xlabel('y [cm]',fontsize=16)
+        ax_y.set_ylabel('number of hits per bin',fontsize=16)
+        ax_y.set_yscale('log')
+        ax_y.set_ylim([1,2e3])
+
+        ax_x.hist(hits['x'],bins=256) # assuming hits at min/max x, each bin is approx 0.5 cm
+        ax_x.set_xlabel('x [cm]',fontsize=16)
+        ax_x.set_ylabel('number of hits per bin',fontsize=16)
+        ax_x.set_yscale('log')
+        ax_x.set_ylim([1,2e3])
+        output.savefig()
+        plt.close()
+
+        # 3D - "event" spills
+        fig = plt.figure(figsize=(10,10),layout="constrained")
+        ax = fig.add_subplot(projection='3d')
+        ax.set_facecolor('none')
+        n_evts = len(flow_h5['charge/events/ref/charge/calib_final_hits/ref_region'])
+        io_group_contrib = np.zeros(shape=(n_evts,8))
+        for a in range(n_evts):
+            hit_ref_slice = flow_h5['charge/events/ref/charge/calib_final_hits/ref_region'][a]
+            spill_hits = final_hits[hit_ref_slice[0]:hit_ref_slice[1]]
+            event_charge = np.sum(spill_hits['Q'])
+            for iog in range(8):
+                iog_mask = spill_hits['io_group'] == (iog+1)
+                iog_hits = spill_hits[iog_mask]
+                iog_evt_charge = 0.
+                if len(iog_hits) > 0:
+                    iog_evt_charge = np.sum(iog_hits['Q'])
+                io_group_contrib[a][iog] = float(iog_evt_charge)/float(event_charge)
+            dat = ax.scatter(spill_hits['z'],spill_hits['x'],
+                       spill_hits['y'],c=spill_hits['Q'],
+                       s=1,cmap='viridis',norm=mlp.colors.LogNorm())
+        ax.set_title(f"Hits in charge events",fontsize=24)
+        ax.set_xlabel('z [cm]',fontsize=16)
+        ax.set_ylabel('x [cm]',fontsize=16)
+        ax.set_zlabel('y [cm]',fontsize=16)
+        ax.set_xlim([-65.,65])
+        ax.set_ylim([-65.,65])
+        ax.set_zlim([-65.,65])
+        output.savefig()
+        plt.close()
+
+        # io_group contribution for each spill
+        fig = plt.figure(figsize=(10,8))
+        ax = fig.add_subplot()
+        ax.set_facecolor('none')
+        bottom = np.zeros(n_evts)
+        for iog in range(8):
+            iog_cont = (io_group_contrib[:,iog:(iog+1)]).flatten()
+            ax.bar(range(n_evts), iog_cont, bottom=bottom, label='IO Group '+str(iog+1), width=1.0)
+            bottom += iog_cont
+        ax.legend(ncols=4,fontsize=13)
+        ax.set_xlabel('charge event number',fontsize=18)
+        ax.set_ylabel('io_group contribution',fontsize=18)
+        ax.set_ylim([-0.1,1.5])
         del ax, fig
         output.savefig()
         plt.close()
 
-
         # 3D - several individual spills
-        fig = plt.figure(figsize=(10,10),layout="tight")
+        fig = plt.figure(figsize=(10,10),layout="constrained")
         gs = fig.add_gridspec(3,3)
         ax = []
         for a in range(9):
+            hit_ref_slice = flow_h5['charge/events/ref/charge/calib_final_hits/ref_region'][a]
+            spill_hits = final_hits[hit_ref_slice[0]:hit_ref_slice[1]]
             ax.append(fig.add_subplot(gs[a//3,a%3],projection='3d'))
-            spill_mask = (hits['ts_pps'] > ((a+1)-0.5)*SPILL_PERIOD) & (hits['ts_pps'] < ((a+1)+0.5)*SPILL_PERIOD)
-            dat = ax[a].scatter(hits[spill_mask]['z'],hits[spill_mask]['x'],
-                       hits[spill_mask]['y'],c=hits[spill_mask]['Q'],
+            dat = ax[a].scatter(spill_hits['z'],spill_hits['x'],
+                       spill_hits['y'],c=spill_hits['Q'],
                        s=1,cmap='viridis',norm=mlp.colors.LogNorm())
             #cb = fig.colorbar(dat, ax=ax[a], label="detected charge",
             #                  shrink=0.5, location='left', pad = 0.)
@@ -72,66 +180,35 @@ def main(flow_file):
             ax[a].set_xlabel('z [cm]')
             ax[a].set_ylabel('x [cm]')
             ax[a].set_zlabel('y [cm]')
+            ax[a].set_xlim([-65.,65])
+            ax[a].set_ylim([-65.,65])
+            ax[a].set_zlim([-65.,65])
         output.savefig()
         plt.close()
 
-        # 2D
-        fig = plt.figure(layout="constrained")
-        gs = fig.add_gridspec(5,3,height_ratios=[1,3,1,3,1])
-        ax1 = fig.add_subplot(gs[1,0])
-        ax2 = fig.add_subplot(gs[1,1])
-        ax3 = fig.add_subplot(gs[1,2])
-        ax4 = fig.add_subplot(gs[3,0])
-        ax5 = fig.add_subplot(gs[3,1])
-        ax6 = fig.add_subplot(gs[3,2])
-        
-        #ax1.hist2d(hits['z'],hits['y'],weights=hits['E'],bins=(300,300))
-        ax4.scatter(hits['z'],hits['y'],s=0.5,alpha=0.1)
-        ax1.set_xlabel(r'z [cm]')
-        ax1.set_ylabel(r'y [cm]')
-        ax4.set_xlabel(r'z [cm]')
-        ax4.set_ylabel(r'y [cm]')
-        #ax2.hist2d(hits['x'],hits['z'],weights=hits['E'],bins=(300,300))
-        ax5.scatter(hits['x'],hits['z'],s=0.5,alpha=0.1)
-        ax2.set_xlabel(r'x [cm]')
-        ax2.set_ylabel(r'z [cm]')
-        ax5.set_xlabel(r'x [cm]')
-        ax5.set_ylabel(r'z [cm]')
-        #ax3.hist2d(hits['x'],hits['y'],weights=hits['E'],bins=(300,300))
-        ax6.scatter(hits['x'],hits['y'],s=0.5,alpha=0.1)
-        ax3.set_xlabel(r'x [cm]')
-        ax3.set_ylabel(r'y [cm]')
-        ax6.set_xlabel(r'x [cm]')
-        ax6.set_ylabel(r'y [cm]')
-        output.savefig()
-        plt.close()
 
-        ### Hit level 1D position distributions
-        plt.hist(hits['z'],bins=298) # assuming hits at min/max z, each bin is approx 1 pixel = 0.434 cm
-        plt.title('/charge/calib_prompt_hits/data')
-        plt.xlabel('z [cm]')
-        plt.ylabel('number of hits per bin')
-        plt.yscale('log')
-        plt.ylim([1,2e3])
-        output.savefig()
-        plt.close()
-
-        plt.show()
-        plt.hist(hits['y'],bins=287) # assuming hits at min/max y, each bin is approx 1 pixel = 0.434 cm
-        plt.title('/charge/calib_prompt_hits/data')
-        plt.xlabel('y [cm]')
-        plt.ylabel('number of hits per bin')
-        plt.yscale('log')
-        plt.ylim([1,2e3])
-        output.savefig()
-        plt.close()
-
-        plt.hist(hits['x'],bins=256) # assuming hits at min/max x, each bin is approx 0.5 cm
-        plt.title('/charge/calib_prompt_hits/data')
-        plt.xlabel('x [cm]')
-        plt.ylabel('number of hits per bin')
-        plt.yscale('log')
-        plt.ylim([1,2e3])
+        ### charge/event information
+        fig = plt.figure(figsize=(10,6),layout='constrained')
+        gs  = fig.add_gridspec(3,1)
+        # share x-axis = event id
+        ax1 = fig.add_subplot(gs[0,0])
+        ax2 = fig.add_subplot(gs[1,0],sharex=ax1)
+        ax3 = fig.add_subplot(gs[2,0],sharex=ax1)
+        fig.subplots_adjust(left=0.075,bottom=0.075,wspace=None, hspace=0.)
+        event_data = flow_h5['charge/events/data']
+        ax1.plot(event_data['id'],event_data['unix_ts'],linestyle='None',marker='o',ms=3)
+        ax1.set_ylabel('unix_ts',fontsize=18)
+        ax1.set_title('charge/events/data',fontsize=18)
+        ax1.grid()
+        ax2.plot(event_data['id'],event_data['ts_start'],linestyle='None',marker='o',ms=3)
+        ax2.set_ylabel('ts_start',fontsize=18)
+        ax2.grid()
+        ax3.plot(event_data['id'],event_data['nhit'],linestyle='None',marker='o',ms=3)
+        ax3.set_ylabel('nhit',fontsize=18)
+        ax3.set_xlabel('event ID',fontsize=18)
+        ax3.grid()
+        ax1.tick_params(labelbottom=False)
+        ax2.tick_params(labelbottom=False)
         output.savefig()
         plt.close()
 
