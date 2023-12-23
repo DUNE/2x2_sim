@@ -6,14 +6,10 @@ source ../util/init.inc.sh
 #Configuration file to use
 config_file="static/param.txt"
 
-echo "a"
 echo $SHIFTER_IMAGEREQUEST
 source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
-echo "b"
 setup dunesw v09_45_00_00 -q e20:prof
-echo "c"
 setup edepsim v3_2_0 -q e20:prof
-echo "b"
 
 
 #SETING UP THE CAMPAIGN PARAMETERS
