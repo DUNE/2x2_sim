@@ -26,10 +26,10 @@ fi
 
 
 #Temporary hack to run locally
-tmp_dir="/pscratch/sd/m/mkramer/out.MiniRun5"
-inDir=${tmp_dir}/run-spill-build/output/$ARCUBE_IN_NAME/EDEPSIM_SPILLS
+#tmp_dir="/pscratch/sd/m/mkramer/out.MiniRun5"
+#inDir=${tmp_dir}/run-spill-build/output/$ARCUBE_IN_NAME/EDEPSIM_SPILLS
 
-#inDir=${ARCUBE_OUTDIR_BASE}/run-spill-build/output/$ARCUBE_IN_NAME
+inDir=${ARCUBE_OUTDIR_BASE}/run-spill-build/output/$ARCUBE_IN_NAME
 inName=$ARCUBE_IN_NAME.$globalIdx
 inFile=${inName}.EDEPSIM_SPILLS.root
 
