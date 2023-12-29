@@ -4,7 +4,10 @@ source ../util/reload_in_container.inc.sh
 source ../util/init.inc.sh
 
 
+# The setup scripts return nonzero for whatever reason
+set +o errexit
 source static/setup_minerva.sh
+set -o errexit
 
 inDir=${ARCUBE_OUTDIR_BASE}/run-edep2flat/output/$ARCUBE_IN_NAME
 inName=$ARCUBE_IN_NAME.$globalIdx

@@ -7,9 +7,13 @@ source ../util/init.inc.sh
 config_file="static/param.txt"
 
 echo $SHIFTER_IMAGEREQUEST
+
+# The setup scripts return nonzero for whatever reason
+set +o errexit
 source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
 setup dunesw v09_45_00_00 -q e20:prof
 setup edepsim v3_2_0 -q e20:prof
+set -o errexit
 
 
 #SETING UP THE CAMPAIGN PARAMETERS
@@ -29,7 +33,7 @@ fi
 #tmp_dir="/pscratch/sd/m/mkramer/out.MiniRun5"
 #inDir=${tmp_dir}/run-spill-build/output/$ARCUBE_IN_NAME/EDEPSIM_SPILLS
 
-inDir=${ARCUBE_OUTDIR_BASE}/run-spill-build/output/$ARCUBE_IN_NAME
+inDir=${ARCUBE_OUTDIR_BASE}/run-spill-build/output/$ARCUBE_IN_NAME/EDEPSIM_SPILLS
 inName=$ARCUBE_IN_NAME.$globalIdx
 inFile=${inName}.EDEPSIM_SPILLS.root
 
