@@ -31,22 +31,33 @@ echo "runNo is $runNo"
 ARCUBE_OUTDIR_BASE="${ARCUBE_OUTDIR_BASE:-$PWD/..}"
 ARCUBE_OUTDIR_BASE=$(realpath "$ARCUBE_OUTDIR_BASE")
 export ARCUBE_OUTDIR_BASE
+ARCUBE_LOGDIR_BASE="${ARCUBE_LOGDIR_BASE:-$PWD/..}"
+ARCUBE_LOGDIR_BASE=$(realpath "$ARCUBE_LOGDIR_BASE")
+export ARCUBE_LOGDIR_BASE
 
 stepname=$(basename "$PWD")
+
 outDir=$ARCUBE_OUTDIR_BASE/${stepname}/output/$ARCUBE_OUT_NAME
+echo "outDir is $outDir"
 outName=$ARCUBE_OUT_NAME.$globalIdx
 echo "outName is $outName"
 mkdir -p "$outDir"
 
-timeFile=$outDir/TIMING/$outName.time
-mkdir -p "$(dirname "$timeFile")"
+logBase=$ARCUBE_LOGDIR_BASE/$stepname/$ARCUBE_OUT_NAME
+echo "logBase is $logBase"
+logDir=$logBase/LOGS
+timeDir=$logBase/TIMING
+mkdir -p "$logDir" "$timeDir"
+logFile=$logDir/$outName.log
+timeFile=$timeDir/$outName.time
+
 timeProg=/usr/bin/time
 # HACK in case we forget to include GNU time in a container
 [[ ! -e "$timeProg" ]] && timeProg=$PWD/../tmp_bin/time
 
 run() {
-    echo RUNNING "$@"
-    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
+    echo RUNNING "$@" | tee -a "$logFile"
+    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@" 2>&1 | tee -a "$logFile"
 }
 
 libpath_remove() {

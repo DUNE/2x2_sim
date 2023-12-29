@@ -23,18 +23,15 @@ echo $nEvents
 
 dstOutDir=$outDir/DST
 gaudiOutDir=$outDir/GAUDI
-logOutDir=$outDir/LOGS
 
 
 mkdir -p $dstOutDir
 mkdir -p $gaudiOutDir
-mkdir -p $logOutDir
 
 
 outFile_dst=$(realpath $dstOutDir/${outName}.dst.root)
 outFile_gaudiroot=$(realpath $gaudiOutDir/${outName}.IDODDigits.root)
 outFile_gaudihisto=$(realpath $gaudiOutDir/${outName}.Histogam.root)
-outFile_log=$(realpath $logOutDir/${outName}.log)
 
 tmpDir=$(mktemp -d)
 optionFile=$(realpath $tmpDir/${outName}.opts)
@@ -57,7 +54,7 @@ sed -i "s#histoFile#${outFile_gaudihisto}#g" $optionFile
 sed -i "s#dstFile#${outFile_dst}#g" $optionFile
 
 
-run SystemTestsApp.exe $optionFile > $outFile_log
+run SystemTestsApp.exe $optionFile
 rm $optionFile
 rmdir $tmpDir
 
