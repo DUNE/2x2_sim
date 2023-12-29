@@ -116,9 +116,10 @@ def main(sim_file):
 
         ### Plot interactions per spill
         mc_hdr = sim_h5['mc_hdr']
-        n_vertices = np.zeros(mc_hdr['event_id'].max())
+        event_ids = np.unique(mc_hdr['event_id'])
+        n_vertices = np.zeros(len(event_ids))
         for i in range(len(n_vertices)):
-            n_vertices[i] = np.count_nonzero(mc_hdr['event_id'] == i)
+            n_vertices[i] = np.count_nonzero(mc_hdr['event_id'] == event_ids[i])
         plt.title('Total interactions per spill')
         plt.xlabel('Interactions')
         plt.ylabel('Counts')
@@ -127,15 +128,14 @@ def main(sim_file):
         plt.close()
 
         ### Plot hits per event
-        tracks = sim_h5['segments']
+        segments = sim_h5['segments']
         def get_eventIDs(event_packets, mc_packets_assn):
             """Takes as input the packets and mc_packets_assn fields, and
             returns the eventIDs that deposited that energy"""
     
             event_IDs = []
-            eventID = tracks['event_id'] # eventIDs associated to each track
-            #track_id_assn = mc_packets_assn['segment_ids'] # track indices corresponding to each packet
-            track_id_assn = mc_packets_assn['track_ids'] # track indices corresponding to each packet
+            eventID = segments['event_id'] # eventIDs associated to each segment
+            segment_id_assn = mc_packets_assn['segment_ids'] # segment indices corresponding to each packet
 
             # Loop over each packet
             for ip, packet in enumerate(event_packets):
@@ -143,12 +143,12 @@ def main(sim_file):
                 if packet['packet_type'] != 0:
                     continue
                     
-                # For packet ip, get track indices that contributed to hit
-                packet_track_ids = track_id_assn[ip]
-                packet_track_ids = packet_track_ids[packet_track_ids != -1]
+                # For packet ip, get segment indices that contributed to hit
+                packet_segment_ids = segment_id_assn[ip]
+                packet_segment_ids = packet_segment_ids[packet_segment_ids != -1]
                 
-                # For track indices, get the corresponding eventID
-                packet_event_IDs = eventID[packet_track_ids]
+                # For segment indices, get the corresponding eventID
+                packet_event_IDs = eventID[packet_segment_ids]
                 
                 # Make sure that there's only one eventID corresponding to hit.
                 # In principle, a hit could come from two events. But I'll deal
@@ -410,8 +410,8 @@ def main(sim_file):
             axs3 = subfigs[3].subplots(4, 1,sharey=True,gridspec_kw={'hspace': 0})
             axs4 = subfigs[4].subplots(1, 1)
             axs5 = subfigs[5].subplots(4, 1,sharey=True,gridspec_kw={'hspace': 0})
-            ## CREATE AN EMPTY ARRAY TO AVOID RE-PLOTTING TRACKS
-            plotted_tracks = []
+            ## CREATE AN EMPTY ARRAY TO AVOID RE-PLOTTING SEGMENTS
+            plotted_segments = []
             ## SET UP LABELING AND COLOR SCHEME
             titles = ["mod. 2, io_group 3","mod. 1, io_group 1","mod. 2, io_group 4","mod. 1, io_group 2",
                       "mod. 4, io_group 7","mod. 3, io_group 5","mod. 4, io_group 8","mod. 3, io_group 6"]
@@ -424,23 +424,23 @@ def main(sim_file):
             ## ENSURE THE TIMESTAMP TURNOVER ISN'T AN ISSUE
             packet_list = packets[data_packet_mask][packet0_spillIDs==spill]
             mc_assoc = mc_packets_assn[data_packet_mask][packet0_spillIDs==spill]
-            ## MAP PACKETS TO TRACKS
+            ## MAP PACKETS TO SEGMENTS
             for ip,packet in enumerate(packet_list):
-                track_ids = mc_assoc['track_ids'][ip]
+                segment_ids = mc_assoc['segment_ids'][ip]
                 io_group = packet['io_group']
-                ## GET THE POSITION OF CHARGE TRACKS AND SAVE TO THE CORRECT IO_GROUP
-                for trackid in track_ids:
-                    if trackid >= 0 and trackid not in plotted_tracks:
-                        plotted_tracks.append(trackid)
+                ## GET THE POSITION OF CHARGE SEGMENTS AND SAVE TO THE CORRECT IO_GROUP
+                for segmentid in segment_ids:
+                    if segmentid >= 0 and segmentid not in plotted_segments:
+                        plotted_segments.append(segmentid)
                         if io_group==io_first:
-                            X = (tracks[trackid]['x_start']*10,tracks[trackid]['x_end']*10)
-                            Y = (tracks[trackid]['y_start']*10,tracks[trackid]['y_end']*10)
-                            Z = (tracks[trackid]['z_start']*10,tracks[trackid]['z_end']*10)
+                            X = (segments[segmentid]['x_start']*10,segments[segmentid]['x_end']*10)
+                            Y = (segments[segmentid]['y_start']*10,segments[segmentid]['y_end']*10)
+                            Z = (segments[segmentid]['z_start']*10,segments[segmentid]['z_end']*10)
                             axs1.plot(Z,Y,c=colors[ios.index(io_first)],alpha=1,lw=1.5)
                         if io_group==io_second:
-                            X = (tracks[trackid]['x_start']*10,tracks[trackid]['x_end']*10)
-                            Y = (tracks[trackid]['y_start']*10,tracks[trackid]['y_end']*10)
-                            Z = (tracks[trackid]['z_start']*10,tracks[trackid]['z_end']*10)
+                            X = (segments[segmentid]['x_start']*10,segments[segmentid]['x_end']*10)
+                            Y = (segments[segmentid]['y_start']*10,segments[segmentid]['y_end']*10)
+                            Z = (segments[segmentid]['z_start']*10,segments[segmentid]['z_end']*10)
                             axs4.plot(Z,Y,c=colors[ios.index(io_second)],alpha=1,lw=1.5)
                         else:
                             pass
