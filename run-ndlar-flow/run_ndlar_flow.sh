@@ -17,7 +17,7 @@ else
     fi
 fi
 
-inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/output/$ARCUBE_IN_NAME
+inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/$ARCUBE_IN_NAME
 inName=$ARCUBE_IN_NAME.$globalIdx
 inFile=$(realpath $inDir/LARNDSIM/${inName}.LARNDSIM.hdf5)
 

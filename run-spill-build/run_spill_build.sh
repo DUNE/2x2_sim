@@ -7,8 +7,8 @@ nuName=$ARCUBE_NU_NAME.$globalIdx
 rockName=$ARCUBE_ROCK_NAME.$globalIdx
 echo "outName is $outName"
 
-# inBaseDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output
-inBaseDir=$ARCUBE_OUTDIR_BASE/run-hadd/output
+# inBaseDir=$ARCUBE_OUTDIR_BASE/run-edep-sim
+inBaseDir=$ARCUBE_OUTDIR_BASE/run-hadd
 nuInDir=$inBaseDir/$ARCUBE_NU_NAME
 rockInDir=$inBaseDir/$ARCUBE_ROCK_NAME
 

@@ -9,7 +9,7 @@ set +o errexit
 source static/setup_minerva.sh
 set -o errexit
 
-inDir=${ARCUBE_OUTDIR_BASE}/run-edep2flat/output/$ARCUBE_IN_NAME
+inDir=${ARCUBE_OUTDIR_BASE}/run-edep2flat/$ARCUBE_IN_NAME
 inName=$ARCUBE_IN_NAME.$globalIdx
 inFile=$(realpath $inDir/FLAT/${inName}.EDEPSIM_SPILLS.FLAT.root)
 

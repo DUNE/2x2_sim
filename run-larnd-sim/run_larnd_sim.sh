@@ -21,7 +21,7 @@ else
     fi
 fi
 
-inDir=${ARCUBE_OUTDIR_BASE}/run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
+inDir=${ARCUBE_OUTDIR_BASE}/run-convert2h5/$ARCUBE_CONVERT2H5_NAME
 inName=$ARCUBE_CONVERT2H5_NAME.$globalIdx
 inFile=$(realpath $inDir/EDEPSIM_H5/${inName}.EDEPSIM.hdf5)
 

@@ -42,7 +42,7 @@ export ARCUBE_INSTALL_DIR=${ARCUBE_INSTALL_DIR:-$PWD}
 
 stepname=$(basename "$PWD")
 
-outDir=$ARCUBE_OUTDIR_BASE/${stepname}/output/$ARCUBE_OUT_NAME
+outDir=$ARCUBE_OUTDIR_BASE/${stepname}/$ARCUBE_OUT_NAME
 echo "outDir is $outDir"
 outName=$ARCUBE_OUT_NAME.$globalIdx
 echo "outName is $outName"

@@ -3,7 +3,7 @@
 source ../util/reload_in_container.inc.sh
 source ../util/init.inc.sh
 
-inDir=${ARCUBE_OUTDIR_BASE}/run-edep-sim/output/$ARCUBE_IN_NAME
+inDir=${ARCUBE_OUTDIR_BASE}/run-edep-sim/$ARCUBE_IN_NAME
 tmpfile=$(mktemp)
 tmpfileghep=$(mktemp)
 
@@ -14,7 +14,7 @@ for i in $(seq 0 $((ARCUBE_HADD_FACTOR - 1))); do
     if [[ "$ARCUBE_USE_GHEP_POT" == "1" ]]; then
         if [ -f "$inFile" ]; then
             ghepInName=${inName/.edep./.genie.}
-            ghepFile=${ARCUBE_OUTDIR_BASE}/run-genie/output/${ghepInName}/GENIE/${ghepInName}.${globalIdx}.GHEP.root
+            ghepFile=${ARCUBE_OUTDIR_BASE}/run-genie/${ghepInName}/GENIE/${ghepInName}.${globalIdx}.GHEP.root
             echo "$ghepFile" >> "$tmpfileghep"
         else
             continue
