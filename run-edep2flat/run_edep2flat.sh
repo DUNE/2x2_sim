@@ -53,7 +53,7 @@ run python3 convert_edepsim_flatroot.py --offset_x "$OFFSETX" \
     --run_number $globalIdx
 
 
-flatOutDir=$outDir/FLAT
+flatOutDir=$outDir/FLAT/$subDir
 mkdir -p $flatOutDir
 echo $flatOutDir
 mv "$tmpOutDir/$outFile" "$flatOutDir"

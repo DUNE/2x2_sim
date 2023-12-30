@@ -51,10 +51,12 @@ mkdir -p "$outDir"
 tmpOutDir=$ARCUBE_OUTDIR_BASE/tmp/$stepname/$ARCUBE_OUT_NAME
 mkdir -p "$tmpOutDir"
 
+subDir=$(printf "%07d" $((ARCUBE_INDEX / 1000 * 1000)))
+
 logBase=$ARCUBE_LOGDIR_BASE/$stepname/$ARCUBE_OUT_NAME
 echo "logBase is $logBase"
-logDir=$logBase/LOGS
-timeDir=$logBase/TIMING
+logDir=$logBase/LOGS/$subDir
+timeDir=$logBase/TIMING/$subDir
 mkdir -p "$logDir" "$timeDir"
 logFile=$logDir/$outName.log
 timeFile=$timeDir/$outName.time

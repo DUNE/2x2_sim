@@ -10,9 +10,9 @@ if [[ "$ARCUBE_RUNTIME" == "NONE" ]]; then
     source validation.venv/bin/activate
 fi
 
-edepDir=${ARCUBE_OUTDIR_BASE}/run-convert2h5/${ARCUBE_EDEP_NAME}/EDEPSIM_H5
-larndDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/${ARCUBE_LARND_NAME}/LARNDSIM
-flowDir=${ARCUBE_OUTDIR_BASE}/run-ndlar-flow/${ARCUBE_FLOW_NAME}/FLOW
+edepDir=${ARCUBE_OUTDIR_BASE}/run-convert2h5/${ARCUBE_EDEP_NAME}/EDEPSIM_H5/$subDir
+larndDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/${ARCUBE_LARND_NAME}/LARNDSIM/$subDir
+flowDir=${ARCUBE_OUTDIR_BASE}/run-ndlar-flow/${ARCUBE_FLOW_NAME}/FLOW/$subDir
 
 edepFile=$edepDir/${ARCUBE_EDEP_NAME}.${globalIdx}.EDEPSIM.hdf5
 larndFile=$larndDir/${ARCUBE_LARND_NAME}.${globalIdx}.LARNDSIM.hdf5
@@ -25,7 +25,7 @@ mkdir -p "$plotOutDir"
 cd "$plotOutDir"
 
 run_in() {
-    direc=$1; shift
+    direc=$1/$subDir; shift
     mkdir -p "$direc"
     pushd "$direc"
     run "$@"

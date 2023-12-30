@@ -43,5 +43,5 @@ run hadd "$outFile" "@$tmpfile"
 
 rm "$tmpfile"
 
-mkdir -p "$outDir"/EDEPSIM
-mv "$outFile" "$outDir"/EDEPSIM
+mkdir -p "$outDir/EDEPSIM/$subDir"
+mv "$outFile" "$outDir/EDEPSIM/$subDir"

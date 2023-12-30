@@ -23,5 +23,5 @@ export ARCUBE_GEOM_EDEP=$baseDir/${ARCUBE_GEOM_EDEP:-$ARCUBE_GEOM}
 run edep-sim -C -g "$ARCUBE_GEOM_EDEP" -o "$edepRootFile" -e "$nEvents" \
     <(echo "$edepCode") "$ARCUBE_EDEP_MAC"
 
-mkdir -p "$outDir"/EDEPSIM
-mv "$edepRootFile" "$outDir"/EDEPSIM
+mkdir -p "$outDir/EDEPSIM/$subDir"
+mv "$edepRootFile" "$outDir/EDEPSIM/$subDir"

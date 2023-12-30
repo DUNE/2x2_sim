@@ -54,8 +54,8 @@ rm -rf $tmpDir
 
 
 
-dstOutDir=$outDir/DST
-gaudiOutDir=$outDir/GAUDI
+dstOutDir=$outDir/DST/$subDir
+gaudiOutDir=$outDir/GAUDI/$subDir
 
 
 mkdir -p $dstOutDir

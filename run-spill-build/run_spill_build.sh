@@ -55,5 +55,5 @@ run root -l -b -q \
     -e "gSystem->Load(\"$LIBTG4EVENT_DIR/libTG4Event.so\")" \
     "overlaySinglesIntoSpillsSorted.C(\"$nuInFile\", \"$rockInFile\", \"$spillFile\", $ARCUBE_INDEX, $ARCUBE_NU_POT, $ARCUBE_ROCK_POT, $ARCUBE_SPILL_POT, $ARCUBE_SPILL_PERIOD)"
 
-mkdir -p "$outDir/EDEPSIM_SPILLS"
-mv "$spillFile" "$outDir/EDEPSIM_SPILLS"
+mkdir -p "$outDir/EDEPSIM_SPILLS/$subDir"
+mv "$spillFile" "$outDir/EDEPSIM_SPILLS/$subDir"

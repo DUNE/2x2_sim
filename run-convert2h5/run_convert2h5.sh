@@ -37,6 +37,6 @@ export CPATH=$EDEPSIM/include/EDepSim:$CPATH
 
 run ./convert_edepsim_roottoh5.py --input_file "$inFile" --output_file "$outFile" "$keepAllDets"
 
-h5OutDir=$outDir/EDEPSIM_H5
+h5OutDir=$outDir/EDEPSIM_H5/$subDir
 mkdir -p "$h5OutDir"
 mv "$outFile" "$h5OutDir"

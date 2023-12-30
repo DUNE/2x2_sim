@@ -53,5 +53,5 @@ run h5flow -c $workflow6 $workflow7\
 run h5flow -c $workflow8\
     -i "$outFile" -o "$outFile"
 
-mkdir -p "$outDir/FLOW"
-mv "$outFile" "$outDir/FLOW"
+mkdir -p "$outDir/FLOW/$subDir"
+mv "$outFile" "$outDir/FLOW/$subDir"

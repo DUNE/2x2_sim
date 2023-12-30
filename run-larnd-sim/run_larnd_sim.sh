@@ -54,5 +54,5 @@ else
         --simulation_properties "$ARCUBE_LARNDSIM_SIMULATION_PROPERTIES"
 fi
 
-mkdir -p "$outDir"/LARNDSIM
-mv "$outFile" "$outDir"/LARNDSIM
+mkdir -p "$outDir/LARNDSIM/$subDir"
+mv "$outFile" "$outDir/LARNDSIM/$subDir"
