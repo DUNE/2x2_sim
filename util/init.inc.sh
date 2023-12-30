@@ -20,7 +20,7 @@ echo "Seed is $seed"
 # representation of that number. Don't do math with globalIdx! Bash may parse it
 # as an octal number.
 
-globalIdx=$(printf "%05d" "$ARCUBE_INDEX")
+globalIdx=$(printf "%07d" "$ARCUBE_INDEX")
 echo "globalIdx is $globalIdx"
 
 runOffset=${ARCUBE_RUN_OFFSET:-0}
