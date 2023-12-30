@@ -36,10 +36,12 @@ if [[ "$ARCUBE_USE_GHEP_POT" == "1" ]]; then
 fi
 
 
-outFile=$outDir/EDEPSIM/${outName}.EDEPSIM.root
-mkdir -p "$(dirname "$outFile")"
+outFile=$tmpOutDir/${outName}.EDEPSIM.root
 rm -f "$outFile"
 
 run hadd "$outFile" "@$tmpfile"
 
 rm "$tmpfile"
+
+mkdir -p "$outDir"/EDEPSIM
+mv "$outFile" "$outDir"/EDEPSIM

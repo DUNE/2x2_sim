@@ -43,6 +43,9 @@ outName=$ARCUBE_OUT_NAME.$globalIdx
 echo "outName is $outName"
 mkdir -p "$outDir"
 
+tmpOutDir=$ARCUBE_OUTDIR_BASE/tmp/$stepname/$ARCUBE_OUT_NAME
+mkdir -p "$tmpOutDir"
+
 logBase=$ARCUBE_LOGDIR_BASE/$stepname/$ARCUBE_OUT_NAME
 echo "logBase is $logBase"
 logDir=$logBase/LOGS

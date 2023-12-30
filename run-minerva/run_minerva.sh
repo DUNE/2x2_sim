@@ -21,17 +21,9 @@ nEvents=$(echo "$rootCode" | root -l -b "$inFile" | tail -1)
 echo $nEvents
 
 
-dstOutDir=$outDir/DST
-gaudiOutDir=$outDir/GAUDI
-
-
-mkdir -p $dstOutDir
-mkdir -p $gaudiOutDir
-
-
-outFile_dst=$(realpath $dstOutDir/${outName}.dst.root)
-outFile_gaudiroot=$(realpath $gaudiOutDir/${outName}.IDODDigits.root)
-outFile_gaudihisto=$(realpath $gaudiOutDir/${outName}.Histogam.root)
+outFile_dst=$tmpOutDir/${outName}.dst.root
+outFile_gaudiroot=$tmpOutDir/${outName}.IDODDigits.root
+outFile_gaudihisto=$tmpOutDir/${outName}.Histogam.root
 
 tmpDir=$(mktemp -d)
 optionFile=$(realpath $tmpDir/${outName}.opts)
@@ -59,3 +51,13 @@ rm $optionFile
 rmdir $tmpDir
 
 
+
+dstOutDir=$outDir/DST
+gaudiOutDir=$outDir/GAUDI
+
+
+mkdir -p $dstOutDir
+mkdir -p $gaudiOutDir
+
+mv "$outFile_dst" "$dstOutDir"
+mv "$outFile_gaudiroot" "$outFile_gaudihisto" "$gaudiOutDir"

@@ -11,8 +11,7 @@ auto t = (TTree*) _file0->Get("gRooTracker");
 std::cout << t->GetEntries() << std::endl;'
 nEvents=$(echo "$rootCode" | root -l -b "$genieFile" | tail -1)
 
-edepRootFile=$outDir/EDEPSIM/${outName}.EDEPSIM.root
-mkdir -p "$(dirname "$edepRootFile")"
+edepRootFile=$tmpOutDir/${outName}.EDEPSIM.root
 rm -f "$edepRootFile"
 
 edepCode="/generator/kinematics/rooTracker/input $genieFile
@@ -23,3 +22,6 @@ export ARCUBE_GEOM_EDEP=$baseDir/${ARCUBE_GEOM_EDEP:-$ARCUBE_GEOM}
 
 run edep-sim -C -g "$ARCUBE_GEOM_EDEP" -o "$edepRootFile" -e "$nEvents" \
     <(echo "$edepCode") "$ARCUBE_EDEP_MAC"
+
+mkdir -p "$outDir"/EDEPSIM
+mv "$edepRootFile" "$outDir"/EDEPSIM

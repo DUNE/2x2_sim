@@ -24,10 +24,7 @@ inDir=${ARCUBE_OUTDIR_BASE}/run-convert2h5/output/$ARCUBE_CONVERT2H5_NAME
 inName=$ARCUBE_CONVERT2H5_NAME.$globalIdx
 inFile=$(realpath $inDir/EDEPSIM_H5/${inName}.EDEPSIM.hdf5)
 
-larndOutDir=$outDir/LARNDSIM
-mkdir -p "$larndOutDir"
-
-outFile=$(realpath $larndOutDir/${outName}.LARNDSIM.hdf5)
+outFile=$tmpOutDir/${outName}.LARNDSIM.hdf5
 rm -f "$outFile"
 
 cd "$ARCUBE_INSTALL_DIR"
@@ -55,3 +52,6 @@ else
         --rand_seed $seed \
         --simulation_properties "$ARCUBE_LARNDSIM_SIMULATION_PROPERTIES"
 fi
+
+mkdir -p "$outDir"/LARNDSIM
+mv "$outFile" "$outDir"/LARNDSIM

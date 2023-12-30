@@ -23,10 +23,7 @@ inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/output/$ARCUBE_IN_NAME
 inName=$ARCUBE_IN_NAME.$globalIdx
 inFile=$(realpath $inDir/LARNDSIM/${inName}.LARNDSIM.hdf5)
 
-flowOutDir=$outDir/FLOW
-mkdir -p "$flowOutDir"
-
-outFile=$(realpath $flowOutDir/${outName}.FLOW.hdf5)
+outFile=$tmpOutDir/${outName}.FLOW.hdf5
 rm -f "$outFile"
 
 # charge workflows
@@ -51,3 +48,6 @@ run h5flow -c $workflow1 $workflow2 $workflow3 $workflow4 $workflow5\
 
 run h5flow -c $workflow6 $workflow7\
     -i "$inFile" -o "$outFile"
+
+mkdir -p "$outDir/FLOW"
+mv "$outFile" "$outDir/FLOW"

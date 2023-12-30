@@ -37,16 +37,7 @@ inDir=${ARCUBE_OUTDIR_BASE}/run-spill-build/output/$ARCUBE_IN_NAME/EDEPSIM_SPILL
 inName=$ARCUBE_IN_NAME.$globalIdx
 inFile=${inName}.EDEPSIM_SPILLS.root
 
-
-
-
-
-flatOutDir=$outDir/FLAT
-mkdir -p $flatOutDir
-
-
 echo $inFile
-echo $flatOutDir
 
 outFile=${outName}.EDEPSIM_SPILLS.FLAT.root
 echo $outFile
@@ -57,7 +48,12 @@ run python3 convert_edepsim_flatroot.py --offset_x "$OFFSETX" \
     --offset_z $OFFSETZ \
     --input_dir "$inDir" \
     --input_file "$inFile" \
-    --output_dir "$flatOutDir" \
+    --output_dir "$tmpOutDir" \
     --output_file "$outFile" \
     --run_number $globalIdx
 
+
+flatOutDir=$outDir/FLAT
+mkdir -p $flatOutDir
+echo $flatOutDir
+mv "$tmpOutDir/$outFile" "$flatOutDir"
