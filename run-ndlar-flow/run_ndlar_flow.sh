@@ -19,7 +19,7 @@ fi
 
 inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/$ARCUBE_IN_NAME
 inName=$ARCUBE_IN_NAME.$globalIdx
-inFile=$(realpath $inDir/LARNDSIM/${inName}.LARNDSIM.hdf5)
+inFile=$(realpath $inDir/LARNDSIM/$subDir/${inName}.LARNDSIM.hdf5)
 
 outFile=$tmpOutDir/${outName}.FLOW.hdf5
 rm -f "$outFile"

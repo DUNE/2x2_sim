@@ -11,7 +11,7 @@ set -o errexit
 
 inDir=${ARCUBE_OUTDIR_BASE}/run-edep2flat/$ARCUBE_IN_NAME
 inName=$ARCUBE_IN_NAME.$globalIdx
-inFile=$(realpath $inDir/FLAT/${inName}.EDEPSIM_SPILLS.FLAT.root)
+inFile=$(realpath $inDir/FLAT/$subDir/${inName}.EDEPSIM_SPILLS.FLAT.root)
 
 
 rootCode='

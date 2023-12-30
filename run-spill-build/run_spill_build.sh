@@ -12,8 +12,8 @@ inBaseDir=$ARCUBE_OUTDIR_BASE/run-hadd
 nuInDir=$inBaseDir/$ARCUBE_NU_NAME
 rockInDir=$inBaseDir/$ARCUBE_ROCK_NAME
 
-nuInFile=$nuInDir/EDEPSIM/${nuName}.EDEPSIM.root
-rockInFile=$rockInDir/EDEPSIM/${rockName}.EDEPSIM.root
+nuInFile=$nuInDir/EDEPSIM/$subDir/${nuName}.EDEPSIM.root
+rockInFile=$rockInDir/EDEPSIM/$subDir/${rockName}.EDEPSIM.root
 
 spillFile=$tmpOutDir/${outName}.EDEPSIM_SPILLS.root
 rm -f "$spillFile"

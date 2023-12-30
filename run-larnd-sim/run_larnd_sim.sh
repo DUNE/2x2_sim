@@ -23,7 +23,7 @@ fi
 
 inDir=${ARCUBE_OUTDIR_BASE}/run-convert2h5/$ARCUBE_CONVERT2H5_NAME
 inName=$ARCUBE_CONVERT2H5_NAME.$globalIdx
-inFile=$(realpath $inDir/EDEPSIM_H5/${inName}.EDEPSIM.hdf5)
+inFile=$(realpath $inDir/EDEPSIM_H5/$subDir/${inName}.EDEPSIM.hdf5)
 
 outFile=$tmpOutDir/${outName}.LARNDSIM.hdf5
 rm -f "$outFile"

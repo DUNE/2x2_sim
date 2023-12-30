@@ -33,7 +33,7 @@ fi
 #tmp_dir="/pscratch/sd/m/mkramer/out.MiniRun5"
 #inDir=${tmp_dir}/run-spill-build/$ARCUBE_IN_NAME/EDEPSIM_SPILLS
 
-inDir=${ARCUBE_OUTDIR_BASE}/run-spill-build/$ARCUBE_IN_NAME/EDEPSIM_SPILLS
+inDir=${ARCUBE_OUTDIR_BASE}/run-spill-build/$ARCUBE_IN_NAME/EDEPSIM_SPILLS/$subDir
 inName=$ARCUBE_IN_NAME.$globalIdx
 inFile=${inName}.EDEPSIM_SPILLS.root
 
