@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -o errexit
+set -o pipefail
 
 # NOTE: We assume that this script is "sourced" from e.g.
 # run-edep-sim/run_edep_sim.sh and that the current working directory is e.g.
