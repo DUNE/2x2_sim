@@ -3,7 +3,7 @@
 source ../util/reload_in_container.inc.sh
 source ../util/init.inc.sh
 
-genieOutPrefix=${ARCUBE_OUTDIR_BASE}/run-genie/${ARCUBE_GENIE_NAME}/GENIE/${ARCUBE_GENIE_NAME}.$globalIdx
+genieOutPrefix=${ARCUBE_OUTDIR_BASE}/run-genie/${ARCUBE_GENIE_NAME}/GTRAC/${ARCUBE_GENIE_NAME}.$globalIdx
 genieFile="$genieOutPrefix".GTRAC.root
 
 rootCode='

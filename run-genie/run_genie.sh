@@ -66,5 +66,6 @@ mv "$genieOutPrefix"."$runNo".ghep.root "$genieOutPrefix".GHEP.root
 run gntpc -i "$genieOutPrefix".GHEP.root -f rootracker \
     -o "$genieOutPrefix".GTRAC.root
 
-mkdir -p "$outDir/GENIE/$subDir"
-mv "$genieOutPrefix.GHEP.root" "$genieOutPrefix.GTRAC.root" "$outDir/GENIE/$subDir"
+mkdir -p "$outDir/GHEP/$subDir"  "$outDir/GTRAC/$subDir"
+mv "$genieOutPrefix.GHEP.root" "$outDir/GHEP/$subDir"
+mv "$genieOutPrefix.GTRAC.root" "$outDir/GTRAC/$subDir"
