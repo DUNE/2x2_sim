@@ -56,7 +56,9 @@ args_gevgen_fnal=( \
 
 run gevgen_fnal "${args_gevgen_fnal[@]}"
 
-mv genie-mcjob-"$runNo".status "$genieOutPrefix".status
+statDir=$logBase/STATUS/$subDir
+mkdir -p "$statDir"
+mv genie-mcjob-"$runNo".status "$statDir/$outName.status"
 popd
 rmdir "$tmpDir"
 
