@@ -1,23 +1,21 @@
 #!/usr/bin/env bash
 
-export ARCUBE_INSTALL_DIR=${ARCUBE_INSTALL_DIR:-.}
-venvDir="$ARCUBE_INSTALL_DIR"/flow.venv
-
-# By default, run on the host
 # By default (i.e. if ARCUBE_RUNTIME isn't set), run on the host
 if [[ -z "$ARCUBE_RUNTIME" || "$ARCUBE_RUNTIME" == "NONE" ]]; then
-    module unload python 2>/dev/null
-    module load python/3.11
-    source "$venvDir"/bin/activate
+    if [[ "$LMOD_SYSTEM_NAME" == "perlmutter" ]]; then
+        module unload python 2>/dev/null
+        module load python/3.11
+    fi
+    source ../util/init.inc.sh
+    source "$ARCUBE_INSTALL_DIR/flow.venv/bin/activate"
 else
     source ../util/reload_in_container.inc.sh
+    source ../util/init.inc.sh
     if [[ -n "$ARCUBE_USE_LOCAL_PRODUCT" && "$ARCUBE_USE_LOCAL_PRODUCT" != "0" ]]; then
         # Allow overriding the container's version
-        source "$venvDir"/bin/activate
+        source "$ARCUBE_INSTALL_DIR/flow.venv/bin/activate"
     fi
 fi
-
-source ../util/init.inc.sh
 
 inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/output/$ARCUBE_IN_NAME
 inName=$ARCUBE_IN_NAME.$globalIdx

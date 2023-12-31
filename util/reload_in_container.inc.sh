@@ -8,7 +8,9 @@ setup_cuda() {
     module load cudatoolkit/12.2
 }
 
-# assume Shifter if ARCUBE_RUNTIME is unset
+# Assume Shifter if ARCUBE_RUNTIME is unset.
+# (Individual scripts can override this; e.g. larnd-sim by default runs on the
+# host, not in Shifter)
 export ARCUBE_RUNTIME=${ARCUBE_RUNTIME:-SHIFTER}
 
 if [[ "$ARCUBE_RUNTIME" == "SHIFTER" ]]; then

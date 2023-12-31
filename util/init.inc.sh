@@ -36,6 +36,10 @@ ARCUBE_LOGDIR_BASE="${ARCUBE_LOGDIR_BASE:-$PWD/..}"
 ARCUBE_LOGDIR_BASE=$(realpath "$ARCUBE_LOGDIR_BASE")
 export ARCUBE_LOGDIR_BASE
 
+# For "local" (i.e. non-container, non-CVMFS) installs of larnd-sim etc.
+# Default to run-larnd-sim etc.
+export ARCUBE_INSTALL_DIR=${ARCUBE_INSTALL_DIR:-$PWD}
+
 stepname=$(basename "$PWD")
 
 outDir=$ARCUBE_OUTDIR_BASE/${stepname}/output/$ARCUBE_OUT_NAME
