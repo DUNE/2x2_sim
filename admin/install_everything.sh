@@ -37,3 +37,8 @@ popd
 # pushd validation
 # ./install_validation.sh
 # popd
+
+# HACK because we forgot to include GNU time in some of the containers
+# Hope you have it on your host system!
+mkdir -p tmp_bin
+cp /usr/bin/time tmp_bin/
