@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# NOTE: We're not currently running larnd-sim in a container (at least on
+# NERSC). The actual CUDA version used for larnd-sim is specified in
+# run_larnd_sim.sh etc.
 setup_cuda() {
     module unload cudatoolkit 2>/dev/null
     module load cudatoolkit/12.2

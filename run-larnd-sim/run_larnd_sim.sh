@@ -7,7 +7,9 @@ venvDir="$ARCUBE_INSTALL_DIR"/larnd.venv
 if [[ -z "$ARCUBE_RUNTIME" || "$ARCUBE_RUNTIME" == "NONE" ]]; then
     module unload python 2>/dev/null
     module unload cudatoolkit 2>/dev/null
-    module load cudatoolkit/12.2
+    ## CUDA 12.2 makes us crash :(
+    # module load cudatoolkit/12.2
+    module load cudatoolkit/11.7
     module load python/3.11
     source "$venvDir"/bin/activate
 else
