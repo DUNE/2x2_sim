@@ -46,9 +46,11 @@ sed -i "s#histoFile#${outFile_gaudihisto}#g" $optionFile
 sed -i "s#dstFile#${outFile_dst}#g" $optionFile
 
 
+# Need to be in tmpdir so that ROOTIO.xml can be created
+pushd $tmpDir
 run SystemTestsApp.exe $optionFile
-rm $optionFile
-rmdir $tmpDir
+popd
+rm -rf $tmpDir
 
 
 
