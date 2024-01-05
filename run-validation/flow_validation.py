@@ -11,6 +11,7 @@ from validation_utils import rasterize_plots
 rasterize_plots()
 
 SPILL_PERIOD = 1.2e7 # units = ticks
+RESET_PERIOD = 1.0e7 # units = ticks
 
 def main(flow_file):
 
@@ -22,9 +23,10 @@ def main(flow_file):
     print('Keys in file:',list(flow_h5.keys()))
     for key in flow_h5.keys():
         print('Number of',key,'entries in file:', len(flow_h5[key]))
-        for key2 in flow_h5[key].keys():
-            full_key = key+'/'+key2+'/data'
-            print('  ** ',full_key,'entries in file:', len(flow_h5[full_key]))
+        if isinstance(flow_h5[key],h5py.Group):
+            for key2 in flow_h5[key].keys():
+                full_key = key+'/'+key2+'/data'
+                print('  ** ',full_key,'entries in file:', len(flow_h5[full_key]))
     print('------------------------------------------------\n')
 
     output_pdf_name = flow_file.split('.h5')[0]+'_validations.pdf'
@@ -188,7 +190,7 @@ def main(flow_file):
 
 
         ### charge/event information
-        fig = plt.figure(figsize=(10,6),layout='constrained')
+        fig = plt.figure(figsize=(10,6))
         gs  = fig.add_gridspec(3,1)
         # share x-axis = event id
         ax1 = fig.add_subplot(gs[0,0])
@@ -197,6 +199,7 @@ def main(flow_file):
         fig.subplots_adjust(left=0.075,bottom=0.075,wspace=None, hspace=0.)
         event_data = flow_h5['charge/events/data']
         ax1.plot(event_data['id'],event_data['unix_ts'],linestyle='None',marker='o',ms=3)
+        ax1.set_ylim([0,500])
         ax1.set_ylabel('unix_ts',fontsize=18)
         ax1.set_title('charge/events/data',fontsize=18)
         ax1.grid()
@@ -262,7 +265,7 @@ def main(flow_file):
         ### Plot charge vs. time per io_group/tpc
         for iog in range(1,9,1):
             iog_mask = (packets['io_group'] == iog) & data_packet_mask
-            plt.hist(packets['timestamp'][iog_mask]%SPILL_PERIOD,weights=packets['dataword'][iog_mask],bins=200,label='io_group '+str(iog),alpha=0.5)
+            plt.hist(packets['timestamp'][iog_mask]%(SPILL_PERIOD%RESET_PERIOD),weights=packets['dataword'][iog_mask],bins=200,label='io_group '+str(iog),alpha=0.5)
         plt.title('/charge/packets/data')
         plt.xlabel('timestamp%spill_period')
         plt.ylabel('charge [ADC]')
@@ -272,7 +275,7 @@ def main(flow_file):
 
         # comparisons of prompt hits and final hits
         # currently correspondes to comparisons before and after merging multi-hits
-        fig = plt.figure(figsize=(12,9),layout='constrained')
+        fig = plt.figure(figsize=(10,8),layout='constrained')
         gs = fig.add_gridspec(2,3)
         ax1 = fig.add_subplot(gs[0,0])
         ax2 = fig.add_subplot(gs[0,1])
