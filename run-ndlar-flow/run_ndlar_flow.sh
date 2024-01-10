@@ -51,6 +51,9 @@ workflow5='yamls/proto_nd_flow/workflows/charge/final_calibration.yaml'
 workflow6='yamls/proto_nd_flow/workflows/light/light_event_building_mc.yaml'
 workflow7='yamls/proto_nd_flow/workflows/light/light_event_reconstruction.yaml'
 
+# charge-light trigger matching
+workflow8='yamls/proto_nd_flow/workflows/charge/charge_light_assoc.yaml'
+
 cd ndlar_flow
 
 # Ensure that the second h5flow doesn't run if the first one crashes. This also
@@ -62,3 +65,6 @@ run h5flow -c $workflow1 $workflow2 $workflow3 $workflow4 $workflow5\
 
 run h5flow -c $workflow6 $workflow7\
     -i $inFile -o $outFile
+
+run h5flow -c $workflow8\
+    -i $outFile -o $outFile
