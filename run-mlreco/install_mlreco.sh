@@ -21,6 +21,7 @@ pip3 install --upgrade pip setuptools wheel
 # pip install 'ruamel.yaml<0.18.0' # for deprecated load()
 pip install scikit-build # for SuperaAtomic
 pip install scikit-learn # for flow2supera
+pip install --upgrade torch_geometric # for mlreco
 
 git clone -b v2_2_0 https://github.com/DeepLearnPhysics/larcv2.git
 cd larcv2
@@ -63,10 +64,11 @@ unset CUDA_HOME
 pip install .
 cd ..
 
-# git clone https://github.com/DeepLearnPhysics/lartpc_mlreco3d.git
-git clone -b jw_dune_nd_lar https://github.com/chenel/lartpc_mlreco3d.git
+# commit 8103996
+# git clone -b jw_dune_nd_lar https://github.com/chenel/lartpc_mlreco3d.git
+git clone -b v2.9.2.4 https://github.com/DeepLearnPhysics/lartpc_mlreco3d.git
 
-git clone https://github.com/chenel/dune-nd-lar-reco.git
+# git clone https://github.com/chenel/dune-nd-lar-reco.git
 # the old yaml.load API has been removed
-sed -i 's/yaml.load(open(filename))/yaml.load(open(filename), yaml.Loader)/' \
-    dune-nd-lar-reco/load_helpers.py
+# sed -i 's/yaml.load(open(filename))/yaml.load(open(filename), yaml.Loader)/' \
+#     dune-nd-lar-reco/load_helpers.py
