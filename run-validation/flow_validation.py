@@ -164,6 +164,43 @@ def main(flow_file):
         output.savefig()
         plt.close()
 
+        # true spill ID vs. reconstructed charge event
+        fig = plt.figure(figsize=(10,8))
+        ax = fig.add_subplot()
+        flow_evt_to_hit = flow_h5['/charge/events/ref/charge/calib_final_hits/ref_region']
+        flow_evts = flow_h5['/charge/events/data']
+        final_hits = flow_h5['/charge/calib_final_hits/data']
+        hits_bt = flow_h5['mc_truth/calib_final_hit_backtrack/data']
+        segments = flow_h5['mc_truth/segments/data']
+
+        true_ids = []
+        reco_ids = []
+        for c_evt in flow_evts['id']:
+            hit_ref_slice = flow_evt_to_hit[c_evt]
+            hts = final_hits[hit_ref_slice[0]:hit_ref_slice[1]]
+            hts_bt = hits_bt[hit_ref_slice[0]:hit_ref_slice[1]]
+            spill_ids = {}
+            for h in hts_bt:
+                for cont in range(len(h['fraction'])):
+                    if abs(h['fraction'][cont]) > 0.0001:
+                        seg_id = h['segment_id'][cont]
+                        seg = segments[seg_id]
+                        if not seg['segment_id'] == seg_id:
+                            print('WARNING: segment id not the same as segment index!')
+                        sid = seg['event_id']
+                        if not sid in spill_ids.keys():
+                            spill_ids[sid] = 1
+                        else: spill_ids[sid] += 1
+            reco_ids.extend([c_evt]*len(spill_ids))
+            true_ids.extend(spill_ids)
+        ax.scatter(reco_ids,true_ids)
+        ax.set_xlabel('reco event ID',fontsize=18)
+        ax.set_ylabel('true event ID',fontsize=18)
+        del ax, fig
+        output.savefig()
+        plt.close()
+
+
         # 3D - several individual spills
         fig = plt.figure(figsize=(10,10),layout="constrained")
         gs = fig.add_gridspec(3,3)
