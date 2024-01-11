@@ -37,9 +37,9 @@ def main(sim_file):
         packet_index = np.array(list(range(0,len(packets))))
         data_packet_mask = packets['packet_type'] == 0
         trig_packet_mask = packets['packet_type'] == 7
-        sync_packet_mask = packets['packet_type'] == 4
-        rollover_packet_mask = (packets['packet_type'] == 6) & (packets['trigger_type'] == 83)
-        other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask | rollover_packet_mask)
+        timestamp_packet_mask = packets['packet_type'] == 4
+        sync_packet_mask = (packets['packet_type'] == 6) & (packets['trigger_type'] == 83)
+        other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask | timestamp_packet_mask)
 
         ### Plot time structure of packets: 
         fig = plt.figure(figsize=(10,10))
@@ -58,8 +58,8 @@ def main(sim_file):
             ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='PPS packets',linestyle='None',ms=2)
             temp_mask = np.logical_and(iog_mask,other_packet_mask)
             ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='other',linestyle='None',ms=2)
-            temp_mask = np.logical_and(iog_mask,rollover_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='rollover packets',linestyle='None',ms=2)
+            temp_mask = np.logical_and(iog_mask,timestamp_packet_mask)
+            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='timestamp packets',linestyle='None',ms=2)
             ax[iog].grid()
             temp_ax = ax[iog].twinx()
             temp_ax.set_ylabel('io_group = '+str(iog+1))
@@ -76,10 +76,10 @@ def main(sim_file):
         plt.plot(packet_index[trig_packet_mask],packets['timestamp'][trig_packet_mask],'o',label='lrs triggers',linestyle='None',ms=1)
         plt.plot(packet_index[sync_packet_mask],packets['timestamp'][sync_packet_mask],'o',label='PPS packets',linestyle='None',ms=1)
         plt.plot(packet_index[other_packet_mask],packets['timestamp'][other_packet_mask],'o',label='other',linestyle='None',ms=1)
-        plt.plot(packet_index[rollover_packet_mask],packets['timestamp'][rollover_packet_mask],'o',label='rollover packets',linestyle='None',ms=1)
+        plt.plot(packet_index[timestamp_packet_mask],packets['timestamp'][timestamp_packet_mask],'o',label='timestamp packets',linestyle='None',ms=1)
         plt.ylabel('timestamp')
         plt.xlabel('packet index')
-        plt.xlim([0,10000])
+        #plt.xlim([0,10000])
         plt.legend()
         output.savefig()
         plt.close()
