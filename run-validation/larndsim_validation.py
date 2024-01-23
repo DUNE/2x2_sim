@@ -135,7 +135,7 @@ def main(sim_file):
     
             event_IDs = []
             eventID = segments['event_id'] # eventIDs associated to each segment
-            segment_id_assn = mc_packets_assn['segment_ids'] # segment indices corresponding to each packet
+            segment_id_assn = mc_packets_assn['track_ids'] # segment indices corresponding to each packet
 
             # Loop over each packet
             for ip, packet in enumerate(event_packets):
@@ -426,7 +426,7 @@ def main(sim_file):
             mc_assoc = mc_packets_assn[data_packet_mask][packet0_spillIDs==spill]
             ## MAP PACKETS TO SEGMENTS
             for ip,packet in enumerate(packet_list):
-                segment_ids = mc_assoc['segment_ids'][ip]
+                segment_ids = mc_assoc['track_ids'][ip]
                 io_group = packet['io_group']
                 ## GET THE POSITION OF CHARGE SEGMENTS AND SAVE TO THE CORRECT IO_GROUP
                 for segmentid in segment_ids:
