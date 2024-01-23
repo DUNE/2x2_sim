@@ -30,14 +30,14 @@ echo "runNo is $runNo"
 # Default to the root of the 2x2_sim repo (but ideally this should be set to
 # somewhere on $SCRATCH)
 ARCUBE_OUTDIR_BASE="${ARCUBE_OUTDIR_BASE:-$PWD/..}"
+mkdir -p "$ARCUBE_OUTDIR_BASE"
 ARCUBE_OUTDIR_BASE=$(realpath "$ARCUBE_OUTDIR_BASE")
 export ARCUBE_OUTDIR_BASE
-mkdir -p "$ARCUBE_OUTDIR_BASE"
 
 ARCUBE_LOGDIR_BASE="${ARCUBE_LOGDIR_BASE:-$PWD/..}"
+mkdir -p "$ARCUBE_LOGDIR_BASE"
 ARCUBE_LOGDIR_BASE=$(realpath "$ARCUBE_LOGDIR_BASE")
 export ARCUBE_LOGDIR_BASE
-mkdir -p "$ARCUBE_LOGDIR_BASE"
 
 # For "local" (i.e. non-container, non-CVMFS) installs of larnd-sim etc.
 # Default to run-larnd-sim etc.
