@@ -249,7 +249,7 @@ def main(sim_file):
         THRESHOLD = 50 # change this if you want to exclude events from noise analysis
         SAMPLE_RATE = 1e8
         ## SEPARATE WAVEFORMS FROM LCM AND ACL
-        larray_geom = np.array([1,1,1,1,1,1,0,0,0,0,0,0]*8*4)
+        larray_geom = np.array([1,1,1,1,1,1,0,0,0,0,0,0]*8)
         lcm_events = [light_wvfm[i][larray_geom==1] for i in range(NUM_LIGHT_EVENTS)]/BIT
         acl_events = [light_wvfm[i][larray_geom!=1] for i in range(NUM_LIGHT_EVENTS)]/BIT
         lcm_wvfms = ak.flatten(lcm_events, axis=1)
