@@ -135,7 +135,7 @@ def main(sim_file):
     
             event_IDs = []
             eventID = segments['event_id'] # eventIDs associated to each segment
-            segment_id_assn = mc_packets_assn['segment_ids'] # segment indices corresponding to each packet
+            segment_id_assn = mc_packets_assn['track_ids'] # segment indices corresponding to each packet
 
             # Loop over each packet
             for ip, packet in enumerate(event_packets):
@@ -496,7 +496,7 @@ def main(sim_file):
                         axs4.plot(X,Y,c=colors[ios.index(io_second)],alpha=1,lw=1.5)
                     else:
                         pass
-            ## LABEL THE LIGHT PLOTS                            
+            ## LABEL THE LIGHT PLOTS
             axs0[0].set_title("Left:\nio_group "+str(io_first))
             axs2[0].set_title("Right:\nio_group "+str(io_first))
             axs3[0].set_title("Left:\nio_group "+str(io_second))
