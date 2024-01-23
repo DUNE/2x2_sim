@@ -41,7 +41,7 @@ pip install -e .
 cd ..
 
 # install ndlar_flow
-git clone -b develop https://github.com/larpix/ndlar_flow.git
+git clone -b MiniRun4.5 https://github.com/larpix/ndlar_flow.git
 cd ndlar_flow
 pip install -e .
 cd scripts/proto_nd_scripts
