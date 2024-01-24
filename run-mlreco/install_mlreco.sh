@@ -67,9 +67,11 @@ pip install .
 cd ..
 
 git clone -b v1.1.1 https://github.com/sindhu-ku/flow2supera.git
-cd flow2supera
-pip install .
-cd ..
+## Don't pip install because e.g. config files are expected to live near
+## __file__
+# cd flow2supera
+# pip install .
+# cd ..
 
 git clone https://github.com/facebookresearch/SparseConvNet.git
 cd SparseConvNet

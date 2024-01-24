@@ -8,4 +8,6 @@ pushd install/larcv2
 source configure.sh
 popd
 
+export PYTHONPATH=$PWD/install/flow2supera/src:$PYTHONPATH
+
 export PYTHONPATH=$PWD/install/lartpc_mlreco3d:$PYTHONPATH

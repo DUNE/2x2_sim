@@ -3,7 +3,7 @@
 # Spawn a shell in the mlreco environment. Useful for interactive testing.
 
 export ARCUBE_RUNTIME=SHIFTER
-export ARCUBE_CONTAINER=mjkramer/sim2x2:mlreco001
+export ARCUBE_CONTAINER=deeplearnphysics/larcv2:ub20.04-cuda11.6-pytorch1.13-larndsim
 
 if [[ "$SHIFTER_IMAGEREQUEST" != "$ARCUBE_CONTAINER" ]]; then
     shifter --image=$ARCUBE_CONTAINER --module=cvmfs,gpu -- /bin/bash --init-file "$0"
