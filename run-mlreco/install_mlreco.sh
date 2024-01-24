@@ -66,7 +66,8 @@ cd h5flow
 pip install .
 cd ..
 
-git clone -b v1.1.1 https://github.com/sindhu-ku/flow2supera.git
+# git clone -b v1.1.1 https://github.com/sindhu-ku/flow2supera.git
+git clone -b MiniRun4.5_beta1 https://github.com/mjkramer/flow2supera.git
 ## Don't pip install because e.g. config files are expected to live near
 ## __file__
 # cd flow2supera
