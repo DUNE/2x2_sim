@@ -181,17 +181,23 @@ def main(sim_file):
         tstamp_trig0 = packets['timestamp'][data_packet_mask]
         tstamp_trig7 = packets['timestamp'][trig_packet_mask]
         ## IDENTIFY THE INDEX WHERE THE TURNOVER OCCURS
-        try:
-            charge_cutoff = np.where(tstamp_trig0 > 1.999**31)[0][-1]
-            light_cutoff = np.where(tstamp_trig7 > 1.999**31)[0][-1]
-            wvfm_cutoff = np.where(light_trig['ts_sync'] > 1.999**31)[0][-1]
-            tstamp_real_trig0 = np.concatenate((tstamp_trig0[:(charge_cutoff+1)],((2**31)+tstamp_trig0[(charge_cutoff+1):])))
-            tstamp_real_trig7 = np.concatenate((tstamp_trig7[:(light_cutoff+1)],((2**31)+tstamp_trig7[(light_cutoff+1):])))
-            l_tsync_real = np.concatenate((light_trig['ts_sync'][:(wvfm_cutoff+1)],((2**31)+light_trig['ts_sync'][(wvfm_cutoff+1):])))
-        except: 
-            tstamp_real_trig0 = tstamp_trig0
-            tstamp_real_trig7 = tstamp_trig7
-            l_tsync_real = light_trig['ts_sync']
+        # try:
+        #     charge_cutoff = np.where(tstamp_trig0 > 1.999**31)[0][-1]
+        #     light_cutoff = np.where(tstamp_trig7 > 1.999**31)[0][-1]
+        #     wvfm_cutoff = np.where(light_trig['ts_sync'] > 1.999**31)[0][-1]
+        #     tstamp_real_trig0 = np.concatenate((tstamp_trig0[:(charge_cutoff+1)],((2**31)+tstamp_trig0[(charge_cutoff+1):])))
+        #     tstamp_real_trig7 = np.concatenate((tstamp_trig7[:(light_cutoff+1)],((2**31)+tstamp_trig7[(light_cutoff+1):])))
+        #     l_tsync_real = np.concatenate((light_trig['ts_sync'][:(wvfm_cutoff+1)],((2**31)+light_trig['ts_sync'][(wvfm_cutoff+1):])))
+        # except:
+        #     tstamp_real_trig0 = tstamp_trig0
+        #     tstamp_real_trig7 = tstamp_trig7
+        #     l_tsync_real = light_trig['ts_sync']
+        spillID0 = mc_packets_assn['event_ids'].max() // 1000 * 1000 # e.g. 123000 for file 123
+        packet_spillIDs = mc_packets_assn['event_ids'][:, 0] - spillID0
+        tstamp_real_trig0 = (packets['timestamp'] + 1.2e7 * packet_spillIDs)[data_packet_mask]
+        tstamp_real_trig7 = (packets['timestamp'] + 1.2e7 * packet_spillIDs)[trig_packet_mask]
+        l_tsync_real = (1e7 * light_trig['ts_s'])
+
         ## DEFINE SPILLID (EVENTID) FOR PACKETS AND LIGHT
         light_spillIDs = (np.rint(l_tsync_real/SPILL_PERIOD)).astype(int)
         packet0_spillIDs = (np.rint(tstamp_real_trig0/SPILL_PERIOD)).astype(int)
@@ -376,30 +382,30 @@ def main(sim_file):
         l_mod4_7L = np.zeros((24,SAMPLES))
         l_mod4_7R = np.zeros((24,SAMPLES))
         l_mod4_8L = np.zeros((24,SAMPLES))
-        l_mod4_8R = np.zeros((24,SAMPLES)) 
+        l_mod4_8R = np.zeros((24,SAMPLES))
+
         ## SORT THE LIGHT DATA BY MODULE, TPC, and SIDE
         for j in spill_light:
-            if (opt_chan[j][0]) == 0: 
-                l_mod1_1L = np.add(l_mod1_1L,light_wvfm[j][0:24])
-                l_mod1_1R = np.add(l_mod1_1R,light_wvfm[j][24:48])
-                l_mod1_2R = np.add(l_mod1_2R,light_wvfm[j][48:72])
-                l_mod1_2L = np.add(l_mod1_2L,light_wvfm[j][72:96])
-            if opt_chan[j][0]==96:
-                l_mod2_3L = np.add(l_mod2_3L,light_wvfm[j][0:24])
-                l_mod2_3R = np.add(l_mod2_3R,light_wvfm[j][24:48])
-                l_mod2_4R = np.add(l_mod2_4R,light_wvfm[j][48:72])
-                l_mod2_4L = np.add(l_mod2_4L,light_wvfm[j][72:96])
-            if opt_chan[j][0]==192:
-                l_mod3_5L = np.add(l_mod3_5L,np.array(light_wvfm[j][0:24]))
-                l_mod3_5R = np.add(l_mod3_5R,np.array(light_wvfm[j][24:48]))
-                l_mod3_6R = np.add(l_mod3_6R,np.array(light_wvfm[j][48:72]))
-                l_mod3_6L = np.add(l_mod3_6L,np.array(light_wvfm[j][72:96])) 
-            if opt_chan[j][0] == 288:
-                l_mod4_7L = np.add(l_mod4_7L,np.array(light_wvfm[j][0:24]))
-                l_mod4_7R = np.add(l_mod4_7R,np.array(light_wvfm[j][24:48]))
-                l_mod4_8R = np.add(l_mod4_8R,np.array(light_wvfm[j][48:72]))
-                l_mod4_8L = np.add(l_mod4_8L,np.array(light_wvfm[j][72:96]))
-                
+            l_mod1_1L = np.add(l_mod1_1L,light_wvfm[j][0:24])
+            l_mod1_1R = np.add(l_mod1_1R,light_wvfm[j][24:48])
+            l_mod1_2R = np.add(l_mod1_2R,light_wvfm[j][48:72])
+            l_mod1_2L = np.add(l_mod1_2L,light_wvfm[j][72:96])
+
+            l_mod2_3L = np.add(l_mod2_3L,light_wvfm[j][96:][0:24])
+            l_mod2_3R = np.add(l_mod2_3R,light_wvfm[j][96:][24:48])
+            l_mod2_4R = np.add(l_mod2_4R,light_wvfm[j][96:][48:72])
+            l_mod2_4L = np.add(l_mod2_4L,light_wvfm[j][96:][72:96])
+
+            l_mod3_5L = np.add(l_mod3_5L,light_wvfm[j][192:][0:24])
+            l_mod3_5R = np.add(l_mod3_5R,light_wvfm[j][192:][24:48])
+            l_mod3_6R = np.add(l_mod3_6R,light_wvfm[j][192:][48:72])
+            l_mod3_6L = np.add(l_mod3_6L,light_wvfm[j][192:][72:96])
+
+            l_mod4_7L = np.add(l_mod4_7L,light_wvfm[j][288:][0:24])
+            l_mod4_7R = np.add(l_mod4_7R,light_wvfm[j][288:][24:48])
+            l_mod4_8R = np.add(l_mod4_8R,light_wvfm[j][288:][48:72])
+            l_mod4_8L = np.add(l_mod4_8L,light_wvfm[j][288:][72:96])
+
         def data_readout(io_first, io_second, spill):
         ## SET UP AN 18-PLOT DISPLAY    
             fig = plt.figure(figsize=(13.8,8),tight_layout=True)
@@ -422,8 +428,10 @@ def main(sim_file):
             left_data = [l_mod2_3L,l_mod1_1L,l_mod2_4L,l_mod1_2L,l_mod4_7L,l_mod3_5L,l_mod4_8L,l_mod3_6L]
             right_data = [l_mod2_3R,l_mod1_1R,l_mod2_4R,l_mod1_2R,l_mod4_7R,l_mod3_5R,l_mod4_8R,l_mod3_6R]
             ## ENSURE THE TIMESTAMP TURNOVER ISN'T AN ISSUE
-            packet_list = packets[data_packet_mask][packet0_spillIDs==spill]
-            mc_assoc = mc_packets_assn[data_packet_mask][packet0_spillIDs==spill]
+            packet_list = packets[packet_spillIDs==spill]
+            data_mask = packet_list['packet_type'] == 0
+            packet_list = packet_list[data_mask]
+            mc_assoc = mc_packets_assn[packet_spillIDs==spill][data_mask]
             ## MAP PACKETS TO SEGMENTS
             for ip,packet in enumerate(packet_list):
                 segment_ids = mc_assoc['segment_ids'][ip]
@@ -433,14 +441,14 @@ def main(sim_file):
                     if segmentid >= 0 and segmentid not in plotted_segments:
                         plotted_segments.append(segmentid)
                         if io_group==io_first:
-                            X = (segments[segmentid]['x_start']*10,segments[segmentid]['x_end']*10)
-                            Y = (segments[segmentid]['y_start']*10,segments[segmentid]['y_end']*10)
-                            Z = (segments[segmentid]['z_start']*10,segments[segmentid]['z_end']*10)
+                            X = (segments[segmentid]['x_start'],segments[segmentid]['x_end'])
+                            Y = (segments[segmentid]['y_start'],segments[segmentid]['y_end'])
+                            Z = (segments[segmentid]['z_start'],segments[segmentid]['z_end'])
                             axs1.plot(Z,Y,c=colors[ios.index(io_first)],alpha=1,lw=1.5)
                         if io_group==io_second:
-                            X = (segments[segmentid]['x_start']*10,segments[segmentid]['x_end']*10)
-                            Y = (segments[segmentid]['y_start']*10,segments[segmentid]['y_end']*10)
-                            Z = (segments[segmentid]['z_start']*10,segments[segmentid]['z_end']*10)
+                            X = (segments[segmentid]['x_start'],segments[segmentid]['x_end'])
+                            Y = (segments[segmentid]['y_start'],segments[segmentid]['y_end'])
+                            Z = (segments[segmentid]['z_start'],segments[segmentid]['z_end'])
                             axs4.plot(Z,Y,c=colors[ios.index(io_second)],alpha=1,lw=1.5)
                         else:
                             pass
