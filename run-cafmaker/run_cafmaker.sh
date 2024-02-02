@@ -10,6 +10,7 @@ cd ../..
 source ../util/init.inc.sh
 
 outFile=${tmpOutDir}/${outName}.CAF.root
+flatOutFile=${tmpOutDir}/${outName}.CAF.flat.root
 cfgFile=$(mktemp --suffix .cfg)
 
 ./gen_cafmaker_cfg.py \
@@ -29,7 +30,9 @@ echo ===================
 run makeCAF "--fcl=$cfgFile"
 
 cafOutDir=$outDir/CAF/$subDir
-mkdir -p "$cafOutDir"
+flatCafOutDir=$outDir/CAF.flat/$subDir
+mkdir -p "$cafOutDir" "$flatCafOutDir"
 mv "$outFile" "$cafOutDir"
+mv "$flatOutFile" "$flatCafOutDir"
 
 rm "$cfgFile"
