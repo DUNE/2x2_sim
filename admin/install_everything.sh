@@ -34,6 +34,14 @@ pushd run-ndlar-flow
 ./install_ndlar_flow.sh
 popd
 
+pushd run-mlreco
+./install_mlreco.sh
+popd
+
+pushd run-cafmaker
+./install_cafmaker.sh
+popd
+
 # pushd validation
 # ./install_validation.sh
 # popd
