@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 
-source ../util/reload_in_container.inc.sh
+if [[ "$ARCUBE_RUNTIME" == "NONE" ]]; then
+    export UPS_OVERRIDE="-H Linux64bit+3.10-2.17"
+    source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
+    setup dunesw v09_79_00d02 -q e26:prof
+    #This var gets set by dunesim but will not work well with this setup
+    unset GDK2NUFLUXXML
+else
+    source ../util/reload_in_container.inc.sh
+fi
+
 source ../util/init.inc.sh
 
 dk2nuAll=("$ARCUBE_DK2NU_DIR"/*.dk2nu)
