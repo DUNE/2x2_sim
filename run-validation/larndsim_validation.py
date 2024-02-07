@@ -178,44 +178,42 @@ def main(sim_file):
         
         # Account for the timestamp turnover:
         light_trig = sim_h5['light_trig']
-        tstamp_trig0 = packets['timestamp'][data_packet_mask]
         tstamp_trig7 = packets['timestamp'][trig_packet_mask]
+        l_tsync_real = light_trig['ts_s']
         ## IDENTIFY THE INDEX WHERE THE TURNOVER OCCURS
-        try:
-            charge_cutoff = np.where(tstamp_trig0 > 1.999**31)[0][-1]
-            light_cutoff = np.where(tstamp_trig7 > 1.999**31)[0][-1]
-            wvfm_cutoff = np.where(light_trig['ts_sync'] > 1.999**31)[0][-1]
-            tstamp_real_trig0 = np.concatenate((tstamp_trig0[:(charge_cutoff+1)],((2**31)+tstamp_trig0[(charge_cutoff+1):])))
-            tstamp_real_trig7 = np.concatenate((tstamp_trig7[:(light_cutoff+1)],((2**31)+tstamp_trig7[(light_cutoff+1):])))
-            l_tsync_real = np.concatenate((light_trig['ts_sync'][:(wvfm_cutoff+1)],((2**31)+light_trig['ts_sync'][(wvfm_cutoff+1):])))
-        except: 
-            tstamp_real_trig0 = tstamp_trig0
-            tstamp_real_trig7 = tstamp_trig7
-            l_tsync_real = light_trig['ts_sync']
+        light_cutoff=[0]
+        for i in range(len(tstamp_trig7)):              
+            if tstamp_trig7[i]<tstamp_trig7[i-1] and i >0:
+                light_cutoff.append(i)
+        tstamp_real_trig7=[]
+
+        for i in range(len(light_cutoff)):
+            if(i+1 < len(light_cutoff)):
+                tstamp_real_trig7=np.concatenate((tstamp_real_trig7, ((1e7*i)+tstamp_trig7[(light_cutoff[i]):(light_cutoff[i+1])])))
+            else:
+                tstamp_real_trig7 = np.concatenate((tstamp_real_trig7, ((1e7*i)+tstamp_trig7[(light_cutoff[i]):])))
         ## DEFINE SPILLID (EVENTID) FOR PACKETS AND LIGHT
-        light_spillIDs = (np.rint(l_tsync_real/SPILL_PERIOD)).astype(int)
-        packet0_spillIDs = (np.rint(tstamp_real_trig0/SPILL_PERIOD)).astype(int)
-        packet7_spillIDs = (np.rint(tstamp_real_trig7/SPILL_PERIOD)).astype(int)
+        light_spillIDs = (np.rint(l_tsync_real/1.2)).astype(int)
+        packet7_spillIDs = (np.rint(tstamp_real_trig7/2e6)).astype(int)
         list_spillIDs = np.unique(light_spillIDs)
         ## DEFINE THE INDICES OF EACH TIMESTAMP
         indices = np.arange(0,len(packets['timestamp']),1)
-        indices_0 = indices[data_packet_mask]
         indices_7 = indices[trig_packet_mask]
         ## PLOT INDICE VS. TIMESTAMP
-        fig = plt.figure(figsize=(18,6))
-        plt.plot(tstamp_real_trig0,indices_0, "o", color='dodgerblue', label='larpix')
-        plt.plot(tstamp_real_trig7,indices_7,".", color='tomato', label='light')
-        plt.axvline(x=(2**31), label='LArPix Clock Rollover')
-        plt.title('Larpix (Spill) Trigger vs. Light Trigger\n', fontsize=18)
-        plt.xlabel(r'Timestamp [0.01$\mu$s]', fontsize=14)
-        plt.ylabel('Packet Index', fontsize=16)
-        plt.legend(fontsize=16)
-        output.savefig()
-        plt.close()     
+        #fig = plt.figure(figsize=(18,6))
+        #plt.plot(tstamp_real_trig0,indices_0, "o", color='dodgerblue', label='larpix')
+        #plt.plot(tstamp_real_trig7,indices_7,".", color='tomato', label='light')
+        #plt.axvline(x=(2**31), label='LArPix Clock Rollover')
+        #plt.title('Larpix (Spill) Trigger vs. Light Trigger\n', fontsize=18)
+        #plt.xlabel(r'Timestamp [0.01$\mu$s]', fontsize=14)
+        #plt.ylabel('Packet Index', fontsize=16)
+        #plt.legend(fontsize=16)
+        #output.savefig()
+        #plt.close()     
         
         ## INSPECT PACMAN VS LIGHT TRIGGERS PER SPILL
         fig = plt.figure(figsize=(14,6))
-        bins = np.linspace(min(packet7_spillIDs),max(packet7_spillIDs),392)
+        bins = np.linspace(min(packet7_spillIDs),max(packet7_spillIDs),(max(packet7_spillIDs)*2)+1)
         bin_width = bins[2] - bins[1]
         counts, bins = np.histogram(np.array(light_spillIDs), bins=bins)
         plt.hist(bins[:-1], bins, weights=counts, color='tomato', label='Light: '+str(len(light_trig['ts_sync']))+' triggers')
@@ -225,6 +223,7 @@ def main(sim_file):
         plt.xlabel('Spill', fontsize=14)
         plt.ylabel('Triggers', fontsize=14)
         plt.ylim(0,max(counts)+2)
+        plt.xlim(0,max(packet7_spillIDs))
         plt.grid(axis='y', color='0.85')
         plt.legend(loc='upper left', fontsize=14)
         output.savefig()
@@ -247,7 +246,7 @@ def main(sim_file):
         #NUM_LIGHT_EVENTS = len(light_wvfm)
         NUM_LIGHT_EVENTS = 150 # Save processing time
         THRESHOLD = 50 # change this if you want to exclude events from noise analysis
-        SAMPLE_RATE = 1e8
+        SAMPLE_RATE = 6.25e7
         ## SEPARATE WAVEFORMS FROM LCM AND ACL
         larray_geom = np.array([1,1,1,1,1,1,0,0,0,0,0,0]*8*4)
         lcm_events = [light_wvfm[i][larray_geom==1] for i in range(NUM_LIGHT_EVENTS)]/BIT
@@ -309,12 +308,12 @@ def main(sim_file):
         def power_spec_plots(adc0_dataset, adc0_max, adc1_dataset, adc1_max, CUTOFF): 
             fig = plt.figure(figsize=(12,3))
             x = np.linspace(0,CUTOFF-1,CUTOFF)
-            y0 = adc0_dataset[2][1]
-            y1 = adc1_dataset[2][1]
+            y0 = adc0_dataset[2][35]
+            y1 = adc1_dataset[2][35]
             plt.plot(x, y0, "-", color='green', label='ACL')
             plt.plot(x, y1, "-", color='yellowgreen', label='LCM')
             plt.title('Pre-Trigger Noise Example (No Pedestal): Module 3', fontsize=16)
-            plt.xlabel(r'Time Sample [0.01 $\mu$s]', fontsize=14)
+            plt.xlabel(r'Time Sample [0.016 $\mu$s]', fontsize=14)
             plt.ylabel('SiPM Channel Output', fontsize=14)
             plt.legend()
             output.savefig()
@@ -347,8 +346,48 @@ def main(sim_file):
             
         power_spec_plots(ACL_dataset, ACL_maxes, LCM_dataset, LCM_maxes, PRE_NOISE)
 
+        ## ANOTHER PRE-TRIGGER NOISE CHECK: CONSISTENT?
+        ptrig_wvfm = -light_wvfm[:,:,0:50]/BIT
+        end_wvfm = -light_wvfm[:,:,950:]/BIT
+        avg_ptrig = np.mean(np.abs(ptrig_wvfm), axis=2)
+        avg_end = np.mean(np.abs(end_wvfm), axis=2)
+        ratio_noise = avg_end/avg_ptrig
+        flat_ratios = np.concatenate(ratio_noise)
+        flat_channels = np.concatenate(light_trig['op_channel'])
+        fig, ax = plt.subplots(figsize=(16, 8))
+        # Plot the 2D histogram
+        regions = [(0, 96, 'yellow', 0.2, 'Mod 0'),
+                   (96, 192, 'orange', 0.3, 'Mod 1'),
+                   (192, 288, 'red', 0.2, 'Mod 2'),
+                   (288, 384, 'magenta', 0.2, 'Mod 3'),]
+        # Plot transparent colored x-axis regions
+        for xmin, xmax, color, alpha, label in regions:
+            ax.axvspan(xmin, xmax, facecolor=color, alpha=alpha, label=label)
+        ax.axhline(y=1, color='red', linestyle='--', label='Ratio = 1')
+        for i in range(0, 383, 12):
+            ax.axvspan(i, i + 6, alpha=0.2, color='green')
+        ax.axvline(x=48, color='black', linestyle=':')
+        ax.axvline(x=96, color='black', linestyle=':')
+        ax.axvline(x=144, color='black', linestyle=':')
+        ax.axvline(x=192, color='black', linestyle=':')
+        ax.axvline(x=240, color='black', linestyle=':')
+        ax.axvline(x=288, color='black', linestyle=':')
+        ax.axvline(x=336, color='black', linestyle=':')
+        ax.axvline(x=384, color='black', linestyle=':')
+        hist1 = ax.hist2d(flat_channels, flat_ratios, bins=(384,2000), norm=mpl.colors.LogNorm(vmax=192), cmap='viridis')
+        fig.colorbar(hist1[3], ax=ax, location='bottom')
+
+        # Customize the plot
+        ax.set_title('MiniRun5: Ratios of the Average Noise Amplitude: [950:1000]/[0:50]', fontsize=16)
+        ax.set_xlabel('Channel ID')
+        ax.set_ylabel('Ratio End/Pretrigger')
+        ax.set_ylim(0,6)
+        plt.legend(loc='upper right')
+        output.savefig()
+        plt.close()
+
         ## SELECT ONE EVENT TO INSPECT
-        SPILL = 8
+        SPILL = 10
         ## ASSIGN "SUM CHANNEL" POSITIONS (this would be one side of one TPC)
         SiPM_struct = np.array([0,0,0,0,0,0,
                                 1,1,1,1,1,1,
@@ -379,26 +418,37 @@ def main(sim_file):
         l_mod4_8R = np.zeros((24,SAMPLES)) 
         ## SORT THE LIGHT DATA BY MODULE, TPC, and SIDE
         for j in spill_light:
-            if (opt_chan[j][0]) == 0: 
-                l_mod1_1L = np.add(l_mod1_1L,light_wvfm[j][0:24])
-                l_mod1_1R = np.add(l_mod1_1R,light_wvfm[j][24:48])
-                l_mod1_2R = np.add(l_mod1_2R,light_wvfm[j][48:72])
-                l_mod1_2L = np.add(l_mod1_2L,light_wvfm[j][72:96])
-            if opt_chan[j][0]==96:
-                l_mod2_3L = np.add(l_mod2_3L,light_wvfm[j][0:24])
-                l_mod2_3R = np.add(l_mod2_3R,light_wvfm[j][24:48])
-                l_mod2_4R = np.add(l_mod2_4R,light_wvfm[j][48:72])
-                l_mod2_4L = np.add(l_mod2_4L,light_wvfm[j][72:96])
-            if opt_chan[j][0]==192:
-                l_mod3_5L = np.add(l_mod3_5L,np.array(light_wvfm[j][0:24]))
-                l_mod3_5R = np.add(l_mod3_5R,np.array(light_wvfm[j][24:48]))
-                l_mod3_6R = np.add(l_mod3_6R,np.array(light_wvfm[j][48:72]))
-                l_mod3_6L = np.add(l_mod3_6L,np.array(light_wvfm[j][72:96])) 
-            if opt_chan[j][0] == 288:
-                l_mod4_7L = np.add(l_mod4_7L,np.array(light_wvfm[j][0:24]))
-                l_mod4_7R = np.add(l_mod4_7R,np.array(light_wvfm[j][24:48]))
-                l_mod4_8R = np.add(l_mod4_8R,np.array(light_wvfm[j][48:72]))
-                l_mod4_8L = np.add(l_mod4_8L,np.array(light_wvfm[j][72:96]))
+            l_mod1_1L = np.add(l_mod1_1L,light_wvfm[j][0:24])
+            l_mod1_1R = np.add(l_mod1_1R,light_wvfm[j][24:48])
+            l_mod1_2R = np.add(l_mod1_2R,light_wvfm[j][48:72])
+            l_mod1_2L = np.add(l_mod1_2L,light_wvfm[j][72:96])
+
+            l_mod2_3L = np.add(l_mod2_3L,light_wvfm[j][96:120])
+            l_mod2_3R = np.add(l_mod2_3R,light_wvfm[j][120:144])
+            l_mod2_4R = np.add(l_mod2_4R,light_wvfm[j][144:168])
+            l_mod2_4L = np.add(l_mod2_4L,light_wvfm[j][168:192])
+
+            l_mod3_5L = np.add(l_mod3_5L,np.array(light_wvfm[j][192:216]))
+            l_mod3_5R = np.add(l_mod3_5R,np.array(light_wvfm[j][216:240]))
+            l_mod3_6R = np.add(l_mod3_6R,np.array(light_wvfm[j][240:264]))
+            l_mod3_6L = np.add(l_mod3_6L,np.array(light_wvfm[j][264:288])) 
+
+            l_mod4_7L = np.add(l_mod4_7L,np.array(light_wvfm[j][288:312]))
+            l_mod4_7R = np.add(l_mod4_7R,np.array(light_wvfm[j][312:336]))
+            l_mod4_8R = np.add(l_mod4_8R,np.array(light_wvfm[j][336:360]))
+            l_mod4_8L = np.add(l_mod4_8L,np.array(light_wvfm[j][360:384]))
+
+        def assign_io(x_pos, z_pos):
+            if z_pos > 0:
+                if x_pos > 0:
+                    return 1 if z_pos > 33.5 else 2
+                else:
+                    return 3 if z_pos > 33.5 else 4
+            else:
+                if x_pos > 0:
+                    return 5 if abs(z_pos) > 33.5 else 6
+                else: 
+                    return 7 if abs(z_pos) > 33.5 else 8
                 
         def data_readout(io_first, io_second, spill):
         ## SET UP AN 18-PLOT DISPLAY    
@@ -421,29 +471,31 @@ def main(sim_file):
             ios = [3,1,4,2,7,5,8,6]
             left_data = [l_mod2_3L,l_mod1_1L,l_mod2_4L,l_mod1_2L,l_mod4_7L,l_mod3_5L,l_mod4_8L,l_mod3_6L]
             right_data = [l_mod2_3R,l_mod1_1R,l_mod2_4R,l_mod1_2R,l_mod4_7R,l_mod3_5R,l_mod4_8R,l_mod3_6R]
-            ## ENSURE THE TIMESTAMP TURNOVER ISN'T AN ISSUE
-            packet_list = packets[data_packet_mask][packet0_spillIDs==spill]
-            mc_assoc = mc_packets_assn[data_packet_mask][packet0_spillIDs==spill]
-            ## MAP PACKETS TO SEGMENTS
-            for ip,packet in enumerate(packet_list):
-                segment_ids = mc_assoc['segment_ids'][ip]
-                io_group = packet['io_group']
-                ## GET THE POSITION OF CHARGE SEGMENTS AND SAVE TO THE CORRECT IO_GROUP
-                for segmentid in segment_ids:
-                    if segmentid >= 0 and segmentid not in plotted_segments:
-                        plotted_segments.append(segmentid)
-                        if io_group==io_first:
-                            X = (segments[segmentid]['x_start']*10,segments[segmentid]['x_end']*10)
-                            Y = (segments[segmentid]['y_start']*10,segments[segmentid]['y_end']*10)
-                            Z = (segments[segmentid]['z_start']*10,segments[segmentid]['z_end']*10)
-                            axs1.plot(Z,Y,c=colors[ios.index(io_first)],alpha=1,lw=1.5)
-                        if io_group==io_second:
-                            X = (segments[segmentid]['x_start']*10,segments[segmentid]['x_end']*10)
-                            Y = (segments[segmentid]['y_start']*10,segments[segmentid]['y_end']*10)
-                            Z = (segments[segmentid]['z_start']*10,segments[segmentid]['z_end']*10)
-                            axs4.plot(Z,Y,c=colors[ios.index(io_second)],alpha=1,lw=1.5)
-                        else:
-                            pass
+            charge_id = (segments['event_id'][0]+spill)
+            event_mask = (segments['event_id'] == charge_id)
+            segment_ids = segments['segment_id'][event_mask==1]
+            for segmentid in segment_ids:
+                if segmentid >= 0 and segmentid not in plotted_segments:
+                    plotted_segments.append(segmentid)
+                    X_start = segments[segmentid]['x_start']
+                    X_end = segments[segmentid]['x_end']
+                    Z_start = segments[segmentid]['z_start']
+                    Z_end = segments[segmentid]['z_end']  
+                    Y_start = segments[segmentid]['y_start']
+                    Y_end = segments[segmentid]['y_end']
+                    io_group = assign_io(X_start, Z_start)
+                    if io_group==io_first:
+                        X = (X_start,X_end)
+                        Y = (Y_start,Y_end)
+                        Z = (Z_start,Z_end)
+                        axs1.plot(X,Y,c=colors[ios.index(io_first)],alpha=1,lw=1.5)
+                    if io_group==io_second:
+                        X = (X_start,X_end)
+                        Y = (Y_start,Y_end)
+                        Z = (Z_start,Z_end)
+                        axs4.plot(X,Y,c=colors[ios.index(io_second)],alpha=1,lw=1.5)
+                    else:
+                        pass
             ## LABEL THE LIGHT PLOTS                            
             axs0[0].set_title("Left:\nio_group "+str(io_first))
             axs2[0].set_title("Right:\nio_group "+str(io_first))
