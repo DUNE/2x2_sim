@@ -10,6 +10,8 @@ inName=${ARCUBE_IN_NAME}.${globalIdx}
 inFile=${ARCUBE_OUTDIR_BASE}/run-ndlar-flow/${ARCUBE_IN_NAME}/FLOW/${subDir}/${inName}.FLOW.hdf5
 config=2x2
 
+rm -f "$outFile"
+
 run install/flow2supera/bin/run_flow2supera.py -o "$outFile" -c "$config" "$inFile"
 
 larcvOutDir=$outDir/LARCV/$subDir
