@@ -18,10 +18,12 @@ else
 fi
 
 inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/$ARCUBE_IN_NAME
-inName=$ARCUBE_IN_NAME.$globalIdx
-inFile=$(realpath $inDir/LARNDSIM/$subDir/${inName}.LARNDSIM.hdf5)
+#inName=$ARCUBE_IN_NAME.$globalIdx
+#inFile=$(realpath $inDir/LARNDSIM/$subDir/${inName}.LARNDSIM.hdf5)
+inFile='/global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5'
 
-outFile=$tmpOutDir/${outName}.FLOW.hdf5
+#outFile=$tmpOutDir/${outName}.FLOW.hdf5
+outFile='wf5.hdf5'
 rm -f "$outFile"
 
 # charge workflows
@@ -50,8 +52,8 @@ run h5flow -c $workflow1 $workflow2 $workflow3 $workflow4 $workflow5\
 run h5flow -c $workflow6 $workflow7\
     -i "$inFile" -o "$outFile"
 
-run h5flow -c $workflow8\
-    -i "$outFile" -o "$outFile"
+#run h5flow -c $workflow8\
+#    -i "$outFile" -o "$outFile"
 
 mkdir -p "$outDir/FLOW/$subDir"
 mv "$outFile" "$outDir/FLOW/$subDir"

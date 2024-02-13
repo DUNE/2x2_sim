@@ -1,0 +1,930 @@
+RUNNING h5flow -c yamls/proto_nd_flow/workflows/charge/charge_event_building.yaml yamls/proto_nd_flow/workflows/charge/charge_event_reconstruction.yaml yamls/proto_nd_flow/workflows/combined/combined_reconstruction.yaml yamls/proto_nd_flow/workflows/charge/prompt_calibration.yaml yamls/proto_nd_flow/workflows/charge/final_calibration.yaml -i /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5 -o wf5.hdf5
+WARNING:root:Running without mpi4py because No module named 'mpi4py'
+WARNING:root:Source dataset charge/raw_events has no inputfile in metadata stored under 'input_filename', using {self.input_filename} for RunData lookup
+WARNING:root:Could not find row matching /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5 in data/proto_nd_flow/runlist-2x2-mcexample.txt
+~~~ H5FLOW ~~~
+output file: wf5.hdf5
+input file: /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (1/5) ~~~
+yamls/proto_nd_flow/workflows/charge/charge_event_building.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+Hello
+create RunData() /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+create RawEventGenerator(charge/raw_events) /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+RunData.init(charge/raw_events)
+RawEventGenerator.init()
+generating truth references:   0%|          | 0/694 [00:00<?, ?it/s]generating truth references:   0%|          | 1/694 [00:00<02:29,  4.63it/s]generating truth references:   1%|          | 4/694 [00:00<01:00, 11.46it/s]generating truth references:   1%|          | 7/694 [00:00<00:54, 12.61it/s]generating truth references:   1%|▏         | 9/694 [00:00<00:37, 18.40it/s]generating truth references:   2%|▏         | 11/694 [00:00<00:34, 19.61it/s]generating truth references:   2%|▏         | 15/694 [00:02<04:07,  2.75it/s]generating truth references:   2%|▏         | 17/694 [00:02<00:52, 12.91it/s]generating truth references:   3%|▎         | 19/694 [00:02<00:43, 15.35it/s]generating truth references:   3%|▎         | 21/694 [00:03<01:56,  5.78it/s]generating truth references:   3%|▎         | 22/694 [00:03<03:19,  3.37it/s]generating truth references:   4%|▎         | 26/694 [00:03<00:19, 34.82it/s]generating truth references:   4%|▍         | 30/694 [00:03<00:21, 31.40it/s]generating truth references:   5%|▍         | 34/694 [00:03<01:08,  9.57it/s]generating truth references:   5%|▌         | 38/694 [00:04<00:17, 37.07it/s]generating truth references:   6%|▌         | 42/694 [00:04<00:51, 12.68it/s]generating truth references:   7%|▋         | 47/694 [00:04<00:35, 18.17it/s]generating truth references:   7%|▋         | 51/694 [00:04<00:19, 33.36it/s]generating truth references:   8%|▊         | 55/694 [00:04<00:17, 36.79it/s]generating truth references:   9%|▊         | 60/694 [00:05<00:16, 37.70it/s]generating truth references:   9%|▉         | 64/694 [00:05<01:14,  8.42it/s]generating truth references:  10%|▉         | 67/694 [00:06<02:43,  3.83it/s]generating truth references:  10%|▉         | 68/694 [00:06<02:12,  4.73it/s]generating truth references:  10%|█         | 71/694 [00:06<00:24, 25.02it/s]generating truth references:  11%|█         | 74/694 [00:06<00:38, 16.29it/s]generating truth references:  11%|█         | 76/694 [00:07<03:02,  3.39it/s]generating truth references:  11%|█▏        | 79/694 [00:07<00:21, 28.75it/s]generating truth references:  12%|█▏        | 83/694 [00:07<00:19, 30.59it/s]generating truth references:  13%|█▎        | 88/694 [00:07<00:13, 44.87it/s]generating truth references:  13%|█▎        | 93/694 [00:07<00:25, 23.74it/s]generating truth references:  14%|█▍        | 96/694 [00:08<01:14,  7.99it/s]generating truth references:  14%|█▍        | 100/694 [00:08<00:21, 28.25it/s]generating truth references:  15%|█▍        | 103/694 [00:08<00:39, 15.14it/s]generating truth references:  15%|█▌        | 105/694 [00:08<01:18,  7.52it/s]generating truth references:  15%|█▌        | 107/694 [00:09<03:38,  2.68it/s]generating truth references:  16%|█▌        | 110/694 [00:09<00:22, 25.60it/s]generating truth references:  16%|█▋        | 113/694 [00:10<00:43, 13.48it/s]generating truth references:  17%|█▋        | 117/694 [00:10<00:58,  9.87it/s]generating truth references:  17%|█▋        | 120/694 [00:10<00:46, 12.31it/s]generating truth references:  18%|█▊        | 123/694 [00:10<00:19, 29.64it/s]generating truth references:  18%|█▊        | 126/694 [00:10<00:38, 14.82it/s]generating truth references:  19%|█▊        | 129/694 [00:11<00:28, 20.15it/s]generating truth references:  19%|█▉        | 132/694 [00:11<00:20, 26.80it/s]generating truth references:  20%|█▉        | 136/694 [00:11<00:24, 22.69it/s]generating truth references:  20%|██        | 139/694 [00:11<00:24, 22.72it/s]generating truth references:  20%|██        | 142/694 [00:11<00:20, 26.79it/s]generating truth references:  21%|██        | 145/694 [00:11<00:31, 17.68it/s]generating truth references:  21%|██▏       | 148/694 [00:11<00:22, 23.99it/s]generating truth references:  22%|██▏       | 151/694 [00:12<00:42, 12.85it/s]generating truth references:  22%|██▏       | 153/694 [00:12<00:32, 16.82it/s]generating truth references:  23%|██▎       | 157/694 [00:12<00:19, 27.17it/s]generating truth references:  23%|██▎       | 160/694 [00:12<00:18, 29.65it/s]generating truth references:  23%|██▎       | 163/694 [00:12<00:23, 22.62it/s]generating truth references:  24%|██▍       | 166/694 [00:12<00:28, 18.74it/s]generating truth references:  24%|██▍       | 168/694 [00:12<00:38, 13.53it/s]generating truth references:  25%|██▍       | 171/694 [00:13<00:39, 13.33it/s]generating truth references:  25%|██▌       | 174/694 [00:13<00:28, 17.98it/s]generating truth references:  25%|██▌       | 176/694 [00:13<00:34, 15.20it/s]generating truth references:  26%|██▌       | 178/694 [00:13<01:06,  7.71it/s]generating truth references:  26%|██▌       | 181/694 [00:13<00:21, 23.99it/s]generating truth references:  27%|██▋       | 184/694 [00:14<00:17, 28.34it/s]generating truth references:  27%|██▋       | 189/694 [00:14<00:19, 25.60it/s]generating truth references:  28%|██▊       | 194/694 [00:14<00:16, 29.81it/s]generating truth references:  28%|██▊       | 197/694 [00:14<00:37, 13.15it/s]generating truth references:  29%|██▉       | 201/694 [00:14<00:34, 14.14it/s]generating truth references:  30%|██▉       | 205/694 [00:15<00:44, 10.90it/s]generating truth references:  30%|███       | 209/694 [00:15<00:16, 29.62it/s]generating truth references:  31%|███       | 212/694 [00:15<00:28, 17.15it/s]generating truth references:  31%|███       | 216/694 [00:15<00:12, 39.50it/s]generating truth references:  32%|███▏      | 222/694 [00:15<00:09, 50.33it/s]generating truth references:  33%|███▎      | 228/694 [00:15<00:08, 54.05it/s]generating truth references:  34%|███▎      | 234/694 [00:16<00:09, 48.89it/s]generating truth references:  34%|███▍      | 239/694 [00:16<00:09, 48.97it/s]generating truth references:  35%|███▌      | 245/694 [00:16<00:08, 55.98it/s]generating truth references:  36%|███▌      | 251/694 [00:16<00:09, 46.29it/s]generating truth references:  37%|███▋      | 257/694 [00:16<00:08, 50.59it/s]generating truth references:  38%|███▊      | 263/694 [00:16<00:09, 43.38it/s]generating truth references:  39%|███▊      | 268/694 [00:16<00:11, 36.80it/s]generating truth references:  39%|███▉      | 273/694 [00:16<00:09, 43.49it/s]generating truth references:  40%|████      | 278/694 [00:16<00:08, 49.30it/s]generating truth references:  41%|████      | 283/694 [00:17<00:08, 46.17it/s]generating truth references:  41%|████▏     | 288/694 [00:17<00:11, 35.66it/s]generating truth references:  42%|████▏     | 292/694 [00:17<00:11, 34.16it/s]generating truth references:  43%|████▎     | 296/694 [00:17<00:13, 28.47it/s]generating truth references:  43%|████▎     | 300/694 [00:17<00:11, 34.28it/s]generating truth references:  44%|████▍     | 304/694 [00:17<00:27, 14.19it/s]generating truth references:  44%|████▍     | 307/694 [00:17<00:14, 25.93it/s]generating truth references:  45%|████▍     | 312/694 [00:18<00:12, 31.61it/s]generating truth references:  46%|████▌     | 316/694 [00:18<00:12, 30.99it/s]generating truth references:  46%|████▋     | 321/694 [00:18<00:07, 47.25it/s]generating truth references:  47%|████▋     | 326/694 [00:18<00:07, 47.23it/s]generating truth references:  48%|████▊     | 332/694 [00:18<00:07, 51.67it/s]generating truth references:  49%|████▊     | 338/694 [00:18<00:07, 46.96it/s]generating truth references:  49%|████▉     | 343/694 [00:18<00:19, 18.31it/s]generating truth references:  50%|█████     | 348/694 [00:19<00:08, 43.04it/s]generating truth references:  51%|█████     | 353/694 [00:19<00:27, 12.45it/s]generating truth references:  52%|█████▏    | 358/694 [00:19<00:06, 48.49it/s]generating truth references:  52%|█████▏    | 363/694 [00:19<00:08, 39.89it/s]generating truth references:  53%|█████▎    | 368/694 [00:19<00:07, 43.87it/s]generating truth references:  54%|█████▎    | 373/694 [00:19<00:07, 43.09it/s]generating truth references:  55%|█████▍    | 379/694 [00:20<00:06, 46.43it/s]generating truth references:  55%|█████▌    | 385/694 [00:20<00:05, 52.07it/s]generating truth references:  56%|█████▋    | 391/694 [00:20<00:09, 31.98it/s]generating truth references:  57%|█████▋    | 395/694 [00:20<00:30,  9.86it/s]generating truth references:  58%|█████▊    | 401/694 [00:20<00:05, 50.28it/s]generating truth references:  59%|█████▊    | 407/694 [00:21<00:07, 36.09it/s]generating truth references:  59%|█████▉    | 411/694 [00:21<00:09, 29.62it/s]generating truth references:  60%|██████    | 417/694 [00:21<00:05, 50.80it/s]generating truth references:  61%|██████    | 423/694 [00:21<00:07, 34.33it/s]generating truth references:  62%|██████▏   | 428/694 [00:21<00:06, 40.32it/s]generating truth references:  62%|██████▏   | 433/694 [00:21<00:06, 39.37it/s]generating truth references:  63%|██████▎   | 437/694 [00:21<00:07, 34.96it/s]generating truth references:  64%|██████▎   | 441/694 [00:22<00:08, 28.90it/s]generating truth references:  64%|██████▍   | 446/694 [00:22<00:05, 45.24it/s]generating truth references:  65%|██████▌   | 452/694 [00:22<00:04, 53.20it/s]generating truth references:  66%|██████▌   | 458/694 [00:22<00:04, 53.93it/s]generating truth references:  67%|██████▋   | 464/694 [00:22<00:04, 50.56it/s]generating truth references:  68%|██████▊   | 470/694 [00:22<00:05, 40.97it/s]generating truth references:  69%|██████▊   | 476/694 [00:22<00:04, 50.93it/s]generating truth references:  69%|██████▉   | 482/694 [00:22<00:04, 49.51it/s]generating truth references:  70%|███████   | 487/694 [00:22<00:05, 38.55it/s]generating truth references:  71%|███████   | 493/694 [00:23<00:03, 51.74it/s]generating truth references:  72%|███████▏  | 499/694 [00:23<00:03, 51.49it/s]generating truth references:  73%|███████▎  | 505/694 [00:23<00:04, 44.10it/s]generating truth references:  73%|███████▎  | 510/694 [00:23<00:04, 38.22it/s]generating truth references:  74%|███████▍  | 516/694 [00:23<00:03, 53.76it/s]generating truth references:  75%|███████▌  | 522/694 [00:23<00:03, 51.81it/s]generating truth references:  76%|███████▌  | 528/694 [00:23<00:04, 38.86it/s]generating truth references:  77%|███████▋  | 534/694 [00:23<00:02, 53.48it/s]generating truth references:  78%|███████▊  | 540/694 [00:24<00:05, 27.12it/s]generating truth references:  79%|███████▊  | 546/694 [00:24<00:02, 54.61it/s]generating truth references:  80%|███████▉  | 552/694 [00:24<00:02, 47.35it/s]generating truth references:  80%|████████  | 557/694 [00:24<00:03, 35.37it/s]generating truth references:  81%|████████  | 563/694 [00:24<00:02, 54.59it/s]generating truth references:  82%|████████▏ | 569/694 [00:24<00:03, 37.22it/s]generating truth references:  83%|████████▎ | 573/694 [00:25<00:08, 14.10it/s]generating truth references:  83%|████████▎ | 578/694 [00:25<00:02, 48.47it/s]generating truth references:  84%|████████▍ | 584/694 [00:25<00:02, 50.78it/s]generating truth references:  85%|████████▌ | 590/694 [00:25<00:01, 55.66it/s]generating truth references:  86%|████████▌ | 596/694 [00:25<00:02, 45.41it/s]generating truth references:  87%|████████▋ | 601/694 [00:25<00:06, 13.74it/s]generating truth references:  87%|████████▋ | 606/694 [00:26<00:01, 48.29it/s]generating truth references:  88%|████████▊ | 611/694 [00:26<00:02, 40.73it/s]generating truth references:  89%|████████▉ | 616/694 [00:26<00:02, 38.72it/s]generating truth references:  89%|████████▉ | 621/694 [00:26<00:01, 43.31it/s]generating truth references:  90%|█████████ | 626/694 [00:26<00:01, 45.86it/s]generating truth references:  91%|█████████ | 631/694 [00:26<00:01, 49.52it/s]generating truth references:  92%|█████████▏| 636/694 [00:26<00:01, 41.36it/s]generating truth references:  92%|█████████▏| 641/694 [00:26<00:01, 38.88it/s]generating truth references:  93%|█████████▎| 647/694 [00:27<00:00, 50.72it/s]generating truth references:  94%|█████████▍| 653/694 [00:27<00:01, 37.24it/s]generating truth references:  95%|█████████▍| 658/694 [00:27<00:00, 44.85it/s]generating truth references:  96%|█████████▌| 663/694 [00:27<00:00, 47.80it/s]generating truth references:  96%|█████████▋| 669/694 [00:27<00:00, 51.90it/s]generating truth references:  97%|█████████▋| 675/694 [00:27<00:00, 49.86it/s]generating truth references:  98%|█████████▊| 680/694 [00:27<00:00, 49.40it/s]generating truth references:  99%|█████████▉| 686/694 [00:27<00:00, 50.13it/s]generating truth references: 100%|█████████▉| 692/694 [00:27<00:00, 51.93it/s]generating truth references: 100%|██████████| 694/694 [00:28<00:00, 24.78it/s]
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on charge/raw_events:
+  
+  0%|          | 0/1 [00:00<?, ?it/s]100%|##########| 1/1 [00:01<00:00,  1.33s/it]100%|##########| 1/1 [00:01<00:00,  1.35s/it]
+WARNING:root:Loading geometry from ['data/proto_nd_flow/multi_tile_layout-2.4.16.yaml', 'data/proto_nd_flow/multi_tile_layout-2.5.16.yaml']...
+WARNING:root:Loading geometry from data/proto_nd_flow/light_module_desc-2.0.0.yaml...
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+RawEventGenerator.finish()
+RunData.finish(charge/raw_events)
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (2/5) ~~~
+yamls/proto_nd_flow/workflows/charge/charge_event_reconstruction.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+create RunData() wf5.hdf5
+create Geometry() wf5.hdf5
+create H5FlowDatasetLoopGenerator(charge/raw_events) wf5.hdf5
+create timestamp_corrector: TimestampCorrector(packets_dset_name=charge/packets, ts_dset_name=charge/packets_corr_ts, correction={1: [-9.597, 4.0021e-06], 2: [-9.329, 1.177e-06]})
+create ext_trig_finder: ExternalTriggerFinder(packets_dset_name=charge/packets, ts_dset_name=charge/packets_corr_ts, ext_trigs_dset_name=charge/ext_trigs, pacman_trigger_enabled=True, pacman_trigger_word_filter=2)
+create raw_hit_builder: RawHitBuilder(packets_dset_name=charge/packets, ts_dset_name=charge/packets_corr_ts, hits_dset_name=charge/raw_hits)
+create event_builder: EventBuilder(hits_dset_name=charge/raw_hits, ext_trigs_dset_name=charge/ext_trigs, events_dset_name=charge/events)
+RunData.init(charge/raw_events)
+Geometry.init(charge/raw_events)
+H5FlowDatasetLoopGenerator.init()
+timestamp_corrector.init(charge/raw_events)
+ext_trig_finder.init(charge/raw_events)
+raw_hit_builder.init(charge/raw_events)
+event_builder.init(charge/raw_events)
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on charge/raw_events:
+  timestamp_corrector -> ext_trig_finder -> raw_hit_builder -> event_builder
+  0%|          | 0/1 [00:00<?, ?it/s]1 64
+100%|##########| 1/1 [00:01<00:00,  1.09s/it]100%|##########| 1/1 [00:01<00:00,  1.09s/it]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+H5FlowDatasetLoopGenerator.finish()
+timestamp_corrector.finish(charge/raw_events)
+ext_trig_finder.finish(charge/raw_events)
+raw_hit_builder.finish(charge/raw_events)
+event_builder.finish(charge/raw_events)
+RunData.finish(charge/raw_events)
+Geometry.finish(charge/raw_events)
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (3/5) ~~~
+yamls/proto_nd_flow/workflows/combined/combined_reconstruction.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+create RunData() wf5.hdf5
+create Geometry() wf5.hdf5
+create LArData() wf5.hdf5
+create H5FlowDatasetLoopGenerator(charge/events) wf5.hdf5
+create t0_reco: T0Reconstruction(ext_trigs_dset_name=charge/ext_trigs, raw_hits_dset_name=charge/raw_hits, t0_dset_name=combined/t0)
+RunData.init(charge/events)
+Geometry.init(charge/events)
+LArData.init(charge/events)
+H5FlowDatasetLoopGenerator.init()
+t0_reco.init(charge/events)
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on charge/events:
+  t0_reco
+  0%|          | 0/4 [00:00<?, ?it/s] 75%|#######5  | 3/4 [00:00<00:00, 25.52it/s]100%|##########| 4/4 [00:00<00:00, 27.91it/s]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+H5FlowDatasetLoopGenerator.finish()
+t0_reco.finish(charge/events)
+RunData.finish(charge/events)
+Geometry.finish(charge/events)
+LArData.finish(charge/events)
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (4/5) ~~~
+yamls/proto_nd_flow/workflows/charge/prompt_calibration.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+create RunData() wf5.hdf5
+create LArData() wf5.hdf5
+create Geometry() wf5.hdf5
+create H5FlowDatasetLoopGenerator(charge/raw_events) wf5.hdf5
+create calib_hit_builder: CalibHitBuilder(events_dset_name=charge/events, packets_dset_name=charge/packets, packets_index_name=charge/packets_index, raw_hits_dset_name=charge/raw_hits, t0_dset_name=combined/t0, max_contrib_segments=10, calib_hits_dset_name=charge/calib_prompt_hits, mc_hit_frac_dset_name=mc_truth/calib_prompt_hit_backtrack)
+RunData.init(charge/raw_events)
+LArData.init(charge/raw_events)
+Geometry.init(charge/raw_events)
+H5FlowDatasetLoopGenerator.init()
+calib_hit_builder.init(charge/raw_events)
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on charge/raw_events:
+  calib_hit_builder
+  0%|          | 0/1 [00:00<?, ?it/s]0 244 0 244 516350.0
+1 1160 244 1404 11999998.0
+2 3031 1404 4435 23999998.0
+3 1589 4435 6024 12516350.0
+4 651 6024 6675 24516350.0
+5 558 6675 7233 59999998.0
+6 227 7233 7460 36516350.0
+7 2380 7460 9840 95999998.0
+8 687 9840 10527 48516350.0
+9 1014 10527 11541 119999998.0
+10 548 11541 12089 131999998.0
+11 1082 12089 13171 143999998.0
+12 740 13171 13911 155999998.0
+13 1442 13911 15353 167999998.0
+14 196 15353 15549 108516350.0
+15 340 15549 15889 203999998.0
+16 319 15889 16208 120516350.0
+17 1059 16208 17267 215999998.0
+18 789 17267 18056 239999998.0
+19 618 18056 18674 263999998.0
+20 614 18674 19288 156516350.0
+21 562 19288 19850 299999998.0
+22 697 19850 20547 180516350.0
+23 679 20547 21226 311999998.0
+24 839 21226 22065 323999998.0
+25 214 22065 22279 335999998.0
+26 766 22279 23045 359999998.0
+27 327 23045 23372 371999998.0
+28 1285 23372 24657 383999998.0
+29 425 24657 25082 395999998.0
+30 1121 25082 26203 407999998.0
+31 920 26203 27123 419999998.0
+32 620 27123 27743 431999998.0
+33 383 27743 28126 455999998.0
+34 6802 28126 34928 467999998.0
+35 619 34928 35547 479999998.0
+36 170 35547 35717 491999998.0
+37 345 35717 36062 503999998.0
+38 451 36062 36513 515999998.0
+39 466 36513 36979 539999998.0
+40 166 36979 37145 551999998.0
+41 627 37145 37772 563999998.0
+42 747 37772 38519 587999998.0
+43 803 38519 39322 611999998.0
+44 1374 39322 40696 623999998.0
+45 475 40696 41171 635999998.0
+46 750 41171 41921 683999998.0
+47 1298 41921 43219 707999998.0
+48 377 43219 43596 719999998.0
+49 8520 43596 52116 731999998.0
+50 830 52116 52946 755999998.0
+51 5170 52946 58116 767999998.0
+52 1225 58116 59341 779999998.0
+53 953 59341 60294 791999998.0
+54 2697 60294 62991 815999998.0
+55 1858 62991 64849 827999998.0
+56 254 64849 65103 840001682.0
+57 663 65103 65766 851999998.0
+58 880 65766 66646 863999998.0
+59 456 66646 67102 875999998.0
+60 1013 67102 68115 899999998.0
+61 574 68115 68689 935999998.0
+62 977 68689 69666 947999998.0
+63 553 69666 70219 959999998.0
+64 1742 70219 71961 983999998.0
+65 2078 71961 74039 995999998.0
+66 1529 74039 75568 1007999998.0
+67 166 75568 75734 1019999998.0
+68 1565 75734 77299 1031999998.0
+69 504 77299 77803 1043999998.0
+70 2160 77803 79963 1055999998.0
+71 1020 79963 80983 1175999998.0
+72 1489 80983 82472 1211999998.0
+73 472 82472 82944 1223999998.0
+74 604 82944 83548 1259999998.0
+75 529 83548 84077 1271999998.0
+76 442 84077 84519 1283999998.0
+77 513 84519 85032 1295999998.0
+78 827 85032 85859 1307999998.0
+79 969 85859 86828 1319999998.0
+80 141 86828 86969 1355999998.0
+81 924 86969 87893 1379999998.0
+82 2379 87893 90272 1391999998.0
+83 811 90272 91083 1403999998.0
+84 765 91083 91848 1415999998.0
+85 500 91848 92348 1439999998.0
+86 450 92348 92798 1451999998.0
+87 272 92798 93070 1463999998.0
+88 390 93070 93460 1487999998.0
+89 596 93460 94056 1499999998.0
+90 220 94056 94276 1512001338.0
+91 624 94276 94900 1523999998.0
+92 1035 94900 95935 1535999998.0
+93 559 95935 96494 1571999998.0
+94 119 96494 96613 1584001002.0
+95 1148 96613 97761 1607999998.0
+96 1707 97761 99468 1643999998.0
+97 1504 99468 100972 1655999998.0
+98 1110 100972 102082 1667999998.0
+99 106 102082 102188 1680001558.0
+100 199 102188 102387 1691999998.0
+101 412 102387 102799 1715999998.0
+102 405 102799 103204 1739999998.0
+103 378 103204 103582 1763999998.0
+104 409 103582 103991 1775999998.0
+105 222 103991 104213 1787999998.0
+106 452 104213 104665 1799999998.0
+107 1067 104665 105732 1823999998.0
+108 870 105732 106602 1835999998.0
+109 1300 106602 107902 1871999998.0
+110 668 107902 108570 1883999998.0
+111 799 108570 109369 1895999998.0
+112 2263 109369 111632 1919999998.0
+113 480 111632 112112 1931999998.0
+114 500 112112 112612 1943999998.0
+115 1014 112612 113626 1955999998.0
+116 351 113626 113977 1967999998.0
+117 275 113977 114252 1979999998.0
+118 809 114252 115061 1991999998.0
+119 626 115061 115687 2027999998.0
+120 1441 115687 117128 2039999998.0
+121 149 117128 117277 2051999998.0
+122 758 117277 118035 2075999998.0
+123 931 118035 118966 2123999998.0
+100%|##########| 1/1 [00:05<00:00,  5.26s/it]100%|##########| 1/1 [00:05<00:00,  5.26s/it]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+H5FlowDatasetLoopGenerator.finish()
+calib_hit_builder.finish(charge/raw_events)
+RunData.finish(charge/raw_events)
+LArData.finish(charge/raw_events)
+Geometry.finish(charge/raw_events)
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (5/5) ~~~
+yamls/proto_nd_flow/workflows/charge/final_calibration.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+create RunData() wf5.hdf5
+create LArData() wf5.hdf5
+create Geometry() wf5.hdf5
+create H5FlowDatasetLoopGenerator(charge/raw_events) wf5.hdf5
+create calib_hit_merger: CalibHitMerger(events_dset_name=charge/events, hits_name=charge/calib_prompt_hits, max_contrib_segments=200, merge_cut=65, max_merge_steps=50, merged_name=charge/calib_final_hits, mc_hit_frac_dset_name=mc_truth/calib_final_hit_backtrack)
+RunData.init(charge/raw_events)
+LArData.init(charge/raw_events)
+Geometry.init(charge/raw_events)
+H5FlowDatasetLoopGenerator.init()
+calib_hit_merger.init(charge/raw_events)
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on charge/raw_events:
+  calib_hit_merger
+  0%|          | 0/4 [00:00<?, ?it/s]current number of merged hits = 27123
+merging: 8520
+current number of merged hits = 18603
+merging: 996
+current number of merged hits = 17607
+merging: 185
+current number of merged hits = 17422
+merging: 57
+current number of merged hits = 17365
+merging: 15
+current number of merged hits = 17350
+merging: 4
+current number of merged hits = 17346
+merging: 2
+current number of merged hits = 17344
+merging: 0
+ 25%|##5       | 1/4 [00:07<00:23,  8.00s/it]current number of merged hits = 43096
+merging: 13009
+current number of merged hits = 30087
+merging: 2561
+current number of merged hits = 27526
+merging: 948
+current number of merged hits = 26578
+merging: 386
+current number of merged hits = 26192
+merging: 144
+current number of merged hits = 26048
+merging: 44
+current number of merged hits = 26004
+merging: 17
+current number of merged hits = 25987
+merging: 8
+current number of merged hits = 25979
+merging: 3
+current number of merged hits = 25976
+merging: 2
+current number of merged hits = 25974
+merging: 2
+current number of merged hits = 25972
+merging: 2
+current number of merged hits = 25970
+merging: 2
+current number of merged hits = 25968
+merging: 1
+current number of merged hits = 25967
+merging: 1
+current number of merged hits = 25966
+merging: 0
+ 50%|#####     | 2/4 [00:45<01:14, 37.35s/it]current number of merged hits = 27542
+merging: 8755
+current number of merged hits = 18787
+merging: 927
+current number of merged hits = 17860
+merging: 99
+current number of merged hits = 17761
+merging: 15
+current number of merged hits = 17746
+merging: 1
+current number of merged hits = 17745
+merging: 0
+ 75%|#######5  | 3/4 [00:51<00:05,  5.74s/it]current number of merged hits = 21205
+merging: 6824
+current number of merged hits = 14381
+merging: 675
+current number of merged hits = 13706
+merging: 113
+current number of merged hits = 13593
+merging: 32
+current number of merged hits = 13561
+merging: 17
+current number of merged hits = 13544
+merging: 7
+current number of merged hits = 13537
+merging: 2
+current number of merged hits = 13535
+merging: 0
+100%|##########| 4/4 [00:56<00:00,  5.41s/it]100%|##########| 4/4 [00:56<00:00, 14.12s/it]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+H5FlowDatasetLoopGenerator.finish()
+calib_hit_merger.finish(charge/raw_events)
+RunData.finish(charge/raw_events)
+LArData.finish(charge/raw_events)
+Geometry.finish(charge/raw_events)
+~~~~~~~~~~~~~~
+
+RUNNING h5flow -c yamls/proto_nd_flow/workflows/light/light_event_building_mc.yaml yamls/proto_nd_flow/workflows/light/light_event_reconstruction.yaml -i /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5 -o wf5.hdf5
+WARNING:root:Running without mpi4py because No module named 'mpi4py'
+~~~ H5FLOW ~~~
+output file: wf5.hdf5
+input file: /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (1/2) ~~~
+yamls/proto_nd_flow/workflows/light/light_event_building_mc.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+Hello
+create RunData() /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+create LightEventGeneratorMC(light/events) /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+RunData.init(light/events)
+LightEventGeneratorMC.init()
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on light/events:
+  
+  0%|          | 0/14 [00:00<?, ?it/s]  7%|7         | 1/14 [00:02<00:26,  2.02s/it] 14%|#4        | 2/14 [00:04<00:24,  2.01s/it] 21%|##1       | 3/14 [00:06<00:22,  2.02s/it] 29%|##8       | 4/14 [00:08<00:20,  2.01s/it] 36%|###5      | 5/14 [00:10<00:18,  2.00s/it] 43%|####2     | 6/14 [00:12<00:16,  2.00s/it] 50%|#####     | 7/14 [00:14<00:14,  2.01s/it] 57%|#####7    | 8/14 [00:16<00:12,  2.01s/it] 64%|######4   | 9/14 [00:18<00:09,  1.99s/it] 71%|#######1  | 10/14 [00:20<00:08,  2.00s/it] 79%|#######8  | 11/14 [00:22<00:06,  2.04s/it] 86%|########5 | 12/14 [00:24<00:04,  2.02s/it] 93%|#########2| 13/14 [00:26<00:01,  1.94s/it] 93%|#########2| 13/14 [00:26<00:02,  2.01s/it]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+LightEventGeneratorMC.finish()
+RunData.finish(light/events)
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (2/2) ~~~
+yamls/proto_nd_flow/workflows/light/light_event_reconstruction.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+create RunData() wf5.hdf5
+create Geometry() wf5.hdf5
+create LArData() wf5.hdf5
+Could not find generator description, using default loop behavior on light/events dataset
+create H5FlowDatasetLoopGenerator(light/events) wf5.hdf5
+create timestamp_corrector: LightTimestampCorrector(t_ns_dset_name=light/t_ns, slope={0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0})
+create true_hit_finder: WaveformHitFinder(wvfm_dset_name=light/wvfm, t_ns_dset_name=light/t_ns, hits_dset_name=light/true_hits, near_samples=4, hit_level=sipm, threshold=80)
+create wvfm_filt: WaveformNoiseFilter(wvfm_dset_name=light/wvfm, fwvfm_dset_name=light/fwvfm, noise_dset_name=light/fwvfm_noise, filter_channels=[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63], filter_samples=[0, 80], modulo_param=10, keep_noise=False)
+create wvfm_deconv: WaveformDeconvolution(wvfm_dset_name=light/fwvfm, deconv_dset_name=light/deconv, do_filtering=True, filter_type=Wiener, gaus_filter_width=1, filter_channels=[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63], noise_spectrum_filename=data/proto_nd_flow/noise_power.npz, signal_spectrum_filename=data/proto_nd_flow/wvfm_deconv_signal_power.npz, signal_impulse_filename=data/proto_nd_flow/wvfm_deconv_signal_impulse.fit.npz)
+create wvfm_align: WaveformAlign(wvfm_dset_name=light/deconv, sim_latency=100)
+create wvfm_calib: WaveformCalib(wvfm_dset_name=light/deconv, cwvfm_dset_name=light/cwvfm, gain={'default': 0.0, 1: {2: 0.00017191110133127956, 3: 0.0001761754425527117, 4: 0.00018319849923789422, 5: 0.00018440930012982414, 6: 0.00018187638226050518, 7: 0.00017276647501105705, 9: 0.0018423534960499937, 10: 0.0018985419198055892, 11: 0.0018419191323824117, 12: 0.001834566161794059, 13: 0.0019141247090530443, 14: 0.001795977011494253, 18: 0.00017462002682163612, 19: 0.0001813276082163166, 20: 0.00016716593559430834, 21: 0.00017007728311744857, 22: 0.00017198679141441938, 23: 0.00017083971134922372, 25: 0.001758383974791807, 26: 0.0017589778228076101, 27: 0.0019614612101431085, 28: 0.0019373837569745813, 29: 0.0019247351564424735, 30: 0.0019015455762443718, 35: 0.00016686245194361384, 36: 0.00018683486787038144, 37: 0.00017798154687322017, 38: 0.00017481539494294026, 39: 0.00017871440009150177, 41: 0.001475866628884481, 42: 0.0014721123045034858, 43: 0.0014424852289512554, 44: 0.0014772619835492105, 45: 0.0014643861293345832, 46: 0.001474473907709729, 50: 0.00016456029489204845, 51: 0.00016345852076577046, 52: 0.00016537891617273497, 53: 0.00015805179041068177, 54: 0.00016186677716771987, 55: 0.00016686245194361384, 57: 0.0016541393182299387, 58: 0.0016643587558585428, 59: 0.0016650682011935208, 60: 0.0016837284482758622, 61: 0.001694134229643283, 62: 0.0017037400501581073}, 0: {2: 0.00018023993540200716, 3: 0.00018247109657830202, 4: 0.00017972164711295148, 5: 0.00017703376387944708, 6: 0.0001798043728423475, 9: 0.001560939060939061, 10: 0.001637497380004192, 11: 0.0017230921923246578, 12: 0.0016700513039760582, 14: 0.0016154880066170387, 18: 0.0002223249857712009, 19: 0.00023735379006531977, 20: 0.00020202999741401602, 21: 0.00019499563209784103, 22: 0.00023994164619164617, 23: 0.0002326533650982728, 25: 0.0015733561574866578, 26: 0.0016048685291700903, 27: 0.0016093315480482024, 28: 0.0016489024905023215, 29: 0.001644390654599032, 30: 0.001607179592676404, 41: 0.0016116554925219185, 42: 0.0016318537859007834, 43: 0.0016325357851844113, 44: 0.0016645360605092147, 45: 0.0015631252501000401, 46: 0.0016629416773094932, 50: 0.0002136021872863978, 51: 0.00020618896806545261, 52: 0.00019383451184716536, 53: 0.00020265888456549936, 54: 0.00019937476075028708, 55: 0.00019347449232293213, 57: 0.0019894321364909598, 58: 0.0020268517317421197, 59: 0.0016837284482758622, 60: 0.0016012502562000412, 61: 0.0016291314774267544, 62: 0.0019446172993154947}}, gain_mc={'default': 0.0, 0: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 1: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 2: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 3: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 4: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 5: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 6: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 7: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}})
+create wvfm_sum: WaveformSum(wvfm_dset_name=light/cwvfm, swvfm_dset_name=light/swvfm)
+create sipm_hit_finder: WaveformHitFinder(wvfm_dset_name=light/cwvfm, t_ns_dset_name=light/t_ns, hits_dset_name=light/sipm_hits, near_samples=4, hit_level=sipm, threshold=80)
+WARNING:root:Input spectrum size mismatch (in: 501, needed: 1001). Interpolating assuming same sample rate...
+WARNING:root:Input spectrum size mismatch (in: 501, needed: 1001). Interpolating assuming same sample rate...
+WARNING:root:Input impulse function size mismatch (in: 1000, needed: 2000). Truncating to shorter length/appending zeros...
+create sum_hit_finder: WaveformHitFinder(wvfm_dset_name=light/swvfm, t_ns_dset_name=light/t_ns, hits_dset_name=light/sum_hits, near_samples=4, hit_level=sum, threshold={0: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 1: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 2: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 3: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 4: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 5: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 6: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 7: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}})
+RunData.init(light/events)
+Geometry.init(light/events)
+LArData.init(light/events)
+H5FlowDatasetLoopGenerator.init()
+timestamp_corrector.init(light/events)
+true_hit_finder.init(light/events)
+wvfm_filt.init(light/events)
+wvfm_deconv.init(light/events)
+wvfm_align.init(light/events)
+wvfm_calib.init(light/events)
+wvfm_sum.init(light/events)
+sipm_hit_finder.init(light/events)
+sum_hit_finder.init(light/events)
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on light/events:
+  timestamp_corrector -> true_hit_finder -> wvfm_filt -> wvfm_deconv -> wvfm_align -> wvfm_calib -> wvfm_sum -> sipm_hit_finder -> sum_hit_finder
+  0%|          | 0/26 [00:00<?, ?it/s]/global/u1/q/qvuong/2x2_sim/run-ndlar-flow/flow.venv/lib/python3.11/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+  fill_value = np.array(fill_value, copy=False, dtype=ndtype)
+  4%|3         | 1/26 [00:08<03:33,  8.54s/it]  8%|7         | 2/26 [00:15<02:40,  6.68s/it]/global/u1/q/qvuong/2x2_sim/run-ndlar-flow/ndlar_flow/src/proto_nd_flow/reco/light/true_hit_finder.py:234: RuntimeWarning: divide by zero encountered in divide
+  - peak_spline_subsamples / peak_spline_d,
+/global/u1/q/qvuong/2x2_sim/run-ndlar-flow/ndlar_flow/src/proto_nd_flow/reco/light/true_hit_finder.py:249: RuntimeWarning: divide by zero encountered in divide
+  + (np.expand_dims(peak_max_spline, axis=-1) * 0.5 - peak_spline_subsamples) / peak_spline_d,
+/global/u1/q/qvuong/2x2_sim/run-ndlar-flow/ndlar_flow/src/proto_nd_flow/reco/light/true_hit_finder.py:252: RuntimeWarning: divide by zero encountered in divide
+  + (np.expand_dims(peak_max_spline, axis=-1) * 0.5 - peak_spline_subsamples) / peak_spline_d,
+ 12%|#1        | 3/26 [00:20<02:02,  5.32s/it] 15%|#5        | 4/26 [00:26<02:01,  5.53s/it] 19%|#9        | 5/26 [00:33<02:35,  7.41s/it] 23%|##3       | 6/26 [00:41<02:34,  7.75s/it] 27%|##6       | 7/26 [00:46<01:35,  5.02s/it] 31%|###       | 8/26 [00:53<02:06,  7.01s/it] 35%|###4      | 9/26 [01:02<02:29,  8.78s/it] 38%|###8      | 10/26 [01:10<02:22,  8.90s/it] 42%|####2     | 11/26 [01:16<01:24,  5.64s/it] 46%|####6     | 12/26 [01:22<01:20,  5.77s/it] 50%|#####     | 13/26 [01:30<01:49,  8.44s/it] 54%|#####3    | 14/26 [01:35<01:00,  5.00s/it] 58%|#####7    | 15/26 [01:42<01:15,  6.85s/it] 62%|######1   | 16/26 [01:50<01:16,  7.64s/it] 65%|######5   | 17/26 [01:56<00:54,  6.08s/it] 69%|######9   | 18/26 [02:01<00:43,  5.49s/it] 73%|#######3  | 19/26 [02:08<00:47,  6.72s/it] 77%|#######6  | 20/26 [02:14<00:33,  5.54s/it]/global/u1/q/qvuong/2x2_sim/run-ndlar-flow/ndlar_flow/src/proto_nd_flow/reco/light/true_hit_finder.py:234: RuntimeWarning: invalid value encountered in divide
+  - peak_spline_subsamples / peak_spline_d,
+ 81%|########  | 21/26 [02:19<00:28,  5.72s/it] 85%|########4 | 22/26 [02:27<00:29,  7.40s/it] 88%|########8 | 23/26 [02:32<00:17,  5.71s/it] 92%|#########2| 24/26 [02:38<00:11,  5.87s/it] 96%|#########6| 25/26 [02:45<00:06,  6.71s/it]100%|##########| 26/26 [02:50<00:00,  4.72s/it]100%|##########| 26/26 [02:50<00:00,  6.55s/it]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+H5FlowDatasetLoopGenerator.finish()
+timestamp_corrector.finish(light/events)
+true_hit_finder.finish(light/events)
+wvfm_filt.finish(light/events)
+wvfm_deconv.finish(light/events)
+wvfm_align.finish(light/events)
+wvfm_calib.finish(light/events)
+wvfm_sum.finish(light/events)
+sipm_hit_finder.finish(light/events)
+sum_hit_finder.finish(light/events)
+RunData.finish(light/events)
+Geometry.finish(light/events)
+LArData.finish(light/events)
+~~~~~~~~~~~~~~
+
+RUNNING h5flow -c yamls/proto_nd_flow/workflows/charge/charge_event_building.yaml yamls/proto_nd_flow/workflows/charge/charge_event_reconstruction.yaml yamls/proto_nd_flow/workflows/combined/combined_reconstruction.yaml yamls/proto_nd_flow/workflows/charge/prompt_calibration.yaml yamls/proto_nd_flow/workflows/charge/final_calibration.yaml -i /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5 -o wf5.hdf5
+WARNING:root:Running without mpi4py because No module named 'mpi4py'
+WARNING:root:Source dataset charge/raw_events has no inputfile in metadata stored under 'input_filename', using {self.input_filename} for RunData lookup
+WARNING:root:Could not find row matching /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5 in data/proto_nd_flow/runlist-2x2-mcexample.txt
+~~~ H5FLOW ~~~
+output file: wf5.hdf5
+input file: /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (1/5) ~~~
+yamls/proto_nd_flow/workflows/charge/charge_event_building.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+Hello
+create RunData() /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+create RawEventGenerator(charge/raw_events) /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+RunData.init(charge/raw_events)
+RawEventGenerator.init()
+generating truth references:   0%|          | 0/694 [00:00<?, ?it/s]generating truth references:   0%|          | 1/694 [00:00<02:25,  4.75it/s]generating truth references:   1%|          | 4/694 [00:00<00:58, 11.71it/s]generating truth references:   1%|          | 7/694 [00:00<00:57, 12.01it/s]generating truth references:   1%|▏         | 9/694 [00:00<00:40, 17.12it/s]generating truth references:   2%|▏         | 11/694 [00:00<00:34, 19.84it/s]generating truth references:   2%|▏         | 15/694 [00:02<04:05,  2.76it/s]generating truth references:   2%|▏         | 17/694 [00:02<00:52, 13.01it/s]generating truth references:   3%|▎         | 19/694 [00:02<00:46, 14.53it/s]generating truth references:   3%|▎         | 21/694 [00:03<02:02,  5.51it/s]generating truth references:   3%|▎         | 22/694 [00:03<03:15,  3.45it/s]generating truth references:   4%|▎         | 26/694 [00:03<00:18, 35.17it/s]generating truth references:   4%|▍         | 30/694 [00:03<00:20, 32.57it/s]generating truth references:   5%|▍         | 34/694 [00:03<01:10,  9.42it/s]generating truth references:   5%|▌         | 38/694 [00:04<00:17, 37.04it/s]generating truth references:   6%|▌         | 42/694 [00:04<00:51, 12.76it/s]generating truth references:   7%|▋         | 47/694 [00:04<00:35, 18.05it/s]generating truth references:   7%|▋         | 51/694 [00:04<00:19, 32.80it/s]generating truth references:   8%|▊         | 55/694 [00:04<00:18, 34.38it/s]generating truth references:   9%|▊         | 60/694 [00:05<00:16, 37.88it/s]generating truth references:   9%|▉         | 64/694 [00:05<01:13,  8.52it/s]generating truth references:  10%|▉         | 67/694 [00:06<02:43,  3.83it/s]generating truth references:  10%|▉         | 68/694 [00:06<02:11,  4.75it/s]generating truth references:  10%|█         | 71/694 [00:06<00:25, 24.87it/s]generating truth references:  11%|█         | 74/694 [00:06<00:39, 15.68it/s]generating truth references:  11%|█         | 76/694 [00:07<03:02,  3.39it/s]generating truth references:  11%|█▏        | 79/694 [00:07<00:21, 29.10it/s]generating truth references:  12%|█▏        | 83/694 [00:07<00:20, 30.18it/s]generating truth references:  13%|█▎        | 88/694 [00:07<00:13, 44.80it/s]generating truth references:  13%|█▎        | 93/694 [00:07<00:25, 23.21it/s]generating truth references:  14%|█▍        | 96/694 [00:08<01:14,  8.04it/s]generating truth references:  14%|█▍        | 100/694 [00:08<00:21, 27.33it/s]generating truth references:  15%|█▍        | 103/694 [00:08<00:40, 14.76it/s]generating truth references:  15%|█▌        | 105/694 [00:08<01:21,  7.20it/s]generating truth references:  15%|█▌        | 107/694 [00:09<03:51,  2.54it/s]generating truth references:  16%|█▌        | 109/694 [00:09<00:29, 19.94it/s]generating truth references:  16%|█▋        | 113/694 [00:10<00:40, 14.42it/s]generating truth references:  17%|█▋        | 116/694 [00:10<00:19, 29.28it/s]generating truth references:  17%|█▋        | 119/694 [00:10<01:21,  7.04it/s]generating truth references:  17%|█▋        | 120/694 [00:10<01:49,  5.26it/s]generating truth references:  18%|█▊        | 123/694 [00:10<00:19, 29.04it/s]generating truth references:  18%|█▊        | 126/694 [00:11<00:42, 13.48it/s]generating truth references:  19%|█▊        | 129/694 [00:11<00:30, 18.35it/s]generating truth references:  19%|█▉        | 132/694 [00:11<00:22, 24.63it/s]generating truth references:  20%|█▉        | 136/694 [00:11<00:26, 21.17it/s]generating truth references:  20%|██        | 139/694 [00:11<00:24, 22.53it/s]generating truth references:  20%|██        | 142/694 [00:11<00:18, 29.59it/s]generating truth references:  21%|██        | 145/694 [00:12<00:29, 18.57it/s]generating truth references:  21%|██▏       | 148/694 [00:12<00:24, 22.17it/s]generating truth references:  22%|██▏       | 151/694 [00:12<00:41, 12.94it/s]generating truth references:  22%|██▏       | 153/694 [00:12<00:32, 16.69it/s]generating truth references:  23%|██▎       | 157/694 [00:12<00:20, 25.88it/s]generating truth references:  23%|██▎       | 160/694 [00:12<00:18, 29.57it/s]generating truth references:  23%|██▎       | 163/694 [00:12<00:23, 22.75it/s]generating truth references:  24%|██▍       | 166/694 [00:13<00:28, 18.72it/s]generating truth references:  24%|██▍       | 168/694 [00:13<00:41, 12.59it/s]generating truth references:  25%|██▍       | 171/694 [00:13<00:38, 13.43it/s]generating truth references:  25%|██▌       | 174/694 [00:13<00:29, 17.34it/s]generating truth references:  25%|██▌       | 176/694 [00:13<00:34, 15.07it/s]generating truth references:  26%|██▌       | 178/694 [00:14<01:05,  7.92it/s]generating truth references:  26%|██▌       | 181/694 [00:14<00:22, 22.42it/s]generating truth references:  27%|██▋       | 184/694 [00:14<00:19, 26.52it/s]generating truth references:  27%|██▋       | 189/694 [00:14<00:19, 25.56it/s]generating truth references:  28%|██▊       | 193/694 [00:14<00:12, 39.49it/s]generating truth references:  28%|██▊       | 197/694 [00:14<00:38, 12.98it/s]generating truth references:  29%|██▉       | 201/694 [00:15<00:36, 13.47it/s]generating truth references:  30%|██▉       | 205/694 [00:15<00:45, 10.68it/s]generating truth references:  30%|███       | 209/694 [00:15<00:17, 27.90it/s]generating truth references:  31%|███       | 212/694 [00:15<00:28, 16.65it/s]generating truth references:  31%|███       | 216/694 [00:15<00:11, 39.91it/s]generating truth references:  32%|███▏      | 222/694 [00:16<00:09, 50.88it/s]generating truth references:  33%|███▎      | 228/694 [00:16<00:08, 55.06it/s]generating truth references:  34%|███▎      | 234/694 [00:16<00:10, 44.82it/s]generating truth references:  34%|███▍      | 239/694 [00:16<00:09, 49.49it/s]generating truth references:  35%|███▌      | 245/694 [00:16<00:07, 56.43it/s]generating truth references:  36%|███▌      | 251/694 [00:16<00:10, 43.88it/s]generating truth references:  37%|███▋      | 257/694 [00:16<00:08, 49.90it/s]generating truth references:  38%|███▊      | 262/694 [00:16<00:10, 41.08it/s]generating truth references:  38%|███▊      | 267/694 [00:17<00:11, 36.17it/s]generating truth references:  39%|███▉      | 272/694 [00:17<00:09, 43.81it/s]generating truth references:  40%|███▉      | 277/694 [00:17<00:08, 49.79it/s]generating truth references:  41%|████      | 282/694 [00:17<00:08, 46.31it/s]generating truth references:  41%|████▏     | 287/694 [00:17<00:09, 41.09it/s]generating truth references:  42%|████▏     | 292/694 [00:17<00:13, 30.35it/s]generating truth references:  43%|████▎     | 296/694 [00:17<00:14, 28.13it/s]generating truth references:  43%|████▎     | 300/694 [00:17<00:11, 34.56it/s]generating truth references:  44%|████▍     | 304/694 [00:18<00:27, 14.27it/s]generating truth references:  44%|████▍     | 307/694 [00:18<00:15, 25.00it/s]generating truth references:  45%|████▍     | 311/694 [00:18<00:09, 39.68it/s]generating truth references:  45%|████▌     | 315/694 [00:18<00:15, 24.08it/s]generating truth references:  46%|████▌     | 320/694 [00:18<00:08, 44.15it/s]generating truth references:  47%|████▋     | 326/694 [00:18<00:07, 48.85it/s]generating truth references:  48%|████▊     | 332/694 [00:18<00:07, 51.35it/s]generating truth references:  49%|████▊     | 338/694 [00:19<00:07, 46.96it/s]generating truth references:  49%|████▉     | 343/694 [00:19<00:19, 18.23it/s]generating truth references:  50%|█████     | 348/694 [00:19<00:08, 42.16it/s]generating truth references:  51%|█████     | 353/694 [00:19<00:26, 12.63it/s]generating truth references:  52%|█████▏    | 358/694 [00:19<00:06, 49.29it/s]generating truth references:  52%|█████▏    | 363/694 [00:20<00:08, 40.06it/s]generating truth references:  53%|█████▎    | 368/694 [00:20<00:07, 44.05it/s]generating truth references:  54%|█████▎    | 373/694 [00:20<00:07, 43.34it/s]generating truth references:  55%|█████▍    | 379/694 [00:20<00:07, 43.40it/s]generating truth references:  55%|█████▌    | 385/694 [00:20<00:05, 52.29it/s]generating truth references:  56%|█████▋    | 391/694 [00:20<00:09, 31.23it/s]generating truth references:  57%|█████▋    | 395/694 [00:21<00:29, 10.12it/s]generating truth references:  58%|█████▊    | 401/694 [00:21<00:05, 53.42it/s]generating truth references:  59%|█████▊    | 407/694 [00:21<00:05, 49.34it/s]generating truth references:  59%|█████▉    | 412/694 [00:21<00:08, 33.79it/s]generating truth references:  60%|██████    | 418/694 [00:21<00:05, 47.33it/s]generating truth references:  61%|██████    | 423/694 [00:21<00:07, 37.67it/s]generating truth references:  62%|██████▏   | 428/694 [00:21<00:06, 41.26it/s]generating truth references:  62%|██████▏   | 433/694 [00:22<00:06, 39.60it/s]generating truth references:  63%|██████▎   | 437/694 [00:22<00:06, 36.77it/s]generating truth references:  64%|██████▎   | 441/694 [00:22<00:08, 30.35it/s]generating truth references:  64%|██████▍   | 446/694 [00:22<00:05, 46.68it/s]generating truth references:  65%|██████▌   | 452/694 [00:22<00:04, 49.54it/s]generating truth references:  66%|██████▌   | 458/694 [00:22<00:04, 52.99it/s]generating truth references:  67%|██████▋   | 464/694 [00:22<00:04, 49.83it/s]generating truth references:  68%|██████▊   | 469/694 [00:22<00:05, 40.18it/s]generating truth references:  68%|██████▊   | 474/694 [00:22<00:04, 49.30it/s]generating truth references:  69%|██████▉   | 479/694 [00:23<00:04, 49.13it/s]generating truth references:  70%|██████▉   | 484/694 [00:23<00:05, 39.64it/s]generating truth references:  71%|███████   | 490/694 [00:23<00:03, 51.96it/s]generating truth references:  71%|███████▏  | 496/694 [00:23<00:03, 52.45it/s]generating truth references:  72%|███████▏  | 502/694 [00:23<00:04, 44.37it/s]generating truth references:  73%|███████▎  | 507/694 [00:23<00:04, 39.69it/s]generating truth references:  74%|███████▎  | 511/694 [00:23<00:04, 37.58it/s]generating truth references:  74%|███████▍  | 517/694 [00:23<00:03, 54.98it/s]generating truth references:  75%|███████▌  | 523/694 [00:24<00:03, 52.69it/s]generating truth references:  76%|███████▌  | 529/694 [00:24<00:04, 38.88it/s]generating truth references:  77%|███████▋  | 535/694 [00:24<00:05, 27.15it/s]generating truth references:  78%|███████▊  | 541/694 [00:24<00:02, 53.20it/s]generating truth references:  79%|███████▉  | 547/694 [00:24<00:03, 46.52it/s]generating truth references:  80%|███████▉  | 552/694 [00:24<00:03, 45.52it/s]generating truth references:  80%|████████  | 557/694 [00:24<00:03, 36.47it/s]generating truth references:  81%|████████  | 563/694 [00:25<00:02, 55.12it/s]generating truth references:  82%|████████▏ | 569/694 [00:25<00:03, 36.44it/s]generating truth references:  83%|████████▎ | 573/694 [00:25<00:08, 13.74it/s]generating truth references:  83%|████████▎ | 578/694 [00:25<00:02, 47.08it/s]generating truth references:  84%|████████▍ | 583/694 [00:25<00:02, 46.15it/s]generating truth references:  85%|████████▍ | 588/694 [00:25<00:02, 49.90it/s]generating truth references:  85%|████████▌ | 593/694 [00:25<00:02, 44.69it/s]generating truth references:  86%|████████▋ | 599/694 [00:26<00:01, 49.01it/s]generating truth references:  87%|████████▋ | 604/694 [00:26<00:06, 13.11it/s]generating truth references:  88%|████████▊ | 609/694 [00:26<00:01, 45.95it/s]generating truth references:  88%|████████▊ | 614/694 [00:26<00:01, 41.53it/s]generating truth references:  89%|████████▉ | 619/694 [00:26<00:02, 34.18it/s]generating truth references:  90%|████████▉ | 624/694 [00:26<00:01, 45.49it/s]generating truth references:  91%|█████████ | 630/694 [00:26<00:01, 54.02it/s]generating truth references:  92%|█████████▏| 636/694 [00:27<00:01, 46.70it/s]generating truth references:  92%|█████████▏| 641/694 [00:27<00:01, 39.12it/s]generating truth references:  93%|█████████▎| 647/694 [00:27<00:00, 51.55it/s]generating truth references:  94%|█████████▍| 653/694 [00:27<00:01, 37.56it/s]generating truth references:  95%|█████████▍| 658/694 [00:27<00:00, 43.83it/s]generating truth references:  96%|█████████▌| 663/694 [00:27<00:00, 42.92it/s]generating truth references:  96%|█████████▋| 669/694 [00:27<00:00, 52.42it/s]generating truth references:  97%|█████████▋| 675/694 [00:27<00:00, 50.05it/s]generating truth references:  98%|█████████▊| 681/694 [00:28<00:00, 50.27it/s]generating truth references:  99%|█████████▉| 687/694 [00:28<00:00, 50.65it/s]generating truth references: 100%|█████████▉| 693/694 [00:28<00:00, 52.03it/s]generating truth references: 100%|██████████| 694/694 [00:28<00:00, 24.46it/s]
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on charge/raw_events:
+  
+  0%|          | 0/1 [00:00<?, ?it/s]100%|##########| 1/1 [00:01<00:00,  1.40s/it]100%|##########| 1/1 [00:01<00:00,  1.41s/it]
+WARNING:root:Loading geometry from ['data/proto_nd_flow/multi_tile_layout-2.4.16.yaml', 'data/proto_nd_flow/multi_tile_layout-2.5.16.yaml']...
+WARNING:root:Loading geometry from data/proto_nd_flow/light_module_desc-2.0.0.yaml...
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+RawEventGenerator.finish()
+RunData.finish(charge/raw_events)
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (2/5) ~~~
+yamls/proto_nd_flow/workflows/charge/charge_event_reconstruction.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+create RunData() wf5.hdf5
+create Geometry() wf5.hdf5
+create H5FlowDatasetLoopGenerator(charge/raw_events) wf5.hdf5
+create timestamp_corrector: TimestampCorrector(packets_dset_name=charge/packets, ts_dset_name=charge/packets_corr_ts, correction={1: [-9.597, 4.0021e-06], 2: [-9.329, 1.177e-06]})
+create ext_trig_finder: ExternalTriggerFinder(packets_dset_name=charge/packets, ts_dset_name=charge/packets_corr_ts, ext_trigs_dset_name=charge/ext_trigs, pacman_trigger_enabled=True, pacman_trigger_word_filter=2)
+create raw_hit_builder: RawHitBuilder(packets_dset_name=charge/packets, ts_dset_name=charge/packets_corr_ts, hits_dset_name=charge/raw_hits)
+create event_builder: EventBuilder(hits_dset_name=charge/raw_hits, ext_trigs_dset_name=charge/ext_trigs, events_dset_name=charge/events)
+RunData.init(charge/raw_events)
+Geometry.init(charge/raw_events)
+H5FlowDatasetLoopGenerator.init()
+timestamp_corrector.init(charge/raw_events)
+ext_trig_finder.init(charge/raw_events)
+raw_hit_builder.init(charge/raw_events)
+event_builder.init(charge/raw_events)
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on charge/raw_events:
+  timestamp_corrector -> ext_trig_finder -> raw_hit_builder -> event_builder
+  0%|          | 0/1 [00:00<?, ?it/s]1 64
+100%|##########| 1/1 [00:01<00:00,  1.05s/it]100%|##########| 1/1 [00:01<00:00,  1.05s/it]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+H5FlowDatasetLoopGenerator.finish()
+timestamp_corrector.finish(charge/raw_events)
+ext_trig_finder.finish(charge/raw_events)
+raw_hit_builder.finish(charge/raw_events)
+event_builder.finish(charge/raw_events)
+RunData.finish(charge/raw_events)
+Geometry.finish(charge/raw_events)
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (3/5) ~~~
+yamls/proto_nd_flow/workflows/combined/combined_reconstruction.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+create RunData() wf5.hdf5
+create Geometry() wf5.hdf5
+create LArData() wf5.hdf5
+create H5FlowDatasetLoopGenerator(charge/events) wf5.hdf5
+create t0_reco: T0Reconstruction(ext_trigs_dset_name=charge/ext_trigs, raw_hits_dset_name=charge/raw_hits, t0_dset_name=combined/t0)
+RunData.init(charge/events)
+Geometry.init(charge/events)
+LArData.init(charge/events)
+H5FlowDatasetLoopGenerator.init()
+t0_reco.init(charge/events)
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on charge/events:
+  t0_reco
+  0%|          | 0/4 [00:00<?, ?it/s] 75%|#######5  | 3/4 [00:00<00:00, 25.37it/s]100%|##########| 4/4 [00:00<00:00, 28.31it/s]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+H5FlowDatasetLoopGenerator.finish()
+t0_reco.finish(charge/events)
+RunData.finish(charge/events)
+Geometry.finish(charge/events)
+LArData.finish(charge/events)
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (4/5) ~~~
+yamls/proto_nd_flow/workflows/charge/prompt_calibration.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+create RunData() wf5.hdf5
+create LArData() wf5.hdf5
+create Geometry() wf5.hdf5
+create H5FlowDatasetLoopGenerator(charge/raw_events) wf5.hdf5
+create calib_hit_builder: CalibHitBuilder(events_dset_name=charge/events, packets_dset_name=charge/packets, packets_index_name=charge/packets_index, raw_hits_dset_name=charge/raw_hits, t0_dset_name=combined/t0, max_contrib_segments=10, calib_hits_dset_name=charge/calib_prompt_hits, mc_hit_frac_dset_name=mc_truth/calib_prompt_hit_backtrack)
+RunData.init(charge/raw_events)
+LArData.init(charge/raw_events)
+Geometry.init(charge/raw_events)
+H5FlowDatasetLoopGenerator.init()
+calib_hit_builder.init(charge/raw_events)
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on charge/raw_events:
+  calib_hit_builder
+  0%|          | 0/1 [00:00<?, ?it/s]0 244 0 244 516350.0
+1 1160 244 1404 11999998.0
+2 3031 1404 4435 23999998.0
+3 1589 4435 6024 12516350.0
+4 651 6024 6675 24516350.0
+5 558 6675 7233 59999998.0
+6 227 7233 7460 36516350.0
+7 2380 7460 9840 95999998.0
+8 687 9840 10527 48516350.0
+9 1014 10527 11541 119999998.0
+10 548 11541 12089 131999998.0
+11 1082 12089 13171 143999998.0
+12 740 13171 13911 155999998.0
+13 1442 13911 15353 167999998.0
+14 196 15353 15549 108516350.0
+15 340 15549 15889 203999998.0
+16 319 15889 16208 120516350.0
+17 1059 16208 17267 215999998.0
+18 789 17267 18056 239999998.0
+19 618 18056 18674 263999998.0
+20 614 18674 19288 156516350.0
+21 562 19288 19850 299999998.0
+22 697 19850 20547 180516350.0
+23 679 20547 21226 311999998.0
+24 839 21226 22065 323999998.0
+25 214 22065 22279 335999998.0
+26 766 22279 23045 359999998.0
+27 327 23045 23372 371999998.0
+28 1285 23372 24657 383999998.0
+29 425 24657 25082 395999998.0
+30 1121 25082 26203 407999998.0
+31 920 26203 27123 419999998.0
+32 620 27123 27743 431999998.0
+33 383 27743 28126 455999998.0
+34 6802 28126 34928 467999998.0
+35 619 34928 35547 479999998.0
+36 170 35547 35717 491999998.0
+37 345 35717 36062 503999998.0
+38 451 36062 36513 515999998.0
+39 466 36513 36979 539999998.0
+40 166 36979 37145 551999998.0
+41 627 37145 37772 563999998.0
+42 747 37772 38519 587999998.0
+43 803 38519 39322 611999998.0
+44 1374 39322 40696 623999998.0
+45 475 40696 41171 635999998.0
+46 750 41171 41921 683999998.0
+47 1298 41921 43219 707999998.0
+48 377 43219 43596 719999998.0
+49 8520 43596 52116 731999998.0
+50 830 52116 52946 755999998.0
+51 5170 52946 58116 767999998.0
+52 1225 58116 59341 779999998.0
+53 953 59341 60294 791999998.0
+54 2697 60294 62991 815999998.0
+55 1858 62991 64849 827999998.0
+56 254 64849 65103 840001682.0
+57 663 65103 65766 851999998.0
+58 880 65766 66646 863999998.0
+59 456 66646 67102 875999998.0
+60 1013 67102 68115 899999998.0
+61 574 68115 68689 935999998.0
+62 977 68689 69666 947999998.0
+63 553 69666 70219 959999998.0
+64 1742 70219 71961 983999998.0
+65 2078 71961 74039 995999998.0
+66 1529 74039 75568 1007999998.0
+67 166 75568 75734 1019999998.0
+68 1565 75734 77299 1031999998.0
+69 504 77299 77803 1043999998.0
+70 2160 77803 79963 1055999998.0
+71 1020 79963 80983 1175999998.0
+72 1489 80983 82472 1211999998.0
+73 472 82472 82944 1223999998.0
+74 604 82944 83548 1259999998.0
+75 529 83548 84077 1271999998.0
+76 442 84077 84519 1283999998.0
+77 513 84519 85032 1295999998.0
+78 827 85032 85859 1307999998.0
+79 969 85859 86828 1319999998.0
+80 141 86828 86969 1355999998.0
+81 924 86969 87893 1379999998.0
+82 2379 87893 90272 1391999998.0
+83 811 90272 91083 1403999998.0
+84 765 91083 91848 1415999998.0
+85 500 91848 92348 1439999998.0
+86 450 92348 92798 1451999998.0
+87 272 92798 93070 1463999998.0
+88 390 93070 93460 1487999998.0
+89 596 93460 94056 1499999998.0
+90 220 94056 94276 1512001338.0
+91 624 94276 94900 1523999998.0
+92 1035 94900 95935 1535999998.0
+93 559 95935 96494 1571999998.0
+94 119 96494 96613 1584001002.0
+95 1148 96613 97761 1607999998.0
+96 1707 97761 99468 1643999998.0
+97 1504 99468 100972 1655999998.0
+98 1110 100972 102082 1667999998.0
+99 106 102082 102188 1680001558.0
+100 199 102188 102387 1691999998.0
+101 412 102387 102799 1715999998.0
+102 405 102799 103204 1739999998.0
+103 378 103204 103582 1763999998.0
+104 409 103582 103991 1775999998.0
+105 222 103991 104213 1787999998.0
+106 452 104213 104665 1799999998.0
+107 1067 104665 105732 1823999998.0
+108 870 105732 106602 1835999998.0
+109 1300 106602 107902 1871999998.0
+110 668 107902 108570 1883999998.0
+111 799 108570 109369 1895999998.0
+112 2263 109369 111632 1919999998.0
+113 480 111632 112112 1931999998.0
+114 500 112112 112612 1943999998.0
+115 1014 112612 113626 1955999998.0
+116 351 113626 113977 1967999998.0
+117 275 113977 114252 1979999998.0
+118 809 114252 115061 1991999998.0
+119 626 115061 115687 2027999998.0
+120 1441 115687 117128 2039999998.0
+121 149 117128 117277 2051999998.0
+122 758 117277 118035 2075999998.0
+123 931 118035 118966 2123999998.0
+100%|##########| 1/1 [00:06<00:00,  6.19s/it]100%|##########| 1/1 [00:06<00:00,  6.19s/it]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+H5FlowDatasetLoopGenerator.finish()
+calib_hit_builder.finish(charge/raw_events)
+RunData.finish(charge/raw_events)
+LArData.finish(charge/raw_events)
+Geometry.finish(charge/raw_events)
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (5/5) ~~~
+yamls/proto_nd_flow/workflows/charge/final_calibration.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+create RunData() wf5.hdf5
+create LArData() wf5.hdf5
+create Geometry() wf5.hdf5
+create H5FlowDatasetLoopGenerator(charge/raw_events) wf5.hdf5
+create calib_hit_merger: CalibHitMerger(events_dset_name=charge/events, hits_name=charge/calib_prompt_hits, max_contrib_segments=200, merge_cut=65, max_merge_steps=50, merged_name=charge/calib_final_hits, mc_hit_frac_dset_name=mc_truth/calib_final_hit_backtrack)
+RunData.init(charge/raw_events)
+LArData.init(charge/raw_events)
+Geometry.init(charge/raw_events)
+H5FlowDatasetLoopGenerator.init()
+calib_hit_merger.init(charge/raw_events)
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on charge/raw_events:
+  calib_hit_merger
+  0%|          | 0/4 [00:00<?, ?it/s]current number of merged hits = 27123
+merging: 8520
+current number of merged hits = 18603
+merging: 996
+current number of merged hits = 17607
+merging: 185
+current number of merged hits = 17422
+merging: 57
+current number of merged hits = 17365
+merging: 15
+current number of merged hits = 17350
+merging: 4
+current number of merged hits = 17346
+merging: 2
+current number of merged hits = 17344
+merging: 0
+ 25%|##5       | 1/4 [00:07<00:23,  7.92s/it]current number of merged hits = 43096
+merging: 13009
+current number of merged hits = 30087
+merging: 2561
+current number of merged hits = 27526
+merging: 948
+current number of merged hits = 26578
+merging: 386
+current number of merged hits = 26192
+merging: 144
+current number of merged hits = 26048
+merging: 44
+current number of merged hits = 26004
+merging: 17
+current number of merged hits = 25987
+merging: 8
+current number of merged hits = 25979
+merging: 3
+current number of merged hits = 25976
+merging: 2
+current number of merged hits = 25974
+merging: 2
+current number of merged hits = 25972
+merging: 2
+current number of merged hits = 25970
+merging: 2
+current number of merged hits = 25968
+merging: 1
+current number of merged hits = 25967
+merging: 1
+current number of merged hits = 25966
+merging: 0
+ 50%|#####     | 2/4 [00:42<01:08, 34.48s/it]current number of merged hits = 27542
+merging: 8755
+current number of merged hits = 18787
+merging: 927
+current number of merged hits = 17860
+merging: 99
+current number of merged hits = 17761
+merging: 15
+current number of merged hits = 17746
+merging: 1
+current number of merged hits = 17745
+merging: 0
+ 75%|#######5  | 3/4 [00:48<00:05,  5.69s/it]current number of merged hits = 21205
+merging: 6824
+current number of merged hits = 14381
+merging: 675
+current number of merged hits = 13706
+merging: 113
+current number of merged hits = 13593
+merging: 32
+current number of merged hits = 13561
+merging: 17
+current number of merged hits = 13544
+merging: 7
+current number of merged hits = 13537
+merging: 2
+current number of merged hits = 13535
+merging: 0
+100%|##########| 4/4 [00:53<00:00,  5.41s/it]100%|##########| 4/4 [00:53<00:00, 13.38s/it]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+H5FlowDatasetLoopGenerator.finish()
+calib_hit_merger.finish(charge/raw_events)
+RunData.finish(charge/raw_events)
+LArData.finish(charge/raw_events)
+Geometry.finish(charge/raw_events)
+~~~~~~~~~~~~~~
+
+RUNNING h5flow -c yamls/proto_nd_flow/workflows/light/light_event_building_mc.yaml yamls/proto_nd_flow/workflows/light/light_event_reconstruction.yaml -i /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5 -o wf5.hdf5
+WARNING:root:Running without mpi4py because No module named 'mpi4py'
+~~~ H5FLOW ~~~
+output file: wf5.hdf5
+input file: /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (1/2) ~~~
+yamls/proto_nd_flow/workflows/light/light_event_building_mc.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+Hello
+create RunData() /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+create LightEventGeneratorMC(light/events) /global/cfs/cdirs/dune/www/data/2x2/simulation/productions/PicoRun4.1_1E17_RHC/PicoRun4.1_1E17_RHC.larnd/LARNDSIM/PicoRun4.1_1E17_RHC.larnd.00008.LARNDSIM.hdf5
+RunData.init(light/events)
+LightEventGeneratorMC.init()
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on light/events:
+  
+  0%|          | 0/14 [00:00<?, ?it/s]  7%|7         | 1/14 [00:02<00:26,  2.04s/it] 14%|#4        | 2/14 [00:04<00:23,  1.99s/it] 21%|##1       | 3/14 [00:06<00:22,  2.08s/it] 29%|##8       | 4/14 [00:08<00:21,  2.16s/it] 36%|###5      | 5/14 [00:10<00:18,  2.08s/it] 43%|####2     | 6/14 [00:12<00:16,  2.04s/it] 50%|#####     | 7/14 [00:14<00:14,  2.08s/it] 57%|#####7    | 8/14 [00:16<00:13,  2.17s/it] 64%|######4   | 9/14 [00:18<00:10,  2.06s/it] 71%|#######1  | 10/14 [00:20<00:07,  1.99s/it] 79%|#######8  | 11/14 [00:22<00:06,  2.01s/it] 86%|########5 | 12/14 [00:24<00:03,  1.97s/it] 93%|#########2| 13/14 [00:26<00:02,  2.02s/it] 93%|#########2| 13/14 [00:26<00:02,  2.05s/it]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+LightEventGeneratorMC.finish()
+RunData.finish(light/events)
+~~~~~~~~~~~~~~
+
+~~~ WORKFLOW (2/2) ~~~
+yamls/proto_nd_flow/workflows/light/light_event_reconstruction.yaml
+~~~~~~~~~~~~~~~~
+
+~~~ INIT ~~~
+create RunData() wf5.hdf5
+create Geometry() wf5.hdf5
+create LArData() wf5.hdf5
+Could not find generator description, using default loop behavior on light/events dataset
+create H5FlowDatasetLoopGenerator(light/events) wf5.hdf5
+create timestamp_corrector: LightTimestampCorrector(t_ns_dset_name=light/t_ns, slope={0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0})
+create true_hit_finder: WaveformHitFinder(wvfm_dset_name=light/wvfm, t_ns_dset_name=light/t_ns, hits_dset_name=light/true_hits, near_samples=4, hit_level=sipm, threshold=80)
+create wvfm_filt: WaveformNoiseFilter(wvfm_dset_name=light/wvfm, fwvfm_dset_name=light/fwvfm, noise_dset_name=light/fwvfm_noise, filter_channels=[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63], filter_samples=[0, 80], modulo_param=10, keep_noise=False)
+create wvfm_deconv: WaveformDeconvolution(wvfm_dset_name=light/fwvfm, deconv_dset_name=light/deconv, do_filtering=True, filter_type=Wiener, gaus_filter_width=1, filter_channels=[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63], noise_spectrum_filename=data/proto_nd_flow/noise_power.npz, signal_spectrum_filename=data/proto_nd_flow/wvfm_deconv_signal_power.npz, signal_impulse_filename=data/proto_nd_flow/wvfm_deconv_signal_impulse.fit.npz)
+create wvfm_align: WaveformAlign(wvfm_dset_name=light/deconv, sim_latency=100)
+create wvfm_calib: WaveformCalib(wvfm_dset_name=light/deconv, cwvfm_dset_name=light/cwvfm, gain={'default': 0.0, 1: {2: 0.00017191110133127956, 3: 0.0001761754425527117, 4: 0.00018319849923789422, 5: 0.00018440930012982414, 6: 0.00018187638226050518, 7: 0.00017276647501105705, 9: 0.0018423534960499937, 10: 0.0018985419198055892, 11: 0.0018419191323824117, 12: 0.001834566161794059, 13: 0.0019141247090530443, 14: 0.001795977011494253, 18: 0.00017462002682163612, 19: 0.0001813276082163166, 20: 0.00016716593559430834, 21: 0.00017007728311744857, 22: 0.00017198679141441938, 23: 0.00017083971134922372, 25: 0.001758383974791807, 26: 0.0017589778228076101, 27: 0.0019614612101431085, 28: 0.0019373837569745813, 29: 0.0019247351564424735, 30: 0.0019015455762443718, 35: 0.00016686245194361384, 36: 0.00018683486787038144, 37: 0.00017798154687322017, 38: 0.00017481539494294026, 39: 0.00017871440009150177, 41: 0.001475866628884481, 42: 0.0014721123045034858, 43: 0.0014424852289512554, 44: 0.0014772619835492105, 45: 0.0014643861293345832, 46: 0.001474473907709729, 50: 0.00016456029489204845, 51: 0.00016345852076577046, 52: 0.00016537891617273497, 53: 0.00015805179041068177, 54: 0.00016186677716771987, 55: 0.00016686245194361384, 57: 0.0016541393182299387, 58: 0.0016643587558585428, 59: 0.0016650682011935208, 60: 0.0016837284482758622, 61: 0.001694134229643283, 62: 0.0017037400501581073}, 0: {2: 0.00018023993540200716, 3: 0.00018247109657830202, 4: 0.00017972164711295148, 5: 0.00017703376387944708, 6: 0.0001798043728423475, 9: 0.001560939060939061, 10: 0.001637497380004192, 11: 0.0017230921923246578, 12: 0.0016700513039760582, 14: 0.0016154880066170387, 18: 0.0002223249857712009, 19: 0.00023735379006531977, 20: 0.00020202999741401602, 21: 0.00019499563209784103, 22: 0.00023994164619164617, 23: 0.0002326533650982728, 25: 0.0015733561574866578, 26: 0.0016048685291700903, 27: 0.0016093315480482024, 28: 0.0016489024905023215, 29: 0.001644390654599032, 30: 0.001607179592676404, 41: 0.0016116554925219185, 42: 0.0016318537859007834, 43: 0.0016325357851844113, 44: 0.0016645360605092147, 45: 0.0015631252501000401, 46: 0.0016629416773094932, 50: 0.0002136021872863978, 51: 0.00020618896806545261, 52: 0.00019383451184716536, 53: 0.00020265888456549936, 54: 0.00019937476075028708, 55: 0.00019347449232293213, 57: 0.0019894321364909598, 58: 0.0020268517317421197, 59: 0.0016837284482758622, 60: 0.0016012502562000412, 61: 0.0016291314774267544, 62: 0.0019446172993154947}}, gain_mc={'default': 0.0, 0: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 1: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 2: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 3: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 4: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 5: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 6: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}, 7: {4: 0.022857, 5: 0.022857, 6: 0.022857, 7: 0.022857, '08': 0.022857, '09': 0.022857, 10: 0.022857, 11: 0.022857, 12: 0.022857, 13: 0.022857, 14: 0.022857, 15: 0.022857, 20: 0.022857, 21: 0.022857, 22: 0.022857, 23: 0.022857, 24: 0.022857, 25: 0.022857, 26: 0.022857, 27: 0.022857, 28: 0.022857, 29: 0.022857, 30: 0.022857, 31: 0.022857, 36: 0.022857, 37: 0.022857, 38: 0.022857, 39: 0.022857, 40: 0.022857, 41: 0.022857, 42: 0.022857, 43: 0.022857, 44: 0.022857, 45: 0.022857, 46: 0.022857, 47: 0.022857, 52: 0.022857, 53: 0.022857, 54: 0.022857, 55: 0.022857, 56: 0.022857, 57: 0.022857, 58: 0.022857, 59: 0.022857, 60: 0.022857, 61: 0.022857, 62: 0.022857, 63: 0.022857}})
+create wvfm_sum: WaveformSum(wvfm_dset_name=light/cwvfm, swvfm_dset_name=light/swvfm)
+create sipm_hit_finder: WaveformHitFinder(wvfm_dset_name=light/cwvfm, t_ns_dset_name=light/t_ns, hits_dset_name=light/sipm_hits, near_samples=4, hit_level=sipm, threshold=80)
+WARNING:root:Input spectrum size mismatch (in: 501, needed: 1001). Interpolating assuming same sample rate...
+WARNING:root:Input spectrum size mismatch (in: 501, needed: 1001). Interpolating assuming same sample rate...
+WARNING:root:Input impulse function size mismatch (in: 1000, needed: 2000). Truncating to shorter length/appending zeros...
+create sum_hit_finder: WaveformHitFinder(wvfm_dset_name=light/swvfm, t_ns_dset_name=light/t_ns, hits_dset_name=light/sum_hits, near_samples=4, hit_level=sum, threshold={0: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 1: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 2: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 3: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 4: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 5: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 6: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}, 7: {0: 1000, 1: 330, 2: 330, 3: 330, 4: 1000, 5: 330, 6: 330, 7: 330, 8: 1000, 9: 330, 10: 330, 11: 330, 12: 1000, 13: 330, 14: 330, 15: 330}})
+RunData.init(light/events)
+Geometry.init(light/events)
+LArData.init(light/events)
+H5FlowDatasetLoopGenerator.init()
+timestamp_corrector.init(light/events)
+true_hit_finder.init(light/events)
+wvfm_filt.init(light/events)
+wvfm_deconv.init(light/events)
+wvfm_align.init(light/events)
+wvfm_calib.init(light/events)
+wvfm_sum.init(light/events)
+sipm_hit_finder.init(light/events)
+sum_hit_finder.init(light/events)
+~~~~~~~~~~~~
+
+~~~ RUN ~~~
+Run loop on light/events:
+  timestamp_corrector -> true_hit_finder -> wvfm_filt -> wvfm_deconv -> wvfm_align -> wvfm_calib -> wvfm_sum -> sipm_hit_finder -> sum_hit_finder
+  0%|          | 0/26 [00:00<?, ?it/s]/global/u1/q/qvuong/2x2_sim/run-ndlar-flow/flow.venv/lib/python3.11/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+  fill_value = np.array(fill_value, copy=False, dtype=ndtype)
+  4%|3         | 1/26 [00:08<03:25,  8.24s/it]  8%|7         | 2/26 [00:14<02:38,  6.61s/it]/global/u1/q/qvuong/2x2_sim/run-ndlar-flow/ndlar_flow/src/proto_nd_flow/reco/light/true_hit_finder.py:234: RuntimeWarning: divide by zero encountered in divide
+  - peak_spline_subsamples / peak_spline_d,
+/global/u1/q/qvuong/2x2_sim/run-ndlar-flow/ndlar_flow/src/proto_nd_flow/reco/light/true_hit_finder.py:249: RuntimeWarning: divide by zero encountered in divide
+  + (np.expand_dims(peak_max_spline, axis=-1) * 0.5 - peak_spline_subsamples) / peak_spline_d,
+/global/u1/q/qvuong/2x2_sim/run-ndlar-flow/ndlar_flow/src/proto_nd_flow/reco/light/true_hit_finder.py:252: RuntimeWarning: divide by zero encountered in divide
+  + (np.expand_dims(peak_max_spline, axis=-1) * 0.5 - peak_spline_subsamples) / peak_spline_d,
+ 12%|#1        | 3/26 [00:20<01:59,  5.21s/it] 15%|#5        | 4/26 [00:25<01:58,  5.40s/it] 19%|#9        | 5/26 [00:32<02:33,  7.30s/it] 23%|##3       | 6/26 [00:40<02:31,  7.56s/it] 27%|##6       | 7/26 [00:45<01:34,  4.97s/it] 31%|###       | 8/26 [00:52<02:04,  6.94s/it] 35%|###4      | 9/26 [01:01<02:32,  8.96s/it] 38%|###8      | 10/26 [01:10<02:23,  8.99s/it] 42%|####2     | 11/26 [01:15<01:26,  5.79s/it] 46%|####6     | 12/26 [01:21<01:22,  5.89s/it] 50%|#####     | 13/26 [01:30<01:50,  8.52s/it] 54%|#####3    | 14/26 [01:35<01:00,  5.08s/it] 58%|#####7    | 15/26 [01:42<01:16,  6.96s/it] 62%|######1   | 16/26 [01:50<01:21,  8.12s/it] 65%|######5   | 17/26 [01:57<00:58,  6.51s/it] 69%|######9   | 18/26 [02:03<00:48,  6.06s/it] 73%|#######3  | 19/26 [02:10<00:53,  7.65s/it] 77%|#######6  | 20/26 [02:16<00:36,  6.07s/it]/global/u1/q/qvuong/2x2_sim/run-ndlar-flow/ndlar_flow/src/proto_nd_flow/reco/light/true_hit_finder.py:234: RuntimeWarning: invalid value encountered in divide
+  - peak_spline_subsamples / peak_spline_d,
+ 81%|########  | 21/26 [02:23<00:31,  6.23s/it] 85%|########4 | 22/26 [02:31<00:32,  8.24s/it] 88%|########8 | 23/26 [02:37<00:19,  6.42s/it] 92%|#########2| 24/26 [02:44<00:13,  6.59s/it] 96%|#########6| 25/26 [02:51<00:07,  7.64s/it]100%|##########| 26/26 [02:57<00:00,  5.44s/it]100%|##########| 26/26 [02:57<00:00,  6.82s/it]
+~~~~~~~~~~~
+
+~~~ FINISH ~~~
+H5FlowDatasetLoopGenerator.finish()
+timestamp_corrector.finish(light/events)
+true_hit_finder.finish(light/events)
+wvfm_filt.finish(light/events)
+wvfm_deconv.finish(light/events)
+wvfm_align.finish(light/events)
+wvfm_calib.finish(light/events)
+wvfm_sum.finish(light/events)
+sipm_hit_finder.finish(light/events)
+sum_hit_finder.finish(light/events)
+RunData.finish(light/events)
+Geometry.finish(light/events)
+LArData.finish(light/events)
+~~~~~~~~~~~~~~
+
