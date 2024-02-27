@@ -52,37 +52,70 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
                                     double spillPOT = 5E13,
                                     double spillPeriod_s = 1.2) {
 
+  // Check that we are considering, nu-LAr only, nu-rock only or both.
+  if (inFile1POT==0. && inFile2POT==0.) {
+    throw std::invalid_argument("nu-LAr POT and nu-rock POT cannot both be zero!")
+  }
+
+  // Useful bools for keeping track of event types being considered.
+  bool have_nu_lar = false;
+  bool have_nu_rock = false;
+
   // get input nu-LAr files
   TChain* edep_evts_1 = new TChain("EDepSimEvents");
-  edep_evts_1->Add(inFileName1.c_str());
+  TChain* genie_evts_1 = new TChain("DetSimPassThru/gRooTracker");
+  gRooTracker genie_evts_1_data;
+  if(inFile1POT > 0.) {
+    edep_evts_1->Add(inFileName1.c_str());
+    genie_evts_1->Add(inFileName1.c_str());
+    gRooTracker genie_evts_1_data_tmp(genie_evts_1);
+    genie_evts_1_data = genie_evts_1_data_tmp;
+    have_nu_lar = true;
+  }
+  else std::cout << "nu-rock file POT stated to be zero, spills will be LAr only" << std::endl;
 
   // get input nu-Rock files
   TChain* edep_evts_2 = new TChain("EDepSimEvents");
-  edep_evts_2->Add(inFileName2.c_str());
-
-  // get input nu-LAr files
-  TChain* genie_evts_1 = new TChain("DetSimPassThru/gRooTracker");
-  genie_evts_1->Add(inFileName1.c_str());
-  gRooTracker genie_evts_1_data(genie_evts_1);
-
-  // get input nu-Rock files
   TChain* genie_evts_2 = new TChain("DetSimPassThru/gRooTracker");
-  genie_evts_2->Add(inFileName2.c_str());
-  gRooTracker genie_evts_2_data(genie_evts_2);
+  gRooTracker genie_evts_2_data;
+  if(inFile2POT > 0.) {
+    edep_evts_2->Add(inFileName2.c_str());
+    genie_evts_2->Add(inFileName2.c_str());
+    gRooTracker genie_evts_2_data_tmp(genie_evts_2);
+    genie_evts_2_data = genie_evts_2_data_tmp;
+    have_nu_rock = true;
+  }
+  else std::cout << "nu-LAr file POT stated to be zero, spills will be rock only" << std::endl;
 
   // make output file
   TFile* outFile = new TFile(outFileName.c_str(),"RECREATE");
-  TTree* new_tree = edep_evts_1->CloneTree(0);
-  TTree* genie_tree = genie_evts_1->CloneTree(0);
+  TTree* new_tree;
+  TTree* genie_tree;
+  if(have_nu_lar) {
+    new_tree = edep_evts_1->CloneTree(0);
+    genie_tree = genie_evts_1->CloneTree(0);
+  }
+  else {
+    new_tree = edep_evts_2->CloneTree(0);
+    genie_tree = genie_evts_2->CloneTree(0);
+  }
   gRooTracker genie_tree_data(genie_tree);
   TBranch* out_branch = new_tree->GetBranch("Event");
 
   // determine events per spill
-  unsigned int N_evts_1 = edep_evts_1->GetEntries();
-  double evts_per_spill_1 = ((double)N_evts_1)/(inFile1POT/spillPOT);
+  unsigned int N_evts_1 = 0;
+  double evts_per_spill_1 = 0.;
+  if(have_nu_lar) {
+    N_evts_1 = edep_evts_1->GetEntries();
+    evts_per_spill_1 = ((double)N_evts_1)/(inFile1POT/spillPOT);
+  }
 
-  unsigned int N_evts_2 = edep_evts_2->GetEntries();
-  double evts_per_spill_2 = ((double)N_evts_2)/(inFile2POT/spillPOT);
+  unsigned int N_evts_2 = 0;
+  double evts_per_spill_2 = 0.;
+  if(have_nu_rock) {
+    N_evts_2 = edep_evts_2->GetEntries();
+    evts_per_spill_2 = ((double)N_evts_2)/(inFile2POT/spillPOT);
+  }
 
   std::cout << "File: " << inFileName1 << std::endl;
   std::cout << "    Number of spills: "<< inFile1POT/spillPOT << std::endl;
@@ -93,10 +126,10 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
   std::cout << "    Events per spill: "<< evts_per_spill_2 << std::endl;
 
   TG4Event* edep_evt_1 = NULL;
-  edep_evts_1->SetBranchAddress("Event",&edep_evt_1);
+  if(have_nu_lar) edep_evts_1->SetBranchAddress("Event",&edep_evt_1);
 
   TG4Event* edep_evt_2 = NULL;
-  edep_evts_2->SetBranchAddress("Event",&edep_evt_2);
+  if(have_nu_rock) edep_evts_2->SetBranchAddress("Event",&edep_evt_2);
 
   TMap* event_spill_map = new TMap(N_evts_1+N_evts_2);
 
@@ -199,8 +232,9 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
   new_tree->SetName("EDepSimEvents");
   genie_tree->SetName("gRooTracker");
 
-  auto inFile1 = new TFile(inFileName1.c_str());
-  auto geom = (TGeoManager*) inFile1->Get("EDepSimGeometry");
+  // Pass on the geometry from the nu-LAr file by default.
+  auto inFileForGeom = new TFile(have_nu_lar ? inFileName1.c_str() : inFileName2.c_str());
+  auto geom = (TGeoManager*) inFileForGeom->Get("EDepSimGeometry");
 
   outFile->cd();
   geom->Write();
@@ -214,6 +248,6 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
   genie_tree->Write();
 
   outFile->Close();
-  inFile1->Close();
+  inFileForGeom->Close();
   delete outFile;
 }
