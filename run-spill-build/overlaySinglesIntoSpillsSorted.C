@@ -86,6 +86,7 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
     gRooTracker genie_evts_1_data_tmp(genie_evts_1);
     genie_evts_1_data = genie_evts_1_data_tmp;
     have_nu_lar = true;
+    if(spillPOT <= 100) is_n_int_mode = true;
   }
   else std::cout << "nu-rock file POT stated to be zero, spills will be LAr only" << std::endl;
 
