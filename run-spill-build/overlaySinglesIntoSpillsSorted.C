@@ -60,15 +60,19 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
                                     double spillPOT = 5E13,
                                     double spillPeriod_s = 1.2) {
 
+  // Maximum number of interactions that can be simulated in
+  // one spill in "N Interaction" mode. Choice of this number
+  // here is somewhat arbitrary, seemed like a very safe
+  // upper limit on the number of nu-LAr events we'd want to 
+  // simulate ever in a single spill (for stress testing).
+  int n_int_max = 10000;
   // Check that we are considering, nu-LAr only, nu-rock only or both.
   if (inFile1POT==0. && inFile2POT==0.) {
-    throw std::invalid_argument("nu-LAr POT and nu-rock POT cannot both be zero!")
+    throw std::invalid_argument("nu-LAr POT and nu-rock POT cannot both be zero!");
   }
-  // "N Interaction" mode only supported in nu-LAr mode. Choice of 100 here 
-  // is somewhat arbitrary, seemed like a safe upper limit on the number 
-  // of nu-LAr events we'd want to simulate in a single spill.
-  else if (spillPOT <= 100 && inFile2POT>0.) {
-    throw std::invalid_argument("N Interaction mode does not support nu-rock POT input")
+  // "N Interaction" mode only supported in nu-LAr mode.
+  else if (spillPOT <= (double)n_int_max && inFile2POT>0.) {
+    throw std::invalid_argument("N Interaction mode does not support nu-rock POT input");
   }
 
   // Useful bools for keeping track of event types being considered.
@@ -79,29 +83,25 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
   // get input nu-LAr files
   TChain* edep_evts_1 = new TChain("EDepSimEvents");
   TChain* genie_evts_1 = new TChain("DetSimPassThru/gRooTracker");
-  gRooTracker genie_evts_1_data;
   if(inFile1POT > 0.) {
     edep_evts_1->Add(inFileName1.c_str());
     genie_evts_1->Add(inFileName1.c_str());
-    gRooTracker genie_evts_1_data_tmp(genie_evts_1);
-    genie_evts_1_data = genie_evts_1_data_tmp;
     have_nu_lar = true;
-    if(spillPOT <= 100) is_n_int_mode = true;
+    if(spillPOT <= (double)n_int_max) is_n_int_mode = true;
   }
   else std::cout << "nu-rock file POT stated to be zero, spills will be LAr only" << std::endl;
+  gRooTracker genie_evts_1_data(genie_evts_1);
 
   // get input nu-Rock files
   TChain* edep_evts_2 = new TChain("EDepSimEvents");
   TChain* genie_evts_2 = new TChain("DetSimPassThru/gRooTracker");
-  gRooTracker genie_evts_2_data;
   if(inFile2POT > 0.) {
     edep_evts_2->Add(inFileName2.c_str());
     genie_evts_2->Add(inFileName2.c_str());
-    gRooTracker genie_evts_2_data_tmp(genie_evts_2);
-    genie_evts_2_data = genie_evts_2_data_tmp;
     have_nu_rock = true;
   }
   else std::cout << "nu-LAr file POT stated to be zero, spills will be rock only" << std::endl;
+  gRooTracker genie_evts_2_data(genie_evts_2);
 
   // make output file
   TFile* outFile = new TFile(outFileName.c_str(),"RECREATE");
@@ -137,7 +137,8 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
   }
 
   std::cout << "File: " << inFileName1 << std::endl;
-  std::cout << "    Number of spills: "<< inFile1POT/spillPOT << std::endl;
+  std::cout << "    Number of spills: "<< (is_n_int_mode ? 
+    std::floor((double)N_evts_1/evts_per_spill_1) : inFile1POT/spillPOT) << std::endl;
   std::cout << "    Events per spill: "<< evts_per_spill_1 << std::endl;
 
   std::cout << "File: " << inFileName2 << std::endl;
