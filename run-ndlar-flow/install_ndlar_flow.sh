@@ -30,8 +30,6 @@ cd "$installDir"
 python -m venv "$venvName"
 source "$venvName"/bin/activate
 
-python -m venv flow.venv
-source flow.venv/bin/activate
 pip install --upgrade pip setuptools wheel
 
 # install h5flow
