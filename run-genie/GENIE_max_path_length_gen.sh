@@ -12,7 +12,7 @@ tune=$1; shift
 seed=0
 npoints=1000
 nrays=1000
-# Used for nd_hall_with_lar_tms_sand.AR23_20i_00_000.maxpath.xml 
+# Used for nd_hall_with_lar_tms_sand_TDR_Production_geometry_v_1.0.3.gdml
 #npoints=20000
 #nrays=20000
 

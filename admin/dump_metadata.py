@@ -62,7 +62,7 @@ def get_checksum(datapath: Path, chunksize=1_000_000_000):
 
 def get_ext(args: argparse.Namespace):
     match args.app:
-        case 'run-spill-build':
+        case 'run-spill-build' | 'run-tms-reco':
             return 'root'
         case 'run-larnd-sim' | 'run-ndlar-flow':
             return 'hdf5'
@@ -74,6 +74,10 @@ def get_runtype(args: argparse.Namespace):
             return 'neardet-2x2'
         case 'run-larnd-sim' | 'run-ndlar-flow':
             return 'neardet-2x2-lar'
+        # TODO: To be decided.
+        # Discussed around here: https://dunescience.slack.com/archives/CKXSC8EG3/p1697488314084449
+        case 'run-tms-reco':
+            return 'neardet'
 
 
 def get_data_tier(args: argparse.Namespace):
@@ -84,6 +88,10 @@ def get_data_tier(args: argparse.Namespace):
             return 'detector-simulated'
         case 'run-ndlar-flow':
             return 'hit-reconstructed'
+        # TODO: This is to be decided.
+        # Discussed around here: https://dunescience.slack.com/archives/CKXSC8EG3/p1697490158091829
+        case 'run-tms-reco':
+            return 'root-tuple'
 
 
 def get_event_stats(datapath: Path, args: argparse.Namespace):
@@ -95,6 +103,16 @@ def get_event_stats(datapath: Path, args: argparse.Namespace):
         case 'run-ndlar-flow':
             return get_event_stats_hdf5(datapath, '/mc_truth/trajectories/data',
                                         args.event_id_var)
+        # TODO: Decide what to do here. We could
+        # write a new function which queries the 
+        # TMSRECO root file. This is only beneficial
+        # if the "number of tracks which deposit
+        # energy in the TMS" can be obtained from
+        # these files. If not, set up the logic to 
+        # use the information of the parent EDEPSIM_SPILLS
+        # files.
+        #case 'run-tms-reco':
+        #    return get_event_stats_edep(datapath)
 
 
 def get_parents(datapath: Path, args: argparse.Namespace):
@@ -105,7 +123,7 @@ def get_parents(datapath: Path, args: argparse.Namespace):
     match args.app:
         case 'run-spill-build':
             return None
-        case 'run-larnd-sim':
+        case 'run-larnd-sim' | 'run-tms-reco':
             if not (base := args.parents):
                 base = f'{basename}.spill'
             return [f'{base}.{fileno}.EDEPSIM_SPILLS.root']
@@ -134,7 +152,7 @@ def dump_metadata(datapath: Path, args: argparse.Namespace):
 
     meta['data_stream'] = 'physics'
     meta['group'] = 'dune'
-    meta['application'] = {'family': '2x2_sim',
+    meta['application'] = {'family': args.family,
                            'name': args.app,
                            'version': args.campaign}
 
@@ -144,6 +162,8 @@ def dump_metadata(datapath: Path, args: argparse.Namespace):
     meta['DUNE_MC.name'] = args.campaign
     meta['DUNE_MC.TopVolume'] = args.top_vol
     meta['LBNF_MC.HornCurrent'] = args.horn_current
+    # TODO: Do we want the genie tune? Does the field 
+    # exist already?
 
     meta['data_tier'] = get_data_tier(args)
     meta['runs'] = [[get_runno(datapath), 1, get_runtype(args)]]
@@ -169,7 +189,13 @@ def main():
     ap.add_argument('--app', help='Name of application', required=True,
                     choices=['run-spill-build',
                              'run-larnd-sim',
-                             'run-ndlar-flow'])
+                             'run-ndlar-flow',
+                             'run-tms-reco'])
+    ap.add_argument('--family', help='Name of family', required=True, 
+                    # TODO: Are we happy with ND_Production
+                    # as the family?
+                    choices=['2x2_sim',
+                             'ND_Production'], default='2x2_sim')
     ap.add_argument('--campaign', help='Name of campaign', required=True)
     ap.add_argument('--geom', help='Name of geometry', required=True)
     ap.add_argument('--top-vol', help='Name of top volume', required=True)
