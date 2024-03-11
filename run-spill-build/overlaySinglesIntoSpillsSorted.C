@@ -10,7 +10,7 @@
 // (setting both inFile1POT and inFile2POT to be greater than 0).
 //
 // When building LAr only spills one can run in "N Interaction" mode
-// by specifying a number less than or equal to 100 as spillPOT. Useful,
+// by specifying a number less than or equal to 10000 as spillPOT. Useful,
 // for example, for studying single neutrino spills.
 //
 // The output will have two changes with respect to the input:
@@ -89,10 +89,9 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
     have_nu_lar = true;
     if(spillPOT <= (double)n_int_max) is_n_int_mode = true;
   }
-  else std::cout << "nu-rock file POT stated to be zero, spills will be LAr only" << std::endl;
   gRooTracker genie_evts_1_data(genie_evts_1);
 
-  // get input nu-Rock files
+  // get input nu-rock files
   TChain* edep_evts_2 = new TChain("EDepSimEvents");
   TChain* genie_evts_2 = new TChain("DetSimPassThru/gRooTracker");
   if(inFile2POT > 0.) {
@@ -100,8 +99,21 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
     genie_evts_2->Add(inFileName2.c_str());
     have_nu_rock = true;
   }
-  else std::cout << "nu-LAr file POT stated to be zero, spills will be rock only" << std::endl;
   gRooTracker genie_evts_2_data(genie_evts_2);
+
+  // Dump some useful information about the running mode.
+  if(have_nu_lar && !have_nu_rock){
+    std::cout << "nu-rock file POT stated to be zero, spills will be LAr only" << std::endl;
+    if(is_n_int_mode) {
+      std::cout << "Running in N Interaction mode with " << spillPOT << " interactions per spill" << std::endl;
+    }
+  }
+  else if(!have_nu_lar && have_nu_rock){
+    std::cout << "nu-LAr file POT stated to be zero, spills will be rock only" << std::endl;
+  }
+  else if(have_nu_lar && have_nu_rock){
+    std::cout << "nu-LAr and nu-rock file POTs stated to be non-zero, spills will be LAr+rock" << std::endl;
+  }
 
   // make output file
   TFile* outFile = new TFile(outFileName.c_str(),"RECREATE");
