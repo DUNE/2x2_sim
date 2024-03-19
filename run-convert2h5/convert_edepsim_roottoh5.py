@@ -177,36 +177,41 @@ def matchTrackID(traj_list, part_4mom, part_pdg):
 
     return trackID
 
-# Generate a reaction code number based on the GENIE reaction string
-# Reaction 0 used as an undefined or unknown reaction
-# Reactions [1, 5] used for basic CC reactions ([6,10] reserved for future use)
-# Reactions [11, 15] used for NC versions (+10 to CC reaction)
-# Reactions are positive for nu, negative for nubar
-def getReactionCode(genie_str, nu_pdg):
-    reaction = 0
-    if "NC" in genie_str:
-        is_nc = True
-    else:
-        is_nc = False
+#Map from GENIE reaction to number to match CAFs
+#Derived from the enum defition and genie::ScatteringType::AsString() fuction from here:
+#https://github.com/GENIE-MC/Generator/blob/master/src/Framework/Interaction/ScatteringType.h
+genie_reaction_map = {
+    "QES" : 1,
+    "1Kaon" : 2,
+    "DIS" : 3,
+    "RES" : 4,
+    "COH" : 5,
+    "DFR" : 6,
+    "NuEEL" : 7,
+    "IMD": 8,
+    "AMNuGamma": 9,
+    "MEC": 10,
+    "CEvNS": 11,
+    "IBD": 12,
+    "GLR": 13,
+    "IMDAnh": 14,
+    "PhotonCOH": 15,
+    "PhotonRES": 16,
+    "1Pion": 17,
+    "DMEL": 101,
+    "DMDIS": 102,
+    "DME": 103,
+}
 
-    if "QES" in genie_str:
-        reaction = 1
-    elif "MEC" in genie_str:
-        reaction = 2
-    elif "RES" in genie_str:
-        reaction = 3
-    elif "DIS" in genie_str:
-        reaction = 4
-    elif "COH" in genie_str:
-        reaction = 5
-    else:
-        reaction = 0
+#RooTracker format stores the process/interaction/scattering type information as a string
+#Using the map defined above, search this string for scattering type and return a number
+def getReactionCode(genie_str):
+    reaction = -100 #Default value to match GENIE
 
-    if is_nc and reaction != 0:
-        reaction += 10
-
-    if nu_pdg < 0:
-        reaction *= -1
+    for mode, num in genie_reaction_map.items():
+        if mode in genie_str:
+            reaction = num
+            continue
 
     return reaction
 
@@ -531,6 +536,7 @@ def dump(input_file, output_file, keep_all_dets=False):
             genie_idx = 0
             nu_4mom = np.empty((4,), dtype='f4')
             lep_4mom = np.empty((4,), dtype='f4')
+            nu_pdg = 0
             target_pdg = 0
 
             # Create particle stack dataset
@@ -593,21 +599,21 @@ def dump(input_file, output_file, keep_all_dets=False):
             genie_hdr["isRES"] = "RES" in genie_str
             genie_hdr["isDIS"] = "DIS" in genie_str
             genie_hdr["isCOH"] = "COH" in genie_str
-            genie_hdr["reaction"] = getReactionCode(genie_str, nu_pdg)
+            genie_hdr["reaction"] = getReactionCode(genie_str)
             genie_hdr["vertex"] = np.array([genieTree.EvtVtx[0]*meter2cm, genieTree.EvtVtx[1]*meter2cm, genieTree.EvtVtx[2]*meter2cm, genieTree.EvtVtx[3]*edep2us])
             genie_hdr["target"] = int((target_pdg % 10000000) / 10000) #Extract Z value from PDG code
-            genie_hdr["Enu"]  = nu_4mom[3]
+            genie_hdr["Enu"] = nu_4mom[3]
             genie_hdr["nu_4mom"] = nu_4mom
             genie_hdr["nu_pdg"] = nu_pdg
             genie_hdr["Elep"] = lep_4mom[3]
             genie_hdr["lep_mom"] = np.linalg.norm(lep_4mom[0:3])
             genie_hdr["lep_ang"] = np.arccos(lep_4mom[0:3].dot(beam_dir) / (beam_norm * genie_hdr["lep_mom"])) * (180.0 / np.pi) # degrees
             genie_hdr["lep_pdg"] = lep_pdg
-            genie_hdr["q0"]   = nu_4mom[3] - lep_4mom[3]
-            genie_hdr["q3"]   = np.linalg.norm(nu_4mom[0:3] - lep_4mom[0:3])
-            genie_hdr["Q2"]   = genie_hdr["q3"]**2 - genie_hdr["q0"]**2
-            genie_hdr["x"]    = genie_hdr["Q2"] / (2.0 * nucleon_mass * genie_hdr["q0"])
-            genie_hdr["y"]    = 1.0 - (genie_hdr["Elep"] / genie_hdr["Enu"])
+            genie_hdr["q0"] = nu_4mom[3] - lep_4mom[3]
+            genie_hdr["q3"] = np.linalg.norm(nu_4mom[0:3] - lep_4mom[0:3])
+            genie_hdr["Q2"] = genie_hdr["q3"]**2 - genie_hdr["q0"]**2
+            genie_hdr["x"]  = genie_hdr["Q2"] / (2.0 * nucleon_mass * genie_hdr["q0"])
+            genie_hdr["y"]  = 1.0 - (genie_hdr["Elep"] / genie_hdr["Enu"])
             genie_hdr_list.append(genie_hdr)
 
     # save any lingering data not written to file
