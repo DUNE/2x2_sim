@@ -180,6 +180,8 @@ def matchTrackID(traj_list, part_4mom, part_pdg):
 #Map from GENIE reaction to number to match CAFs
 #Derived from the enum defition and genie::ScatteringType::AsString() fuction from here:
 #https://github.com/GENIE-MC/Generator/blob/master/src/Framework/Interaction/ScatteringType.h
+#which is copied to duneanaobj/StandardRecord
+#https://github.com/DUNE/duneanaobj/blob/main/duneanaobj/StandardRecord/SREnums.h
 genie_reaction_map = {
     "QES" : 1,
     "1Kaon" : 2,
