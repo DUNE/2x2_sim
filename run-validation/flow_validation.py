@@ -133,7 +133,10 @@ def main(flow_file):
                 iog_evt_charge = 0.
                 if len(iog_hits) > 0:
                     iog_evt_charge = np.sum(iog_hits['Q'])
-                io_group_contrib[a][iog] = float(iog_evt_charge)/float(event_charge)
+                try:
+                    io_group_contrib[a][iog] = float(iog_evt_charge)/float(event_charge)
+                except ZeroDivisionError:
+                    io_group_contrib[a][iog] = 0.
             dat = ax.scatter(spill_hits['z'],spill_hits['x'],
                        spill_hits['y'],c=spill_hits['Q'],
                        s=1,cmap='viridis',norm=mlp.colors.LogNorm())
