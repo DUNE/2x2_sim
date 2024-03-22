@@ -46,7 +46,8 @@ genie_stack_dtype = np.dtype([("event_id", "u4"), ("vertex_id", "u8"), ("traj_id
                               ("part_status", "i4")], align=True)
 
 genie_hdr_dtype = np.dtype([("event_id", "u4"), ("vertex_id", "u8"),
-                            ("vertex", "f8", (4,)), ("target", "u4"), ("reaction", "i4"),
+                            ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
+                            ("t_vert","f8"), ("target", "u4"), ("reaction", "i4"),
                             ("isCC", "?"), ("isQES", "?"), ("isMEC", "?"),
                             ("isRES", "?"), ("isDIS", "?"), ("isCOH", "?"),
                             ("Enu", "f4"), ("nu_4mom", "f4", (4,)), ("nu_pdg", "i4"),
@@ -365,7 +366,7 @@ def dump(input_file, output_file, keep_all_dets=False):
         else:
             # If ARCUBE_ACTIVE_VOLUME is not set, default to previously hard
             # coded containerName.
-            if not any(containerName == os.environ.get("ARCUBE_ACTIVE_VOLUME", "volLArActive")
+            if not any(containerName == os.environ.get("ARCUBE_ACTIVE_VOLUME", "volTPCActive")
                        for containerName, _hits in event.SegmentDetectors):
                 continue
 
@@ -439,7 +440,7 @@ def dump(input_file, output_file, keep_all_dets=False):
         for containerName, hitSegments in event.SegmentDetectors:
             # If ARCUBE_ACTIVE_VOLUME is not set, default to previously hard
             # coded containerName.
-            if (not keep_all_dets) and containerName != os.environ.get("ARCUBE_ACTIVE_VOLUME", "volLArActive"):
+            if (not keep_all_dets) and containerName != os.environ.get("ARCUBE_ACTIVE_VOLUME", "volTPCActive"):
                 continue
             segment = np.empty(len(hitSegments), dtype=segments_dtype)
             for iHit, hitSegment in enumerate(hitSegments):
@@ -608,7 +609,10 @@ def dump(input_file, output_file, keep_all_dets=False):
             genie_hdr["isDIS"] = "DIS" in genie_str
             genie_hdr["isCOH"] = "COH" in genie_str
             genie_hdr["reaction"] = getReactionCode(genie_str)
-            genie_hdr["vertex"] = np.array([genieTree.EvtVtx[0]*meter2cm, genieTree.EvtVtx[1]*meter2cm, genieTree.EvtVtx[2]*meter2cm, genieTree.EvtVtx[3]*edep2us])
+            genie_hdr["x_vert"] = genieTree.EvtVtx[0]*meter2cm
+            genie_hdr["y_vert"] = genieTree.EvtVtx[1]*meter2cm
+            genie_hdr["z_vert"] = genieTree.EvtVtx[2]*meter2cm
+            genie_hdr["t_vert"] = genieTree.EvtVtx[3]*edep2us
             genie_hdr["target"] = int((target_pdg % 10000000) / 10000) #Extract Z value from PDG code
             genie_hdr["Enu"] = nu_4mom[3]
             genie_hdr["nu_4mom"] = nu_4mom
