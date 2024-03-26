@@ -418,25 +418,26 @@ def main(sim_file):
         l_mod4_8R = np.zeros((24,SAMPLES)) 
         ## SORT THE LIGHT DATA BY MODULE, TPC, and SIDE
         for j in spill_light:
-            l_mod1_2L = np.add(l_mod1_2L,light_wvfm[j][0:24])
-            l_mod1_2R = np.add(l_mod1_2R,light_wvfm[j][24:48])
-            l_mod1_1R = np.add(l_mod1_1R,light_wvfm[j][48:72])
-            l_mod1_1L = np.add(l_mod1_1L,light_wvfm[j][72:96])
-
-            l_mod2_4L = np.add(l_mod2_4L,light_wvfm[j][96:120])
-            l_mod2_4R = np.add(l_mod2_4R,light_wvfm[j][120:144])
-            l_mod2_3R = np.add(l_mod2_3R,light_wvfm[j][144:168])
-            l_mod2_3L = np.add(l_mod2_3L,light_wvfm[j][168:192])
-
-            l_mod3_6L = np.add(l_mod3_6L,np.array(light_wvfm[j][192:216]))
-            l_mod3_6R = np.add(l_mod3_6R,np.array(light_wvfm[j][216:240]))
-            l_mod3_5R = np.add(l_mod3_5R,np.array(light_wvfm[j][240:264]))
-            l_mod3_5L = np.add(l_mod3_5L,np.array(light_wvfm[j][264:288])) 
-
-            l_mod4_8L = np.add(l_mod4_8L,np.array(light_wvfm[j][288:312]))
-            l_mod4_8R = np.add(l_mod4_8R,np.array(light_wvfm[j][312:336]))
-            l_mod4_7R = np.add(l_mod4_7R,np.array(light_wvfm[j][336:360]))
-            l_mod4_7L = np.add(l_mod4_7L,np.array(light_wvfm[j][360:384]))
+            if (opt_chan[j][0]) == 0:
+                l_mod1_1L = np.add(l_mod1_1L,light_wvfm[j][0:24])
+                l_mod1_1R = np.add(l_mod1_1R,light_wvfm[j][24:48])
+                l_mod1_2R = np.add(l_mod1_2R,light_wvfm[j][48:72])
+                l_mod1_2L = np.add(l_mod1_2L,light_wvfm[j][72:96])
+            if opt_chan[j][0]==96:
+                l_mod2_3L = np.add(l_mod2_3L,light_wvfm[j][0:24])
+                l_mod2_3R = np.add(l_mod2_3R,light_wvfm[j][24:48])
+                l_mod2_4R = np.add(l_mod2_4R,light_wvfm[j][48:72])
+                l_mod2_4L = np.add(l_mod2_4L,light_wvfm[j][72:96])
+            if opt_chan[j][0]==192:
+                l_mod3_5L = np.add(l_mod3_5L,np.array(light_wvfm[j][0:24]))
+                l_mod3_5R = np.add(l_mod3_5R,np.array(light_wvfm[j][24:48]))
+                l_mod3_6R = np.add(l_mod3_6R,np.array(light_wvfm[j][48:72]))
+                l_mod3_6L = np.add(l_mod3_6L,np.array(light_wvfm[j][72:96]))
+            if opt_chan[j][0] == 288:
+                l_mod4_7L = np.add(l_mod4_7L,np.array(light_wvfm[j][0:24]))
+                l_mod4_7R = np.add(l_mod4_7R,np.array(light_wvfm[j][24:48]))
+                l_mod4_8R = np.add(l_mod4_8R,np.array(light_wvfm[j][48:72]))
+                l_mod4_8L = np.add(l_mod4_8L,np.array(light_wvfm[j][72:96]))
 
         def assign_io(x_pos, z_pos):
             if z_pos > 0:
