@@ -34,6 +34,8 @@ python -m venv flow.venv
 source flow.venv/bin/activate
 pip install --upgrade pip setuptools wheel
 
+pip install pyyaml-include==1.3.2
+
 # install h5flow
 git clone -b main https://github.com/larpix/h5flow.git
 cd h5flow
