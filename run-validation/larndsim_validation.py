@@ -103,7 +103,7 @@ def main(sim_file):
     
             event_IDs = []
             eventID = tracks['event_id'] # eventIDs associated to each track
-            track_id_assn = mc_packets_assn['track_ids'] # track indices corresponding to each packet
+            track_id_assn = mc_packets_assn['segment_ids'] # track indices corresponding to each packet
 
             # Loop over each packet
             for ip, packet in enumerate(event_packets):
@@ -112,11 +112,11 @@ def main(sim_file):
                     continue
                     
                 # For packet ip, get track indices that contributed to hit
-                packet_track_ids = track_id_assn[ip]
-                packet_track_ids = packet_track_ids[packet_track_ids != -1]
+                packet_segment_ids = track_id_assn[ip]
+                packet_segment_ids = packet_segment_ids[packet_segment_ids != -1]
                 
                 # For track indices, get the corresponding eventID
-                packet_event_IDs = eventID[packet_track_ids]
+                packet_event_IDs = eventID[packet_segment_ids]
                 
                 # Make sure that there's only one eventID corresponding to hit.
                 # In principle, a hit could come from two events. But I'll deal
@@ -394,10 +394,10 @@ def main(sim_file):
             mc_assoc = mc_packets_assn[data_packet_mask][packet0_spillIDs==spill]
             ## MAP PACKETS TO TRACKS
             for ip,packet in enumerate(packet_list):
-                track_ids = mc_assoc['track_ids'][ip]
+                segment_ids = mc_assoc['segment_ids'][ip]
                 io_group = packet['io_group']
                 ## GET THE POSITION OF CHARGE TRACKS AND SAVE TO THE CORRECT IO_GROUP
-                for trackid in track_ids:
+                for trackid in segment_ids:
                     if trackid >= 0 and trackid not in plotted_tracks:
                         plotted_tracks.append(trackid)
                         if io_group==io_first:

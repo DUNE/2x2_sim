@@ -1158,7 +1158,7 @@ namespace {
 "/opt/nvidia/hpc_sdk/Linux_x86_64/22.5/math_libs/11.7/include",
 "/opt/nvidia/hpc_sdk/Linux_x86_64/22.5/cuda/11.7/include",
 "/opt/generators/root/install/include",
-"/global/cfs/cdirs/dune/users/mkramer/mywork/2x2_sim/run-spill-build/libTG4Event/",
+"/global/cfs/cdirs/dune/users/ehinkle/nd_prototypes_ana/2x2_sim/run-spill-build/libTG4Event/",
 0
     };
     static const char* fwdDeclCode = R"DICTFWDDCLS(
