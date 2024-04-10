@@ -1,0 +1,497 @@
+//============================================================
+// MCCal-ParticleCannon.opts
+//
+//    options file for running the detector PC-> Geant4 simulation + Readout + dst
+//============================================================
+
+//------------------------------------------------------------
+// Standard MINERvA-GAUDI Job Setup
+//-----------------------------------------------------------
+
+//============================================================
+// BEGIN INCLUDING FILE:
+// /cvmfs/minerva.opensciencegrid.org/minerva/software_releases/v22r1p1/minerva/MINERVA/MINERVA_v22r1p1/Top/MinervaConf/options/MinervaApplicationRoot.opts
+//------------------------------------------------------------
+//================================================================
+// Job options to be included by a standard Minerva application
+//================================================================
+
+// Allow units to be used in jobOptions
+//--------------------------------------
+#units "$MINERVAOPTS/minerva_units.opts"
+
+
+// Setup the transient data store
+//--------------------------------------
+EventDataSvc.ForceLeaves = true;
+EventDataSvc.RootCLID    =    1;
+
+
+// Setup the RootCnvSvc stuff for "ROOT" file output (the replacement
+// for POOL)
+//--------------------------------------
+
+//============================================================
+// BEGIN INCLUDING FILE:
+// /cvmfs/minerva.opensciencegrid.org/minerva/software_releases/v22r1p1/lhcb/LHCB/LHCB_v33r0p1b_lcgcmake/RootCnv/options/Setup.opts
+//------------------------------------------------------------
+ApplicationMgr.ExtSvc      = { "Gaudi::MultiFileCatalog/FileCatalog",
+"Gaudi::IODataManager/IODataManager"};
+
+//============================================================
+// BEGIN INCLUDING FILE:
+// /cvmfs/minerva.opensciencegrid.org/minerva/software_releases/v22r1p1/lhcb/LHCB/LHCB_v33r0p1b_lcgcmake/RootCnv/options/SetupIO.opts
+//------------------------------------------------------------
+ApplicationMgr.HistogramPersistency = "NONE";
+ApplicationMgr.ExtSvc      += { "Gaudi::RootCnvSvc/RootCnvSvc"};
+EventPersistencySvc.CnvServices += { "RootCnvSvc" };
+MessageSvc.OutputLevel     = 3;
+ApplicationMgr.AuditAlgorithms = True ;
+ApplicationMgr.ExtSvc     += { "AuditorSvc"} ;
+ApplicationMgr.EvtMax = MAXEVT;
+AuditorSvc.Auditors       += { "ChronoAuditor" };
+FileCatalog.Catalogs       = { "xmlcatalog_file:ROOTIO.xml" } ;
+EventSelector.PrintFreq = 100;
+EventDataSvc.RootCLID      = 1;
+ReadAlg.OutputLevel        = 4;
+RootCnvSvc.CacheSize       = 50000000;
+ApplicationMgr.SvcOptMapping    += { "Gaudi::MultiFileCatalog/FileCatalog", "Gaudi::IODataManager/IODataManager" };
+
+//-------------------------------------------------------------
+ApplicationMgr.HistogramPersistency = "ROOT";
+//------------------------------------------------------------
+
+//--------------------------------------------------------------
+// Standard Options to use the Geometry and Conditions Database
+//--------------------------------------------------------------
+
+// DetetectorDataSvc must be external, to finalize after ToolSvc
+ApplicationMgr.ExtSvc += { "DetDataSvc/DetectorDataSvc" };
+DetectorDataSvc.UsePersistency = true;
+DetectorDataSvc.DetDbRootName  = "dd";
+
+//--------------------------------------------------------------
+// Location of detector description XML database is a URL
+// so never use "\" (Use only "/")
+//--------------------------------------------------------------
+//DetectorDataSvc.DetDbLocation = "conddb:/minerva-200708.xml";
+DetectorDataSvc.DetStorageType = 7;
+
+//----------------------------------------------------------------------------
+// Detector Persistency service setup:
+//----------------------------------------------------------------------------
+DetectorPersistencySvc.CnvServices = { "XmlCnvSvc" };
+//DetectorPersistencySvc.CnvServices += { "CondDBCnvSvc" };
+
+// Set the maximum number of files to be put in the cache of the XmlCnvSvc
+XmlParserSvc.MaxDocNbInCache = 10;
+
+// Change the behavior of the cache of the XmlCnvService. A 0 value makes it FIFO
+// while a bigger value tends to make it keep only reused files.
+XmlParserSvc.CacheBehavior = 3;
+
+// Trigger generic detector element conversion
+// Useful in the case of visualization or in a case the required user
+// defined detector element converters are somehow not available
+//----------------------------------------------------------------------------
+XmlCnvSvc.AllowGenericConversion = true;
+
+//----------------------------------------------------------------------------
+// Tell to the XmlParserSvc how to resolve entities in the CondDB
+//----------------------------------------------------------------------------
+//XmlParserSvc.EntityResolverSvc = "CondDBEntityResolverSvc";
+XmlParserSvc.EntityResolver = "CondDBEntityResolver";
+
+//----------------------------------------------------------------------------
+// Access to ConditionsDB
+//----------------------------------------------------------------------------
+
+// Define the main DB service name and the alternative for conditions
+// (and, in the future, for online)
+CondDBCnvSvc.CondDBReader = "CondDBDispatcherSvc";
+CondDBDispatcherSvc.MainAccessSvc = "CondDBAccessSvc/DDDB";
+///CondDBDispatcherSvc.Alternatives = { "/Conditions=CondDBAccessSvc/MINERVA" };
+CondDBDispatcherSvc.Alternatives = { "/Conditions": "CondDBAccessSvc/MINERVA" };
+// CondDBDispatcherSvc.Alternatives += { "/Conditions/Online=CondDBAccessSvc/ONLINE" };
+// CondDBDispatcherSvc.Alternatives += { "/Conditions/Online": "CondDBAccessSvc/ONLINE" };
+
+//----------------------------------------------------------------------------
+// Technology dependent options
+//----------------------------------------------------------------------------
+
+//============================================================
+// BEGIN INCLUDING FILE:
+// /cvmfs/minerva.opensciencegrid.org/minerva/software_releases/v22r1p1/minerva/MDBASE/MDBASE_v22r1p1/Det/MinervaSQLDDDB/options/SQLDDDB.opts
+//------------------------------------------------------------
+//--------------------------------------------------------------
+// Technology dependent options to use the Conditions Database
+//--------------------------------------------------------------
+
+DDDB.ConnectionString = "sqlite_file:$MINERVASQLDDDBROOT/db/DDDB.db/DDDB";
+DDDB.CacheHighLevel = 450;
+
+MINERVA.ConnectionString = "sqlite_file:$MINERVASQLDDDBROOT/db/MINERVA.db/MINERVA";
+//------------------------------------------------------------
+// DONE INCLUDING FILE:
+// /cvmfs/minerva.opensciencegrid.org/minerva/software_releases/v22r1p1/minerva/MDBASE/MDBASE_v22r1p1/Det/MinervaSQLDDDB/options/SQLDDDB.opts
+//============================================================
+//------------------------------------------------------------
+// DONE INCLUDING FILE:
+// /cvmfs/minerva.opensciencegrid.org/minerva/software_releases/v22r1p1/minerva/MINERVA/MINERVA_v22r1p1/Det/MinervaDDDBIF/options/DDDB.opts
+//============================================================
+
+
+// Configure the DataOnDemand Service
+//--------------------------------------
+EventDataSvc.EnableFaultHandler = true ;
+
+// Particle Property Svc Setup
+//--------------------------------------
+ParticlePropertySvc.ParticlePropertiesFile = "$MPARAMFILES/Geant4/ParticleTable.txt";
+
+// Configure MessageSvc
+// Longer "algorithm" identifier in printout
+//--------------------------------------
+MessageSvc.Format = "% F%48W%S%7W%R%T %0W%M";
+MessageSvc.useColors = false;
+MessageSvc.OutputLevel = 4;
+
+
+//==================================================================
+//------------------------------------------------------------
+// DONE INCLUDING FILE:
+// /cvmfs/minerva.opensciencegrid.org/minerva/software_releases/v22r1p1/minerva/MINERVA/MINERVA_v22r1p1/Top/MinervaConf/options/MinervaApplicationRoot.opts
+//============================================================
+
+//============================================================
+// BEGIN INCLUDING FILE:
+// /cvmfs/minerva.opensciencegrid.org/minerva/software_releases/v22r1p1/minerva/MINERVA/MINERVA_v22r1p1/Top/MinervaConf/options/MinervaRootIOList.opts
+//------------------------------------------------------------
+
+ApplicationMgr.OutStream =  { "RootIOFile" };
+
+//--------------------------------------------------------------------
+// complete list of TES objects which can be written to output file
+//--------------------------------------------------------------------
+
+RootIOFile.OptItemList += {  "/Event/DAQ#1"
+,"/Event/DAQ/Header#1"
+,"/Event/DAQ/FPGAFrames#1"
+,"/Event/DAQ/SupDigits#1"
+,"/Event/DAQ/RawDigits#1"
+};
+RootIOFile.OptItemList += {  "/Event/Gate#1"
+,"/Event/Gate/NumiBeamData#1"
+,"/Event/Gate/DeadTimeTable#1"
+,"/Event/Gate/PMTEffectsTables#1"
+,"/Event/Gate/DataQuality#1"
+};
+RootIOFile.OptItemList += {  "/Event/Mgr#1"
+,"/Event/Mgr/TimeSlices#1"
+,"/Event/Mgr/PhysicsEvents#1"
+};
+RootIOFile.OptItemList += {  "/Event/Cal#1"
+,"/Event/Cal/ID#1"
+,"/Event/Cal/ID/Digits#1"
+,"/Event/Cal/OD#1"
+,"/Event/Cal/OD/Digits#1"
+,"/Event/Cal/Veto#1"
+,"/Event/Cal/Veto/Digits#1"
+};
+RootIOFile.OptItemList += {  "/Event/Rec#1"
+,"/Event/Rec/ID#1"
+,"/Event/Rec/ID/Clusters#1"
+,"/Event/Rec/ID/Blobs#1"
+,"/Event/Rec/OD#1"
+,"/Event/Rec/OD/Clusters#1"
+,"/Event/Rec/OD/Blobs#1"
+,"/Event/Rec/Tracks#1"
+,"/Event/Rec/Minos#1"
+,"/Event/Rec/Minos/Hits#1"
+,"/Event/Rec/Minos/Tracks#1"
+,"/Event/Rec/Vertices#1"
+,"/Event/Rec/Prongs#1"
+,"/Event/Rec/Particles#1"
+,"/Event/Rec/NeutrinoInts#1"
+};
+RootIOFile.OptItemList += {  "/Event/Gen#1"
+,"/Event/Gen/Header#1"
+,"/Event/Gen/Interactions#1"
+,"/Event/Gen/EventRecords#1"
+,"/Event/Gen/FluxRecord#1"
+,"/Event/Gen/Weights#1"
+,"/Event/Gen/CentralValueWeight#1"
+,"/Event/Gen/MCWeights#1"
+,"/Event/Gen/MCWeightList#1"
+};
+RootIOFile.OptItemList += {  "/Event/MC#1"
+,"/Event/MC/Header#1"
+,"/Event/MC/TG4Trajectories#1"
+,"/Event/MC/ID#1"
+,"/Event/MC/ID/Hits#1"
+,"/Event/MC/ID/Digits#1"
+,"/Event/MC/OD#1"
+,"/Event/MC/OD/Hits#1"
+,"/Event/MC/OD/Digits#1"
+,"/Event/MC/Minos#1"
+,"/Event/MC/Minos/Hits#1"
+,"/Event/MC/Veto#1"
+,"/Event/MC/Veto/Hits#1"
+,"/Event/MC/Veto/Digits#1"
+};
+RootIOFile.OptItemList += {  "/Event/TBeam#1"
+,"/Event/TBeam/MtestBeamData#1"
+};
+//==================================================================
+//------------------------------------------------------------
+// DONE INCLUDING FILE:
+// /cvmfs/minerva.opensciencegrid.org/minerva/software_releases/v22r1p1/minerva/MINERVA/MINERVA_v22r1p1/Top/MinervaConf/options/MinervaRootIOList.opts
+//============================================================
+
+
+//============================================================
+// BEGIN INCLUDING FILE:
+// /cvmfs/minerva.opensciencegrid.org/minerva/software_releases/v22r1p1/minerva/MINERVA/MINERVA_v22r1p1/Sim/MNVDetectormc/options/Common.opts
+//------------------------------------------------------------
+
+// External services that will be always used
+ApplicationMgr.ExtSvc += { "ToolSvc" ,
+"ParticlePropertySvc" ,
+//                       "EventSelector",
+"EventClockSvc", "CondDBCnvSvc" };
+
+// Configuration of various services that are used:
+RndmGenSvc.Engine.SetSingleton   = true;
+ParticlePropertySvc.ParticlePropertiesFile = "$MPARAMFILESROOT/data/Geant4/ParticleTable.txt" ;
+
+// Load necessary DLLs
+ApplicationMgr.DLLs += { "G4Processor", "Processes", "G4Subscribers" };
+
+
+// No events are read as input
+ApplicationMgr.EvtSel  = "NONE" ;
+
+
+
+
+
+//------------------------------------------------------------
+// DONE INCLUDING FILE:
+//============================================================
+
+//------------------------------------------------------------
+// Geometry selection
+// options are 'MINERVA', 'Frozen', 'TP_NuMI'
+//-----------------------------------------------------------
+//DetectorDataSvc.DetDbLocation = "$MINERVA_GEOMETRY/MINERVA2x2_Minirun.xml";
+//DetectorDataSvc.DetDbLocation = "$MINERVA_GEOMETRY/MINERVA.xml";
+DetectorDataSvc.DetDbLocation = "$MINERVA_GEOMETRY/MINERVA2x2.xml";
+DetectorDataSvc.ApplyAlignment = false;
+
+//---------------------------------------------------------------------------
+// Applications to Run in this job
+//---------------------------------------------------------------------------
+ApplicationMgr.DLLs += { "GaudiAlg"};
+ApplicationMgr.DLLs += { "GaudiAud"};
+AuditorSvc.Auditors  = { "MemoryAuditor", "ChronoAuditor" };
+
+ApplicationMgr.Dlls += {"MinervaDet", "IDDet", "ODDet"};
+
+//----- MNVDetectormc -----//
+//ApplicationMgr.TopAlg += { "GaudiSequencer/Generator"  };
+//ApplicationMgr.TopAlg += { "GaudiSequencer/Simulation" }; // For G4 geom
+//Generator.Members      = { "GenInit/MegaGen" };
+//Simulation.Members     = { "SimInit/MegaSim" };
+
+//----- Readout -----//
+ApplicationMgr.TopAlg += { "GaudiSequencer/ReadoutSim" };
+ReadoutSim.Members    += { "ReadoutAlg/ReadoutAlg" };
+
+ApplicationMgr.TopAlg += { "ChronoBuncherAlg" };
+
+ApplicationMgr.TopAlg += { "XTalkScoreGraderAlg" };
+ApplicationMgr.TopAlg += { "ClusterFormationAlg" };
+ApplicationMgr.TopAlg += { "PrimaryVertexAndTrackBuilder" };
+ApplicationMgr.TopAlg += { "AttenuationAlg" };
+// ApplicationMgr.TopAlg += { "PrimaryTrackProngAlg" };
+ApplicationMgr.TopAlg += { "PrimaryBlobProngAlg" };
+ApplicationMgr.TopAlg += { "DSTWriterAlg" };
+
+
+
+
+//--------------------------------------------------------------
+// POOL / DST / Histogram Output Files
+//--------------------------------------------------------------
+RootIOFile.Output   = "DATAFILE='PFN:gaudiFile'   SVC='RootCnvSvc' OPT='RECREATE'";
+
+HistogramPersistencySvc.OutputFile = "histoFile";
+
+DSTWriterAlg.OutputFile = "dstFile";
+
+
+//--------------------------------------------------------------
+// Algorithm options
+//--------------------------------------------------------------
+
+//----- MNVDetectormc -----//
+
+
+
+
+// Populate sensitive hits in the TES for all sub-detectors
+//Simulation.Members += { "GaudiSequencer/DetectorsHits" };
+//DetectorsHits.Members += { "GetTrackerHitsAlg/GetVetoHits"};
+//DetectorsHits.Members += { "GetTrackerHitsAlg/GetPlaneHits" };
+DetectorsHits.Members += { "GetTrackerHitsAlg/GetTowerHits" };
+//DetectorsHits.Members += { "GetTrackerHitsAlg/GetMinosHits" };
+
+GetVetoHits.CollectionName = "PaddleSDet/Hits";
+GetVetoHits.MCHitsLocation = "/Event/MC/Veto/Hits";
+GetVetoHits.Detector = "/dd/Structure/Minerva/VetoDetector";
+
+GetPlaneHits.CollectionName = "ScintPlaneSDet/Hits";
+GetPlaneHits.MCHitsLocation = "/Event/MC/ID/Hits";
+GetPlaneHits.Detector = "/dd/Structure/Minerva/Detector/InnerDetector";
+
+GetTowerHits.CollectionName = "TowerSDet/Hits";
+GetTowerHits.MCHitsLocation = "/Event/MC/OD/Hits";
+GetTowerHits.Detector = "/dd/Structure/Minerva/Detector/OuterDetector";
+
+//GetMinosHits.CollectionName = "MinosSDet/Hits";
+//GetMinosHits.MCHitsLocation = "/Event/MC/Minos/Hits";
+//GetMinosHits.Detector = "/dd/Structure/Minerva/MinosDetector";
+
+//DetectorsHits.MeasureTime = true;
+
+
+//--------------------------------------------------------------------------
+// Simulation configuration: Geant4 control
+
+//---------------------------------------------------------------------------
+// Mandatory run action
+GiGa.RunAction                 =   "MnvUserRunActionSequence/RunSeq";
+
+
+
+ReadoutAlg.HitInputFile   = "inputFile";
+ReadoutAlg.DoLoadEdepsim  = true;
+ReadoutAlg.SpillRate = 1.2; // Edepsim rate is 1.2 sec
+//-----------------------------------------------
+// By default, we use the data Calibration DB
+//  to decalibrate/calibrate MC. To turn this OFF,
+//  use the following commands:
+//ReadoutAlg.UseCalibTools   = false;
+//ToolSvc.FullMinervaReadoutBuilder.UseGainTable = false;
+//ToolSvc.FullMinervaReadoutBuilder.DoStripResponse = false;
+ToolSvc.GetCalAttenuation.UseDefaults = true;
+
+// Need tags to specify DB version, will be swapped by ProductionScripts
+ToolSvc.GetStripResponse.DbTag = "";
+ToolSvc.GetCalEnergy.DbTag = "";
+
+// Simulate nearest- and next-to-nearest-neighbor cross-talk.
+ToolSvc.PmtModel.SimulateDynodeXtalk  = true;
+ToolSvc.PmtModel.SimulateOpticalXtalk = true;
+ToolSvc.PmtModel.SimulateAfterpulsing = true;
+ToolSvc.TripModel.SimulateXtalk       = true;
+ToolSvc.PmtDynodeXtalk.DistanceLimit  = 2;
+ToolSvc.PmtOpticalXtalk.DistanceLimit = 2;
+
+ReadoutSim.MeasureTime   = true;
+
+
+//----------------------------------------
+// Database
+//----------------------------------------
+ToolSvc.GetCalAttenuation.DbUrl = "https://dbdata0vm.fnal.gov:9443/mnvcon_prd/app/";
+ToolSvc.GetStripResponse.DbUrl = "https://dbdata0vm.fnal.gov:9443/mnvcon_prd/app/";
+ToolSvc.GetCalEnergy.DbUrl = "https://dbdata0vm.fnal.gov:9443/mnvcon_prd/app/";
+ToolSvc.TimingCorrections.DbUrl = "https://dbdata0vm.fnal.gov:9443/mnvcon_prd/app/";
+ToolSvc.BadChanTool.DbUrl = "https://dbdata0vm.fnal.gov:9443/mnvcon_prd/app/";
+ToolSvc.GetCalCharge.DbUrl = "https://dbdata0vm.fnal.gov:9443/mnvcon_prd/app/";
+ToolSvc.GetCalPE.DbUrl = "https://dbdata0vm.fnal.gov:9443/mnvcon_prd/app/";
+ToolSvc.GetTempResponse.DbUrl = "https://dbdata0vm.fnal.gov:9443/mnvcon_prd/app/";
+ToolSvc.PedSupTool.DbUrl = "https://dbdata0vm.fnal.gov:9443/mnvcon_prd/app/";
+
+ToolSvc.MinervaPlexModel.MCPlexNumberMinerva = 20;
+//ToolSvc.MinervaPlexModel.MCPlexNumberMinerva = 13;
+//----------------------------------------
+// DST
+//----------------------------------------
+DSTWriterAlg.WriteDAQHeader    = true;
+DSTWriterAlg.WriteFPGAs        = false;
+DSTWriterAlg.WriteRawDigits    = false;
+DSTWriterAlg.WriteIDDigits     = true;
+DSTWriterAlg.WriteODDigits     = true;
+DSTWriterAlg.WriteVetoDigits   = true;
+DSTWriterAlg.WriteBeamData     = false;
+DSTWriterAlg.WriteIDClusters   = true;
+DSTWriterAlg.WriteODClusters   = false;
+DSTWriterAlg.WriteIDBlobs      = true;
+DSTWriterAlg.WriteODBlobs      = false;
+DSTWriterAlg.WriteTracks       = true;
+DSTWriterAlg.WriteVertices     = true;
+DSTWriterAlg.WriteMinos        = false;
+
+DSTWriterAlg.WriteInteraction  = true;
+DSTWriterAlg.WriteMCTrajectories = true;
+DSTWriterAlg.WriteMCIDDigits   = true;
+DSTWriterAlg.WriteMCODDigits   = true;
+DSTWriterAlg.WriteMCVetoDigits = false;
+
+
+DSTWriterAlg.NumModules = 120;
+DSTWriterAlg.SaveFrequency = 10;
+
+
+//---------------------------------------------------------------------------
+// Output level 1=VERBOSE, 2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL
+//---------------------------------------------------------------------------
+MessageSvc.OutputLevel                          = 4;
+
+Generator.OutputLevel                           = 3;
+Simulation.OutputLevel                          = 3;
+MegaGen.OutputLevel                             = 3;
+MegaSim.OutputLevel                             = 3;
+MessageSvc.MinervaDet.OutputLevel               = 3;
+
+ReadoutAlg.OutputLevel                          = 5;
+ToolSvc.FullMinervaReadoutBuilder.OutputLevel   = 5;
+ToolSvc.ReadoutBuilder.OutputLevel              = 3;
+ToolSvc.MinervaPlexModel.OutputLevel            = 3;
+ToolSvc.OpticalModel.OutputLevel                = 3;
+ToolSvc.PmtModel.OutputLevel                    = 3;
+ToolSvc.LightInjector.OutputLevel               = 3;
+ToolSvc.AdcModel.OutputLevel                    = 3;
+ToolSvc.DiscriminatorModel.OutputLevel          = 3;
+ToolSvc.TripModel.OutputLevel                   = 3;
+ToolSvc.PmtDynodeXtalk.OutputLevel              = 3;
+ToolSvc.PmtOpticalXtalk.OutputLevel             = 3;
+ToolSvc.TripXtalk.OutputLevel                   = 3;
+ToolSvc.XtalkStrength.OutputLevel               = 3;
+ToolSvc.PixelUtils.OutputLevel                  = 3;
+
+ToolSvc.GetCalPE.OutputLevel                    = 5;
+ToolSvc.GetCalAttenuation.OutputLevel           = 5;
+ToolSvc.GetStripResponse.OutputLevel            = 5;
+
+ChronoBuncherAlg.OutputLevel                    = 4;
+DSTWriterAlg.OutputLevel                        = 4;
+
+//===========================================================================
+
+//===== ParticleCannon Global Vertex added by MCCalPCStage =====//
+//ParticleCannon.VertexTimeTool = "SpillTimeFactory";
+//=====================================================//
+
+//===== ParticleCannon(ParticleCannon) particle(proton) added by MCCalPCStage =====//
+//ParticleCannon.ParticleNameList += {"GeneralParticles/proton"};
+//ParticleCannon.proton.PdgCodes = {2212};
+//ParticleCannon.proton.MinMomentum = .1*GeV;
+//ParticleCannon.proton.MaxMomentum = .2*GeV;
+//ParticleCannon.proton.MinTheta = 0.523598775598*rad;
+//ParticleCannon.proton.MaxTheta = 2.09439510239*rad;
+//ParticleCannon.proton.MinPhi = -3.14159265359*rad;
+//ParticleCannon.proton.MaxPhi = 3.14159265359*rad;
+//=====================================================//

@@ -16,17 +16,13 @@ fi
 
 if [[ -n "$ARCUBE_SPILL_NAME" ]]; then
     inName=$ARCUBE_SPILL_NAME.$globalIdx
-    inFile=$ARCUBE_OUTDIR_BASE/run-spill-build/output/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/${inName}.EDEPSIM_SPILLS.root
+    inFile=$ARCUBE_OUTDIR_BASE/run-spill-build/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/$subDir/${inName}.EDEPSIM_SPILLS.root
 else
     inName=$ARCUBE_SINGLE_NAME.$globalIdx
-    inFile=$ARCUBE_OUTDIR_BASE/run-edep-sim/output/${ARCUBE_SINGLE_NAME}/EDEPSIM/${inName}.EDEPSIM.root
+    inFile=$ARCUBE_OUTDIR_BASE/run-edep-sim/${ARCUBE_SINGLE_NAME}/EDEPSIM/$subDir/${inName}.EDEPSIM.root
 fi
 
-h5OutDir=$outDir/EDEPSIM_H5
-mkdir -p "$h5OutDir"
-
-outFile=$h5OutDir/${outName}.EDEPSIM.hdf5
-rm -f "$outFile"
+outFile=$tmpOutDir/${outName}.EDEPSIM.hdf5
 
 if [[ "$ARCUBE_KEEP_ALL_DETS" == "1" ]]; then
     keepAllDets=--keep_all_dets
@@ -40,3 +36,7 @@ fi
 export CPATH=$EDEPSIM/include/EDepSim:$CPATH
 
 run ./convert_edepsim_roottoh5.py --input_file "$inFile" --output_file "$outFile" "$keepAllDets"
+
+h5OutDir=$outDir/EDEPSIM_H5/$subDir
+mkdir -p "$h5OutDir"
+mv "$outFile" "$h5OutDir"

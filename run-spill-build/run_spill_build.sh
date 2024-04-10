@@ -7,18 +7,15 @@ nuName=$ARCUBE_NU_NAME.$globalIdx
 rockName=$ARCUBE_ROCK_NAME.$globalIdx
 echo "outName is $outName"
 
-# inBaseDir=$ARCUBE_OUTDIR_BASE/run-edep-sim/output
-inBaseDir=$ARCUBE_OUTDIR_BASE/run-hadd/output
+# inBaseDir=$ARCUBE_OUTDIR_BASE/run-edep-sim
+inBaseDir=$ARCUBE_OUTDIR_BASE/run-hadd
 nuInDir=$inBaseDir/$ARCUBE_NU_NAME
 rockInDir=$inBaseDir/$ARCUBE_ROCK_NAME
 
-nuInFile=$nuInDir/EDEPSIM/${nuName}.EDEPSIM.root
-rockInFile=$rockInDir/EDEPSIM/${rockName}.EDEPSIM.root
+nuInFile=$nuInDir/EDEPSIM/$subDir/${nuName}.EDEPSIM.root
+rockInFile=$rockInDir/EDEPSIM/$subDir/${rockName}.EDEPSIM.root
 
-spillOutDir=$outDir/EDEPSIM_SPILLS
-mkdir -p "$spillOutDir"
-
-spillFile=$spillOutDir/${outName}.EDEPSIM_SPILLS.root
+spillFile=$tmpOutDir/${outName}.EDEPSIM_SPILLS.root
 rm -f "$spillFile"
 
 # run root -l -b -q \
@@ -57,3 +54,6 @@ LIBTG4EVENT_DIR=${LIBTG4EVENT_DIR:-libTG4Event}
 run root -l -b -q \
     -e "gSystem->Load(\"$LIBTG4EVENT_DIR/libTG4Event.so\")" \
     "overlaySinglesIntoSpillsSorted.C(\"$nuInFile\", \"$rockInFile\", \"$spillFile\", $ARCUBE_INDEX, $ARCUBE_NU_POT, $ARCUBE_ROCK_POT, $ARCUBE_SPILL_POT, $ARCUBE_SPILL_PERIOD)"
+
+mkdir -p "$outDir/EDEPSIM_SPILLS/$subDir"
+mv "$spillFile" "$outDir/EDEPSIM_SPILLS/$subDir"

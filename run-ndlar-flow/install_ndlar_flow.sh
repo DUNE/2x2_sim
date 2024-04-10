@@ -30,9 +30,9 @@ cd "$installDir"
 python -m venv "$venvName"
 source "$venvName"/bin/activate
 
-python -m venv flow.venv
-source flow.venv/bin/activate
 pip install --upgrade pip setuptools wheel
+
+pip install pyyaml-include==1.3.2
 
 # install h5flow
 git clone -b main https://github.com/larpix/h5flow.git
@@ -44,19 +44,6 @@ cd ..
 git clone -b develop https://github.com/larpix/ndlar_flow.git
 cd ndlar_flow
 pip install -e .
-cd ..
-
-datadir=ndlar_flow/data/proto_nd_flow
-
-cp "$staticDir"/multi_tile_layout-2.4.16.yaml $datadir
-cp "$staticDir"/runlist-2x2-mcexample.txt $datadir
-cp "$staticDir"/light_module_desc-0.0.0.yaml $datadir
-
-if [[ "$installDir" == "." ]]; then
-    cp ../run-larnd-sim/larnd-sim/larndsim/detector_properties/2x2.yaml $datadir
-elif [[ -e "$installDir/larnd-sim" ]]; then
-    cp "$installDir"/larnd-sim/larndsim/detector_properties/2x2.yaml $datadir
-else
-    echo "Couldn't find larnd-sim/larndsim/detector_properties/2x2.yaml"
-    echo "Please manually copy it into $datadir"
-fi
+cd scripts/proto_nd_scripts
+./get_proto_nd_input.sh
+cd ../../..

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -o errexit
+set -o pipefail
 
 # NOTE: We assume that this script is "sourced" from e.g.
 # run-edep-sim/run_edep_sim.sh and that the current working directory is e.g.
@@ -19,7 +20,7 @@ echo "Seed is $seed"
 # representation of that number. Don't do math with globalIdx! Bash may parse it
 # as an octal number.
 
-globalIdx=$(printf "%05d" "$ARCUBE_INDEX")
+globalIdx=$(printf "%07d" "$ARCUBE_INDEX")
 echo "globalIdx is $globalIdx"
 
 runOffset=${ARCUBE_RUN_OFFSET:-0}
@@ -29,24 +30,47 @@ echo "runNo is $runNo"
 # Default to the root of the 2x2_sim repo (but ideally this should be set to
 # somewhere on $SCRATCH)
 ARCUBE_OUTDIR_BASE="${ARCUBE_OUTDIR_BASE:-$PWD/..}"
+mkdir -p "$ARCUBE_OUTDIR_BASE"
 ARCUBE_OUTDIR_BASE=$(realpath "$ARCUBE_OUTDIR_BASE")
 export ARCUBE_OUTDIR_BASE
 
+ARCUBE_LOGDIR_BASE="${ARCUBE_LOGDIR_BASE:-$PWD/..}"
+mkdir -p "$ARCUBE_LOGDIR_BASE"
+ARCUBE_LOGDIR_BASE=$(realpath "$ARCUBE_LOGDIR_BASE")
+export ARCUBE_LOGDIR_BASE
+
+# For "local" (i.e. non-container, non-CVMFS) installs of larnd-sim etc.
+# Default to run-larnd-sim etc.
+export ARCUBE_INSTALL_DIR=${ARCUBE_INSTALL_DIR:-$PWD}
+
 stepname=$(basename "$PWD")
-outDir=$ARCUBE_OUTDIR_BASE/${stepname}/output/$ARCUBE_OUT_NAME
+
+outDir=$ARCUBE_OUTDIR_BASE/${stepname}/$ARCUBE_OUT_NAME
+echo "outDir is $outDir"
 outName=$ARCUBE_OUT_NAME.$globalIdx
 echo "outName is $outName"
 mkdir -p "$outDir"
 
-timeFile=$outDir/TIMING/$outName.time
-mkdir -p "$(dirname "$timeFile")"
+tmpOutDir=$ARCUBE_OUTDIR_BASE/tmp/$stepname/$ARCUBE_OUT_NAME
+mkdir -p "$tmpOutDir"
+
+subDir=$(printf "%07d" $((ARCUBE_INDEX / 1000 * 1000)))
+
+logBase=$ARCUBE_LOGDIR_BASE/$stepname/$ARCUBE_OUT_NAME
+echo "logBase is $logBase"
+logDir=$logBase/LOGS/$subDir
+timeDir=$logBase/TIMING/$subDir
+mkdir -p "$logDir" "$timeDir"
+logFile=$logDir/$outName.log
+timeFile=$timeDir/$outName.time
+
 timeProg=/usr/bin/time
 # HACK in case we forget to include GNU time in a container
 [[ ! -e "$timeProg" ]] && timeProg=$PWD/../tmp_bin/time
 
 run() {
-    echo RUNNING "$@"
-    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@"
+    echo RUNNING "$@" | tee -a "$logFile"
+    time "$timeProg" --append -f "$1 %P %M %E" -o "$timeFile" "$@" 2>&1 | tee -a "$logFile"
 }
 
 libpath_remove() {

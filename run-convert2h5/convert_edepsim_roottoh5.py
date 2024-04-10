@@ -35,7 +35,7 @@ trajectories_dtype = np.dtype([("event_id","u4"), ("vertex_id", "u8"),
                                ("xyz_end", "f4", (3,)), ("t_end", "f8"),
                                ("pdg_id", "i4"), ("start_process", "u4"),
                                ("start_subprocess", "u4"), ("end_process", "u4"),
-                               ("end_subprocess", "u4")], align=True)
+                               ("end_subprocess", "u4"),("dist_travel", "f4")], align=True)
 
 vertices_dtype = np.dtype([("event_id","u4"), ("vertex_id","u8"),
                            ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
@@ -46,7 +46,8 @@ genie_stack_dtype = np.dtype([("event_id", "u4"), ("vertex_id", "u8"), ("traj_id
                               ("part_status", "i4")], align=True)
 
 genie_hdr_dtype = np.dtype([("event_id", "u4"), ("vertex_id", "u8"),
-                            ("vertex", "f8", (4,)), ("target", "u4"), ("reaction", "i4"),
+                            ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
+                            ("t_vert","f8"), ("target", "u4"), ("reaction", "i4"),
                             ("isCC", "?"), ("isQES", "?"), ("isMEC", "?"),
                             ("isRES", "?"), ("isDIS", "?"), ("isCOH", "?"),
                             ("Enu", "f4"), ("nu_4mom", "f4", (4,)), ("nu_pdg", "i4"),
@@ -177,36 +178,43 @@ def matchTrackID(traj_list, part_4mom, part_pdg):
 
     return trackID
 
-# Generate a reaction code number based on the GENIE reaction string
-# Reaction 0 used as an undefined or unknown reaction
-# Reactions [1, 5] used for basic CC reactions ([6,10] reserved for future use)
-# Reactions [11, 15] used for NC versions (+10 to CC reaction)
-# Reactions are positive for nu, negative for nubar
-def getReactionCode(genie_str, nu_pdg):
-    reaction = 0
-    if "NC" in genie_str:
-        is_nc = True
-    else:
-        is_nc = False
+#Map from GENIE reaction to number to match CAFs
+#Derived from the enum defition and genie::ScatteringType::AsString() fuction from here:
+#https://github.com/GENIE-MC/Generator/blob/master/src/Framework/Interaction/ScatteringType.h
+#which is copied to duneanaobj/StandardRecord
+#https://github.com/DUNE/duneanaobj/blob/main/duneanaobj/StandardRecord/SREnums.h
+genie_reaction_map = {
+    "QES" : 1,
+    "1Kaon" : 2,
+    "DIS" : 3,
+    "RES" : 4,
+    "COH" : 5,
+    "DFR" : 6,
+    "NuEEL" : 7,
+    "IMD": 8,
+    "AMNuGamma": 9,
+    "MEC": 10,
+    "CEvNS": 11,
+    "IBD": 12,
+    "GLR": 13,
+    "IMDAnh": 14,
+    "PhotonCOH": 15,
+    "PhotonRES": 16,
+    "1Pion": 17,
+    "DMEL": 101,
+    "DMDIS": 102,
+    "DME": 103,
+}
 
-    if "QES" in genie_str:
-        reaction = 1
-    elif "MEC" in genie_str:
-        reaction = 2
-    elif "RES" in genie_str:
-        reaction = 3
-    elif "DIS" in genie_str:
-        reaction = 4
-    elif "COH" in genie_str:
-        reaction = 5
-    else:
-        reaction = 0
+#RooTracker format stores the process/interaction/scattering type information as a string
+#Using the map defined above, search this string for scattering type and return a number
+def getReactionCode(genie_str):
+    reaction = -100 #Default value to match GENIE
 
-    if is_nc and reaction != 0:
-        reaction += 10
-
-    if nu_pdg < 0:
-        reaction *= -1
+    for mode, num in genie_reaction_map.items():
+        if mode in genie_str:
+            reaction = num
+            continue
 
     return reaction
 
@@ -358,7 +366,7 @@ def dump(input_file, output_file, keep_all_dets=False):
         else:
             # If ARCUBE_ACTIVE_VOLUME is not set, default to previously hard
             # coded containerName.
-            if not any(containerName == os.environ.get("ARCUBE_ACTIVE_VOLUME", "volLArActive")
+            if not any(containerName == os.environ.get("ARCUBE_ACTIVE_VOLUME", "volTPCActive")
                        for containerName, _hits in event.SegmentDetectors):
                 continue
 
@@ -418,6 +426,9 @@ def dump(input_file, output_file, keep_all_dets=False):
                 trajectories[n_traj]["end_process"] = end_pt.GetProcess()
                 trajectories[n_traj]["end_subprocess"] = end_pt.GetSubprocess()
                 trajectories[n_traj]["pdg_id"] = trajectory.GetPDGCode()
+                trajectories[n_traj]["dist_travel"]=0
+                for i in range(len(trajectory.Points)-1):
+                    trajectories[n_traj]["dist_travel"]+=(trajectory.Points[i].GetPosition()-trajectory.Points[i+1].GetPosition()).Vect().Mag()* edep2cm
 
                 n_traj += 1
 
@@ -429,7 +440,7 @@ def dump(input_file, output_file, keep_all_dets=False):
         for containerName, hitSegments in event.SegmentDetectors:
             # If ARCUBE_ACTIVE_VOLUME is not set, default to previously hard
             # coded containerName.
-            if (not keep_all_dets) and containerName != os.environ.get("ARCUBE_ACTIVE_VOLUME", "volLArActive"):
+            if (not keep_all_dets) and containerName != os.environ.get("ARCUBE_ACTIVE_VOLUME", "volTPCActive"):
                 continue
             segment = np.empty(len(hitSegments), dtype=segments_dtype)
             for iHit, hitSegment in enumerate(hitSegments):
@@ -480,6 +491,9 @@ def dump(input_file, output_file, keep_all_dets=False):
                             trajectories[n_traj]["end_process"] = end_pt.GetProcess()
                             trajectories[n_traj]["end_subprocess"] = end_pt.GetSubprocess()
                             trajectories[n_traj]["pdg_id"] = trajectory.GetPDGCode()
+                            trajectories[n_traj]["dist_travel"]=0
+                            for i in range(len(trajectory.Points)-1):
+                                trajectories[n_traj]["dist_travel"]+=(trajectory.Points[i].GetPosition()-trajectory.Points[i+1].GetPosition()).Vect().Mag()* edep2cm
                             n_traj += 1
                             if trajectories[n_traj-1]["parent_id"] == -1:
                                 break
@@ -531,6 +545,7 @@ def dump(input_file, output_file, keep_all_dets=False):
             genie_idx = 0
             nu_4mom = np.empty((4,), dtype='f4')
             lep_4mom = np.empty((4,), dtype='f4')
+            nu_pdg = 0
             target_pdg = 0
 
             # Create particle stack dataset
@@ -593,21 +608,24 @@ def dump(input_file, output_file, keep_all_dets=False):
             genie_hdr["isRES"] = "RES" in genie_str
             genie_hdr["isDIS"] = "DIS" in genie_str
             genie_hdr["isCOH"] = "COH" in genie_str
-            genie_hdr["reaction"] = getReactionCode(genie_str, nu_pdg)
-            genie_hdr["vertex"] = np.array([genieTree.EvtVtx[0]*meter2cm, genieTree.EvtVtx[1]*meter2cm, genieTree.EvtVtx[2]*meter2cm, genieTree.EvtVtx[3]*edep2us])
+            genie_hdr["reaction"] = getReactionCode(genie_str)
+            genie_hdr["x_vert"] = genieTree.EvtVtx[0]*meter2cm
+            genie_hdr["y_vert"] = genieTree.EvtVtx[1]*meter2cm
+            genie_hdr["z_vert"] = genieTree.EvtVtx[2]*meter2cm
+            genie_hdr["t_vert"] = genieTree.EvtVtx[3]*edep2us
             genie_hdr["target"] = int((target_pdg % 10000000) / 10000) #Extract Z value from PDG code
-            genie_hdr["Enu"]  = nu_4mom[3]
+            genie_hdr["Enu"] = nu_4mom[3]
             genie_hdr["nu_4mom"] = nu_4mom
             genie_hdr["nu_pdg"] = nu_pdg
             genie_hdr["Elep"] = lep_4mom[3]
             genie_hdr["lep_mom"] = np.linalg.norm(lep_4mom[0:3])
             genie_hdr["lep_ang"] = np.arccos(lep_4mom[0:3].dot(beam_dir) / (beam_norm * genie_hdr["lep_mom"])) * (180.0 / np.pi) # degrees
             genie_hdr["lep_pdg"] = lep_pdg
-            genie_hdr["q0"]   = nu_4mom[3] - lep_4mom[3]
-            genie_hdr["q3"]   = np.linalg.norm(nu_4mom[0:3] - lep_4mom[0:3])
-            genie_hdr["Q2"]   = genie_hdr["q3"]**2 - genie_hdr["q0"]**2
-            genie_hdr["x"]    = genie_hdr["Q2"] / (2.0 * nucleon_mass * genie_hdr["q0"])
-            genie_hdr["y"]    = 1.0 - (genie_hdr["Elep"] / genie_hdr["Enu"])
+            genie_hdr["q0"] = nu_4mom[3] - lep_4mom[3]
+            genie_hdr["q3"] = np.linalg.norm(nu_4mom[0:3] - lep_4mom[0:3])
+            genie_hdr["Q2"] = genie_hdr["q3"]**2 - genie_hdr["q0"]**2
+            genie_hdr["x"]  = genie_hdr["Q2"] / (2.0 * nucleon_mass * genie_hdr["q0"])
+            genie_hdr["y"]  = 1.0 - (genie_hdr["Elep"] / genie_hdr["Enu"])
             genie_hdr_list.append(genie_hdr)
 
     # save any lingering data not written to file

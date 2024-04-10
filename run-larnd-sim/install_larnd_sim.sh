@@ -2,7 +2,9 @@
 
 set -o errexit
 
-module load cudatoolkit/12.2
+## CUDA 12.2 makes us crash :(
+# module load cudatoolkit/12.2
+module load cudatoolkit/11.7
 module load python/3.11
 
 installDir=${1:-.}
@@ -36,7 +38,8 @@ pip install --upgrade pip setuptools wheel
 # pip install -U pip wheel setuptools
 # pip install cupy-cuda11x
 
-pip install cupy-cuda12x
+# pip install cupy-cuda12x
+pip install cupy-cuda11x
 
 # https://docs.nersc.gov/development/languages/python/using-python-perlmutter/#installing-with-pip
 ( git clone -b develop https://github.com/DUNE/larnd-sim.git
