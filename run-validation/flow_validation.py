@@ -39,6 +39,83 @@ def main(flow_file):
         final_hits = flow_h5['/charge/calib_final_hits/data']
 
         ### Event display
+        sipm_hits_data = flow_h5['light/sipm_hits/data']
+
+        # Extracting channel IDs and maximum values
+        channel_ids = sipm_hits_data['chan'][:]
+        max_values = sipm_hits_data['max'][:]
+        pos_data = sipm_hits_data['pos'][:]
+        z_coordinates = pos_data[:, 2]
+        x_coordinates = pos_data[:, 0]
+        y_coordinates = pos_data[:, 1]
+
+        unique_x, xcounts = np.unique(x_coordinates, return_counts=True)
+        unique_y, ycounts = np.unique(y_coordinates, return_counts=True)
+        unique_z, zcounts = np.unique(z_coordinates, return_counts=True)
+
+        plt.figure(figsize=(10, 6))
+        plt.bar(unique_x, xcounts)
+        plt.xlabel('X-coordinate')
+        plt.ylabel('Counts')
+        plt.title('X-coordinate')
+        plt.grid(True)
+        output.savefig()  
+        plt.close()
+
+        plt.figure(figsize=(10, 6))
+        plt.bar(unique_y, ycounts)
+        plt.xlabel('Y-coordinate')
+        plt.ylabel('Counts')
+        plt.title('Y-coordinate')
+        plt.grid(True)
+        output.savefig()  
+        plt.close()
+ 
+        plt.figure(figsize=(10, 6))
+        plt.bar(unique_z, zcounts)
+        plt.xlabel('Z-coordinate')
+        plt.ylabel('Counts')
+        plt.title('Z-coordinate')
+        plt.grid(True)
+        output.savefig()  
+        plt.close()
+
+
+        # Plot scatter plot for channel IDs versus maximum values
+        plt.figure(figsize=(10, 6))
+        plt.scatter(channel_ids, max_values, marker='.', color='blue')
+        plt.xlabel('Channel ID')
+        plt.ylabel('Maximum Value')
+        plt.title('Maximum Values vs. Channel IDs')
+        plt.grid(True)
+        plt.xlim(0, 60)
+        output.savefig()  
+        plt.close()    
+
+        sum_hits_data = flow_h5['light/sum_hits/data']
+        tpc_values = sum_hits_data['tpc'][:]
+        det_values = sum_hits_data['det'][:]
+        unique_tpc, counts_tpc = np.unique(tpc_values, return_counts=True)
+        unique_det, counts_det = np.unique(det_values, return_counts=True)
+
+        plt.figure(figsize=(8, 6))
+        plt.bar(unique_tpc, counts_tpc, color='purple')
+        plt.xlabel(tpc_values)
+        plt.ylabel('Counts')
+        plt.title(f'Histogram of TPC index')
+        plt.grid(True)
+        output.savefig()  
+        plt.close()    
+
+        plt.figure(figsize=(8, 6))
+        plt.bar(unique_det, counts_det, color='purple')
+        plt.xlabel(det_values)
+        plt.ylabel('Counts')
+        plt.title(f'Histogram of detector index')
+        plt.grid(True)
+        output.savefig()  
+        plt.close()   
+
 
         # 3D - all spills
         fig = plt.figure(figsize=(10,10))
