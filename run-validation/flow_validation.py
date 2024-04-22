@@ -100,7 +100,7 @@ def main(flow_file):
 
         plt.figure(figsize=(8, 6))
         plt.bar(unique_tpc, counts_tpc, color='purple')
-        plt.xlabel(tpc_values)
+        plt.xlabel('tpc_values')
         plt.ylabel('Counts')
         plt.title(f'Histogram of TPC index')
         plt.grid(True)
@@ -109,7 +109,7 @@ def main(flow_file):
 
         plt.figure(figsize=(8, 6))
         plt.bar(unique_det, counts_det, color='purple')
-        plt.xlabel(det_values)
+        plt.xlabel('det_values')
         plt.ylabel('Counts')
         plt.title(f'Histogram of detector index')
         plt.grid(True)
