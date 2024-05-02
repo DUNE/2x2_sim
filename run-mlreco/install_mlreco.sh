@@ -39,19 +39,22 @@ pip install --upgrade pip setuptools wheel
 # pip install scikit-learn # for flow2supera
 # pip install --upgrade torch_geometric # for mlreco
 
-git clone -b v2_2_0 https://github.com/DeepLearnPhysics/larcv2.git
+git clone -b v2_2_6 https://github.com/DeepLearnPhysics/larcv2.git
 cd larcv2
 source configure.sh
 make -j16
 cd ..
 
-git clone -b v1.5.0 https://github.com/DeepLearnPhysics/SuperaAtomic.git
+git clone -b v1.6.0 https://github.com/DeepLearnPhysics/SuperaAtomic.git
+
 cd SuperaAtomic
 git submodule update --init     # pybind11
 pip install .
 cd ..
 
-git clone -b v1.2.0 https://github.com/DeepLearnPhysics/edep2supera.git
+git clone -b v1.3.1 https://github.com/DeepLearnPhysics/edep2supera.git
+
+
 cd edep2supera
 pip install .
 cd ..
@@ -66,7 +69,8 @@ cd h5flow
 pip install .
 cd ..
 
-git clone -b v1.1.1 https://github.com/sindhu-ku/flow2supera.git
+
+git clone -b v2.0.0 https://github.com/DeepLearnPhysics/flow2supera.git
 ## Don't pip install because e.g. config files are expected to live near
 ## __file__
 # cd flow2supera
@@ -84,7 +88,9 @@ cd ..
 
 # commit 8103996
 # git clone -b jw_dune_nd_lar https://github.com/chenel/lartpc_mlreco3d.git
-git clone -b v2.9.2.4 https://github.com/DeepLearnPhysics/lartpc_mlreco3d.git
+
+git clone -b v2.9.3.16 https://github.com/DeepLearnPhysics/lartpc_mlreco3d.git
+
 
 # git clone https://github.com/chenel/dune-nd-lar-reco.git
 # the old yaml.load API has been removed
