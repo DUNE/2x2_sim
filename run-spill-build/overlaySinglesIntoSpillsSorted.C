@@ -281,7 +281,7 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
   geom->Write();
   new_tree->Write();
   event_spill_map->Write("event_spill_map", 1);
-  auto p = new TParameter<float>("spillPeriod_s", spillPeriod_s);
+  auto p = new TParameter<double>("spillPeriod_s", spillPeriod_s);
   p->Write();
 
   outFile->mkdir("DetSimPassThru");
