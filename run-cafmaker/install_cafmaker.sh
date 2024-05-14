@@ -11,7 +11,7 @@ setup edepsim v3_2_0c -q e20:prof
 mkdir install
 cd install
 
-git clone -b v4.6.0 https://github.com/DUNE/ND_CAFMaker.git
+git clone -b v4.6.2 https://github.com/DUNE/ND_CAFMaker.git
 cd ND_CAFMaker
 sed -i 's/CXXFLAGS = /CXXFLAGS = -DDISABLE_TMS /' Makefile
 ./build.sh
