@@ -31,7 +31,9 @@ rm virtualenv.pyz
 
 # python3 -m venv --system-site-packages mlreco.venv
 source mlreco.venv/bin/activate
-pip install --upgrade pip setuptools wheel
+# setuptools 70 doesn't like SparseConvNet
+# (pkg_resources.packaging is the culprit)
+pip install --upgrade pip setuptools==69 wheel
 # pip install 'ruamel.yaml<0.18.0' # for deprecated load()
 
 ## Need the following?
