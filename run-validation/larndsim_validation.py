@@ -255,38 +255,27 @@ def main(sim_file):
         acl_wvfms = ak.flatten(acl_events, axis=1)
         
         def noise_datasets(no_ped_adc,CUTOFF):
-            adc_signal_indices=[]
-            for i in range(len(no_ped_adc)):
-                if max(abs(no_ped_adc[i]))>THRESHOLD:
-                    adc_signal_indices.append(i)
-                else:
-                    pass
-            adc_normal_pretrig = []
-            for i in adc_signal_indices:
-                waveform = no_ped_adc[i][0:PRE_NOISE]
-                adc_normal_pretrig.append(np.array(waveform))
-                if len(adc_normal_pretrig)>3000:
-                    break
+            max_abs_values=np.max(np.abs(no_ped_adc), axis=1)
+            mask = max_abs_values > THRESHOLD
+            adc_signal_indices= np.flatnonzero(mask)
+            adc_normal_pretrig=no_ped_adc[adc_signal_indices,0:PRE_NOISE]
             adc_normal_pretrig = np.array(adc_normal_pretrig[0:3000])
-            ns_wvfms = []
-            for wave in adc_normal_pretrig:
-                norm = max(abs(wave))
-                ns_wvfms.append(wave/norm)
+            norms=np.max(np.abs(adc_normal_pretrig), axis=1)
+            norms_big=np.expand_dims(norms, axis=1)
+            ns_wvfms=np.divide(adc_normal_pretrig,norms_big)
             # Calculate power spectra using FFT
             freqs = np.fft.fftfreq(PRE_NOISE, 1/SAMPLE_RATE)
             freqs = freqs[:PRE_NOISE//2] # keep only positive frequencies
             freq_matrix = np.tile(np.array(freqs), (len(adc_normal_pretrig),1))
             frequencies = np.ndarray.flatten(np.array(freq_matrix))
-            psds = []
-            for wave in ns_wvfms:
-                spectrum = np.fft.fft(wave)
-                psd = np.abs(spectrum[:PRE_NOISE//2])**2 / (PRE_NOISE * SAMPLE_RATE)
-                psd[1:] *= 2 # double the power except for the DC component
-                psds.append(psd)
+            spectrum_arr=np.fft.fft(ns_wvfms, axis=1)
+            psds= np.abs(spectrum_arr[:,:PRE_NOISE//2])**2 / (PRE_NOISE * SAMPLE_RATE)
+            psds[:,1:] *=2 #Double the power except for the DC component
             ref = 1 #(everything is in integers?)
             power = np.ndarray.flatten(np.array(psds))
             p_dbfs = 20 * np.log10(power/ref)
             return adc_signal_indices, frequencies, adc_normal_pretrig, p_dbfs
+
         
         def power_hist_maxes(adc_dataset):
             adc_freq = adc_dataset[1]
