@@ -72,7 +72,7 @@ pip install .
 cd ..
 
 
-git clone -b v2.0.0 https://github.com/DeepLearnPhysics/flow2supera.git
+git clone -b v3.0.1 https://github.com/DeepLearnPhysics/flow2supera.git
 ## Don't pip install because e.g. config files are expected to live near
 ## __file__
 # cd flow2supera
@@ -91,7 +91,7 @@ cd ..
 # commit 8103996
 # git clone -b jw_dune_nd_lar https://github.com/chenel/lartpc_mlreco3d.git
 
-git clone -b v2.9.3.16 https://github.com/DeepLearnPhysics/lartpc_mlreco3d.git
+git clone -b v2.9.5 https://github.com/DeepLearnPhysics/lartpc_mlreco3d.git
 
 
 # git clone https://github.com/chenel/dune-nd-lar-reco.git

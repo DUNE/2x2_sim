@@ -29,7 +29,7 @@ workflow1='yamls/proto_nd_flow/workflows/charge/charge_event_building.yaml'
 workflow2='yamls/proto_nd_flow/workflows/charge/charge_event_reconstruction.yaml'
 workflow3='yamls/proto_nd_flow/workflows/combined/combined_reconstruction.yaml'
 workflow4='yamls/proto_nd_flow/workflows/charge/prompt_calibration.yaml'
-workflow5='yamls/proto_nd_flow/workflows/charge/final_calibration.yaml'
+#workflow5='yamls/proto_nd_flow/workflows/charge/final_calibration.yaml'
 
 # light workflows
 workflow6='yamls/proto_nd_flow/workflows/light/light_event_building_mc.yaml'
@@ -44,7 +44,10 @@ cd "$ARCUBE_INSTALL_DIR"/ndlar_flow
 # ensures that we properly report the failure to the production system.
 set -o errexit
 
-run h5flow -c $workflow1 $workflow2 $workflow3 $workflow4 $workflow5\
+#run h5flow -c $workflow1 $workflow2 $workflow3 $workflow4 $workflow5\
+#    -i "$inFile" -o "$outFile"
+
+run h5flow -c $workflow1 $workflow2 $workflow3 $workflow4\
     -i "$inFile" -o "$outFile"
 
 run h5flow -c $workflow6 $workflow7\
