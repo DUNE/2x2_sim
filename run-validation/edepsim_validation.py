@@ -10,7 +10,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 from validation_utils import rasterize_plots
 rasterize_plots()
 
-def main(sim_file, input_type):
+def main(sim_file, input_type, det_complex):
 
     sim_h5 = h5py.File(sim_file,'r')
     print('\n----------------- File content -----------------')
@@ -50,8 +50,66 @@ def main(sim_file, input_type):
 
         ### Plot time structure of packets:
         plt.hist(segments['t0_start'], bins=100)
+        plt.yscale('log')
         plt.xlabel('t0_start')
         plt.ylabel(r'N segments')
+        output.savefig()
+        plt.close()
+
+        ### Plot the time structure of packets for adjacent spills for the first max_time seconds.
+        max_time = 0.
+        if det_complex == "full": max_time = 20e6
+        t0_start = segments['t0_start']
+        spill_duration = 1.2e6
+        epsillon = 0.1e6
+        spill = 0
+        while ((spill+1)*spill_duration < max_time):
+            this_t0_start = t0_start[t0_start > spill*spill_duration - epsillon]
+            this_t0_start = this_t0_start[this_t0_start < (spill+1)*spill_duration + epsillon]
+            plt.hist(this_t0_start, bins=int(int(2*epsillon+spill_duration)/1e4), range=[spill*spill_duration - epsillon, (spill+1)*spill_duration + epsillon])
+            plt.xlabel(r't0_start (us)')
+            plt.ylabel(r'N segments')
+            output.savefig()
+            plt.close()
+            spill += 1
+
+        ### Plot the time structure individual packets for the first max_time seconds.
+        spill = 0
+        packet_duration = 10
+        epsillon = 5
+        while ((spill+1)*spill_duration < max_time):
+            this_t0_start = t0_start[t0_start > spill*spill_duration - epsillon]
+            this_t0_start = this_t0_start[this_t0_start < spill*(spill_duration) + packet_duration + epsillon]
+            plt.hist(this_t0_start, bins=100, range=[spill*spill_duration - epsillon, spill*spill_duration+packet_duration + epsillon])
+            plt.xlabel(r't0_start (us)')
+            plt.ylabel(r'N segments')
+            output.savefig()
+            plt.close()
+            spill += 1
+
+        ### Plot the individual packets stacked.
+        spill = 0
+        spills_stacked = []
+        while ((spill+1)*spill_duration < max(t0_start)):
+            this_t0_start = t0_start[t0_start > spill*spill_duration - epsillon]
+            this_t0_start = this_t0_start[this_t0_start < spill*(spill_duration) + packet_duration + epsillon]
+            spills_stacked.append([t0 - spill*spill_duration for t0 in this_t0_start])
+            spill += 1
+
+        plt.hist(spills_stacked, stacked=True, bins=100, range=[0. - epsillon, packet_duration + epsillon])
+        plt.xlabel('Time since first segment in spill (us)')
+        plt.ylabel(r'N segments')
+        output.savefig()
+        plt.close()
+
+        # Plot a single segment for each event ID.
+        _, event_id_idxs = np.unique(segments['event_id'], return_index=True)
+        t0_start_uniq = np.take(segments['t0_start'], event_id_idxs)
+        event_id_uniq = np.take(segments['event_id'], event_id_idxs)
+        plt.scatter(t0_start_uniq,event_id_uniq)
+        plt.title(r'One segment t0_start per event_id')
+        plt.xlabel(r't0_start (us)')
+        plt.ylabel(r'Event ID')
         output.savefig()
         plt.close()
 
@@ -71,6 +129,30 @@ def main(sim_file, input_type):
         output.savefig()
         plt.close()
 
+        ### Plot segment position in x:
+        plt.hist(segments['x'], bins=100)
+        plt.xlabel('x [cm]')
+        plt.ylabel(r'N segments')
+        plt.yscale('log')
+        output.savefig()
+        plt.close()
+
+        ### Plot segment position in y:
+        plt.hist(segments['y'], bins=100)
+        plt.xlabel('y [cm]')
+        plt.ylabel(r'N segments')
+        plt.yscale('log')
+        output.savefig()
+        plt.close()
+
+        ### Plot segment position in z:
+        plt.hist(segments['z'], bins=100)
+        plt.xlabel('z [cm]')
+        plt.ylabel(r'N segments')
+        plt.yscale('log')
+        output.savefig()
+        plt.close()
+
         ### Plot the outgoing muon momentum
         traj = sim_h5['trajectories']
         muon_mask = (np.abs(traj['pdg_id']) == 13) & (traj['parent_id'] == -1)
@@ -85,6 +167,7 @@ def main(sim_file, input_type):
 
         ### Plot the outgoing muon angle w.r.t. the neutrino beam direction
         beam_dir  = np.asarray([0.0, -0.05836, 1.0]) # -3.34 degrees in the y-direction
+        if det_complex == "full": beam_dir = np.asarray([0.0, -0.101, 1.0]) # taken from 2x2_sim/flux/GNuMIFlux.xml -5.79 degrees in y-direction
         beam_norm = np.linalg.norm(beam_dir)
         muon_angle = np.arccos(muon_pvec.dot(beam_dir) / (beam_norm * muon_pmag)) * (180.0 / np.pi)
         plt.hist(muon_angle, bins=60, range=[0, 180])
@@ -180,21 +263,51 @@ def main(sim_file, input_type):
         for i, coord in enumerate(['x', 'y', 'z']):
             counts, bins, _ = plt.hist(muon_vtx[:,i], bins=100)
             
-            if bins[0] < -NDHallwidths[i]/2:
-                plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
-            if bins[-1] > NDHallwidths[i]/2:
-                plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+            if det_complex == "2x2":
+                if bins[0] < -NDHallwidths[i]/2:
+                    plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
+                if bins[-1] > NDHallwidths[i]/2:
+                    plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+                
+                for i_bounds, bounds in enumerate(MINERvA_bounds(i)):
+                    if i_bounds == 0:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
+                    else:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5)
+                for i_bounds, bounds in enumerate(tpc_bounds(i)):
+                    if i_bounds == 0:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5, label = 'Active 2x2')
+                    else:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
+
+            plt.title('Muon end point {}'.format(coord))
+            plt.xlabel(r'{} position [cm]'.format(coord))
+            plt.ylabel(r'Event rate')
+            plt.legend()
+            output.savefig()
+            plt.close()
+
+        ### Plot the outgoing muon end position
+        muon_end = traj['xyz_end'][muon_mask]
+        for i, coord in enumerate(['x', 'y', 'z']):
+            counts, bins, _ = plt.hist(muon_end[:,i], bins=100)
             
-            for i_bounds, bounds in enumerate(MINERvA_bounds(i)):
-                if i_bounds == 0:
-                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
-                else:
-                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5)
-            for i_bounds, bounds in enumerate(tpc_bounds(i)):
-                if i_bounds == 0:
-                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5, label = 'Active 2x2')
-                else:
-                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
+            if det_complex == "2x2":
+                if bins[0] < -NDHallwidths[i]/2:
+                    plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
+                if bins[-1] > NDHallwidths[i]/2:
+                    plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+                
+                for i_bounds, bounds in enumerate(MINERvA_bounds(i)):
+                    if i_bounds == 0:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
+                    else:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5)
+                for i_bounds, bounds in enumerate(tpc_bounds(i)):
+                    if i_bounds == 0:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5, label = 'Active 2x2')
+                    else:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
 
             plt.title('Muon vertex {}'.format(coord))
             plt.xlabel(r'{} position [cm]'.format(coord))
@@ -202,6 +315,31 @@ def main(sim_file, input_type):
             plt.legend()
             output.savefig()
             plt.close()
+
+        ### Plot the muon end points
+        plt.axes().set_aspect('equal')
+        plt.hist2d(muon_end[:,0], muon_end[:,1], bins = 100)
+        plt.title('Muon end point, x vs y')
+        plt.xlabel('x [cm]')
+        plt.ylabel('y [cm]')
+        output.savefig()
+        plt.close()
+   
+        plt.axes().set_aspect('equal')
+        plt.hist2d(muon_end[:,2], muon_end[:,1], bins = 100)
+        plt.title('Muon end point, z vs y')
+        plt.xlabel('z [cm]')
+        plt.ylabel('y [cm]')
+        output.savefig()
+        plt.close()
+        
+        plt.axes().set_aspect('equal')
+        plt.hist2d(muon_end[:,2], muon_end[:,0], bins = 100)
+        plt.title('Muon end point, z vs x')
+        plt.xlabel('z [cm]')
+        plt.ylabel('x [cm]')
+        output.savefig()
+        plt.close()
             
         ### Plot the interaction vertex positions. The distinction from the above is that
         ### this includes events that did not produce muons. (NC events?)
@@ -209,22 +347,23 @@ def main(sim_file, input_type):
         for i, coord in enumerate(['x_vert', 'y_vert', 'z_vert']):
             counts, bins, _ = plt.hist(vertex[:, i], bins=200)
 
-            if bins[0] < -NDHallwidths[i]/2:
-                plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
-            if bins[-1] > NDHallwidths[i]/2:
-                plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
+            if det_complex == "2x2":
+                if bins[0] < -NDHallwidths[i]/2:
+                    plt.axvspan(bins[0], -NDHallwidths[i]/2.,0,1., facecolor = 'gray', alpha = 0.5, label = 'Dirt')
+                if bins[-1] > NDHallwidths[i]/2:
+                    plt.axvspan(NDHallwidths[i]/2, bins[-1],0,1., facecolor = 'gray', alpha = 0.5)
 
-            for i_bounds, bounds in enumerate(MINERvA_bounds(i)):
-                if i_bounds == 0:
-                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
-                else:
-                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5)
-            for i_bounds, bounds in enumerate(tpc_bounds(i)):
-                if i_bounds == 0:
-                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5, label = 'Active 2x2')
-                else:
-                    plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
-            plt.vlines( [-NDHallwidths[i]/2., NDHallwidths[i]/2.], 0,counts.max(), colors = 'gray')
+                for i_bounds, bounds in enumerate(MINERvA_bounds(i)):
+                    if i_bounds == 0:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5, label = 'MINERvA')
+                    else:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'red', alpha=0.5)
+                for i_bounds, bounds in enumerate(tpc_bounds(i)):
+                    if i_bounds == 0:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5, label = 'Active 2x2')
+                    else:
+                        plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
+                plt.vlines( [-NDHallwidths[i]/2., NDHallwidths[i]/2.], 0,counts.max(), colors = 'gray')
             plt.title('Interaction Vertex {}'.format(coord))
             plt.xlabel(r'{} position [cm]'.format(coord))
             plt.ylabel(r'Event rate')
@@ -264,6 +403,20 @@ def main(sim_file, input_type):
         output.savefig()
         plt.close()
 
+        plt.axes().set_aspect('equal')
+        cmap = matplotlib.colors.LinearSegmentedColormap.from_list('Dirt or not Dirt', ['black', 'red', 'black'], 3)
+        norm = matplotlib.colors.BoundaryNorm([-100000, -NDHallwidths[2]/2., NDHallwidths[2]/2., 100000], 3)
+        plt.scatter(vertex[:,0],vertex[:,1],c=vertex[:,2], s=3, norm=norm, cmap=cmap)
+        plt.axvspan(min(vertex[:,0]), -NDHallwidths[0]/2., color='gray', alpha=0.1)
+        plt.axvspan(NDHallwidths[0]/2., max(vertex[:,0]), color='gray', alpha=0.1)
+        plt.axhspan(min(vertex[:,1]), -NDHallwidths[1]/2., color='gray', alpha=0.1)
+        plt.axhspan(NDHallwidths[1]/2., max(vertex[:,1]), color='gray', alpha=0.1)
+        plt.title('Interaction vertex, x vs y vs z')
+        plt.xlabel('x [cm]')
+        plt.ylabel('y [cm]')
+        output.savefig()
+        plt.close()
+
         ### Plot total number of primary tracks from the vertex
         event_ids = np.unique(traj['vertex_id'])
         n_primaries = np.zeros(event_ids.size)
@@ -284,10 +437,26 @@ def main(sim_file, input_type):
         output.savefig()
         plt.close()
 
+        ### Plot vertex time distribution (helps with number of events in each spill).
+        vertices_time = sim_h5['vertices']['t_vert']
+        spill = 0
+        packet_duration = 10
+        epsillon = 5
+        while ((spill+1)*spill_duration < max_time):
+            this_vertices_time = vertices_time[vertices_time > spill*spill_duration - epsillon]
+            this_vertices_time = this_vertices_time[this_vertices_time < spill*(spill_duration) + packet_duration + epsillon]
+            plt.hist(this_vertices_time, bins=100, range=[spill*spill_duration - epsillon, spill*spill_duration+packet_duration + epsillon])
+            plt.xlabel('Vertex t_vert (us)')
+            plt.ylabel(r'N Vertices')
+            output.savefig()
+            plt.close()
+            spill += 1
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--sim_file', default=None, required=True, type=str, help='''string corresponding to the path of the edep-sim output simulation file to be considered''')
     parser.add_argument('-t', '--input_type', default='edep', choices=['edep', 'larnd'], type=str, help='''string corresponding to the output file type: edep or larnd''')
+    parser.add_argument('-d', '--det_complex', default='2x2', choices=['2x2', 'full'], type=str, help='''string describing the detector complex''')
     args = parser.parse_args()
     main(**vars(args))
