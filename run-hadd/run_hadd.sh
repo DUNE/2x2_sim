@@ -16,8 +16,9 @@ for i in $(seq 0 $((ARCUBE_HADD_FACTOR - 1))); do
     inFile="$inDir"/"$inName".EDEPSIM.root
     if [[ "$ARCUBE_USE_GHEP_POT" == "1" ]]; then
         if [ -f "$inFile" ]; then
-            ghepInName=${inName/.edep./.genie.}
-            ghepFile=${ARCUBE_OUTDIR_BASE}/run-genie/${ghepInName}/GHEP/$inSubDir/${ghepInName}.${globalIdx}.GHEP.root
+            ghepFile=${inFile//.edep./.genie.}
+            ghepFile=${ghepFile//run-edep-sim/run-genie}
+            ghepFile=${ghepFile//EDEPSIM/GHEP}
             echo "$ghepFile" >> "$tmpfileghep"
         else
             continue
