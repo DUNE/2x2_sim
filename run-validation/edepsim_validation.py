@@ -186,6 +186,7 @@ def main(sim_file, input_type, det_complex):
         output.savefig()
         plt.close()
 
+        ### Need to check that these are the same / good enough for full ND complex. 
         NDHallwidths = [1000.,550.,2000.] # cm
 
         def tpc_bounds(i):
@@ -343,9 +344,9 @@ def main(sim_file, input_type, det_complex):
             
         ### Plot the interaction vertex positions. The distinction from the above is that
         ### this includes events that did not produce muons. (NC events?)
-        vertex = sim_h5['mc_hdr']['vertex']
+        vertex = sim_h5['vertices']
         for i, coord in enumerate(['x_vert', 'y_vert', 'z_vert']):
-            counts, bins, _ = plt.hist(vertex[:, i], bins=200)
+            counts, bins, _ = plt.hist(vertex[:, coord], bins=200)
 
             if det_complex == "2x2":
                 if bins[0] < -NDHallwidths[i]/2:
@@ -370,8 +371,8 @@ def main(sim_file, input_type, det_complex):
             plt.legend()
             output.savefig()
             plt.close()
-                        
-        r_squared = vertex[:,0]**2 + vertex[:,1] **2 + vertex[:,2] **2 
+
+        r_squared = vertex[:,"x_vert"]**2 + vertex[:,"y_vert"] **2 + vertex[:,"z_vert"] **2 
         plt.hist(np.sqrt(r_squared), bins=100)
         plt.title('Interaction vertex, distance from center')
         plt.xlabel(r'Radial distance')
@@ -380,7 +381,7 @@ def main(sim_file, input_type, det_complex):
         plt.close()
             
         plt.axes().set_aspect('equal')
-        plt.hist2d(vertex[:,0], vertex[:,1], bins = 100)
+        plt.hist2d(vertex[:,"x_vert"], vertex[:,"y_vert"], bins = 100)
         plt.title('Interaction vertex, x vs y')
         plt.xlabel('x [cm]')
         plt.ylabel('y [cm]')
@@ -388,7 +389,7 @@ def main(sim_file, input_type, det_complex):
         plt.close()
    
         plt.axes().set_aspect('equal')
-        plt.hist2d(vertex[:,2], vertex[:,1], bins = 100)
+        plt.hist2d(vertex[:,"z_vert"], vertex[:,"y_vert"], bins = 100)
         plt.title('Interaction vertex, z vs y')
         plt.xlabel('z [cm]')
         plt.ylabel('y [cm]')
@@ -396,7 +397,7 @@ def main(sim_file, input_type, det_complex):
         plt.close()
         
         plt.axes().set_aspect('equal')
-        plt.hist2d(vertex[:,2], vertex[:,0], bins = 100)
+        plt.hist2d(vertex[:,"z_vert"], vertex[:,"x_vert"], bins = 100)
         plt.title('Interaction vertex, z vs x')
         plt.xlabel('z [cm]')
         plt.ylabel('x [cm]')
@@ -406,11 +407,11 @@ def main(sim_file, input_type, det_complex):
         plt.axes().set_aspect('equal')
         cmap = matplotlib.colors.LinearSegmentedColormap.from_list('Dirt or not Dirt', ['black', 'red', 'black'], 3)
         norm = matplotlib.colors.BoundaryNorm([-100000, -NDHallwidths[2]/2., NDHallwidths[2]/2., 100000], 3)
-        plt.scatter(vertex[:,0],vertex[:,1],c=vertex[:,2], s=3, norm=norm, cmap=cmap)
-        plt.axvspan(min(vertex[:,0]), -NDHallwidths[0]/2., color='gray', alpha=0.1)
-        plt.axvspan(NDHallwidths[0]/2., max(vertex[:,0]), color='gray', alpha=0.1)
-        plt.axhspan(min(vertex[:,1]), -NDHallwidths[1]/2., color='gray', alpha=0.1)
-        plt.axhspan(NDHallwidths[1]/2., max(vertex[:,1]), color='gray', alpha=0.1)
+        plt.scatter(vertex[:,"x_vert"],vertex[:,"y_vert"],c=vertex[:,"z_vert"], s=3, norm=norm, cmap=cmap)
+        plt.axvspan(min(vertex[:,"x_vert"]), -NDHallwidths[0]/2., color='gray', alpha=0.1)
+        plt.axvspan(NDHallwidths[0]/2., max(vertex[:,"x_vert"]), color='gray', alpha=0.1)
+        plt.axhspan(min(vertex[:,"y_vert"]), -NDHallwidths[1]/2., color='gray', alpha=0.1)
+        plt.axhspan(NDHallwidths[1]/2., max(vertex[:,"y_vert"]), color='gray', alpha=0.1)
         plt.title('Interaction vertex, x vs y vs z')
         plt.xlabel('x [cm]')
         plt.ylabel('y [cm]')
