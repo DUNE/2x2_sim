@@ -281,7 +281,7 @@ def main(sim_file, input_type, det_complex):
                     else:
                         plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
 
-            plt.title('Muon end point {}'.format(coord))
+            plt.title('Muon vertex {}'.format(coord))
             plt.xlabel(r'{} position [cm]'.format(coord))
             plt.ylabel(r'Event rate')
             plt.legend()
@@ -310,7 +310,7 @@ def main(sim_file, input_type, det_complex):
                     else:
                         plt.axvspan(bounds[0], bounds[1], 0, 1., facecolor = 'green', alpha=0.5)
 
-            plt.title('Muon vertex {}'.format(coord))
+            plt.title('Muon end point {}'.format(coord))
             plt.xlabel(r'{} position [cm]'.format(coord))
             plt.ylabel(r'Event rate')
             plt.legend()
