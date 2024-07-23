@@ -39,7 +39,7 @@ pip install --upgrade pip setuptools wheel
 # pip install cupy-cuda11x
 
 # pip install cupy-cuda12x
-pip install cupy-cuda11x
+pip install cupy-cuda11x==13.1.0
 
 # https://docs.nersc.gov/development/languages/python/using-python-perlmutter/#installing-with-pip
 ( git clone -b MiniRun5-beta2 https://github.com/DUNE/larnd-sim.git
