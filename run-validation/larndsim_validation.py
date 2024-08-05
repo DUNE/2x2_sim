@@ -9,6 +9,7 @@ import numpy as np
 import awkward as ak
 import h5py
 import argparse
+import sys
 from matplotlib.backends.backend_pdf import PdfPages
 
 from validation_utils import rasterize_plots
@@ -16,7 +17,7 @@ rasterize_plots()
 
 SPILL_PERIOD = 1.2e7 # units = ticks
 
-def main(sim_file):
+def main(sim_file, charge_only):
 
     sim_h5 = h5py.File(sim_file,'r')
     print('\n----------------- File content -----------------')
@@ -40,37 +41,45 @@ def main(sim_file):
         timestamp_packet_mask = packets['packet_type'] == 4
         sync_packet_mask = (packets['packet_type'] == 6) & (packets['trigger_type'] == 83)
         other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask | timestamp_packet_mask)
+        io_groups_uniq = set(packets['io_group'])
 
         ### Plot time structure of packets: 
-        fig = plt.figure(figsize=(10,10))
-        gs = fig.add_gridspec(ncols=1,nrows=8)
-        fig.subplots_adjust(left=0.075,bottom=0.075,wspace=None, hspace=0.)
-        ax = []
-        for iog in range(8):
-            if iog==0: ax.append(fig.add_subplot(gs[iog,0]))
-            else: ax.append(fig.add_subplot(gs[iog,0],sharex=ax[0]))
+        io_group_count = 0
+        io_groups_per_page = 8
+        for iog in io_groups_uniq:
+            
+            if io_group_count % io_groups_per_page == 0:
+                fig = plt.figure(figsize=(10,10))
+                gs = fig.add_gridspec(ncols=1,nrows=io_groups_per_page)
+                fig.subplots_adjust(left=0.075,bottom=0.075,wspace=None, hspace=0.)
+                ax = []
+                ax.append(fig.add_subplot(gs[iog % io_groups_per_page,0]))
+            else: ax.append(fig.add_subplot(gs[iog % io_groups_per_page,0],sharex=ax[0]))
+
             iog_mask = packets['io_group'] == iog+1
             temp_mask = np.logical_and(iog_mask,data_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='data packets',linestyle='None',ms=2)
+            ax[iog % io_groups_per_page].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='data packets',linestyle='None',ms=2)
             temp_mask = np.logical_and(iog_mask,trig_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='lrs triggers',linestyle='None',ms=2)
+            ax[iog % io_groups_per_page].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='lrs triggers',linestyle='None',ms=2)
             temp_mask = np.logical_and(iog_mask,sync_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='PPS packets',linestyle='None',ms=2)
+            ax[iog % io_groups_per_page].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='PPS packets',linestyle='None',ms=2)
             temp_mask = np.logical_and(iog_mask,other_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='other',linestyle='None',ms=2)
+            ax[iog % io_groups_per_page].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='other',linestyle='None',ms=2)
             temp_mask = np.logical_and(iog_mask,timestamp_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='timestamp packets',linestyle='None',ms=2)
-            ax[iog].grid()
-            temp_ax = ax[iog].twinx()
+            ax[iog % io_groups_per_page].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='timestamp packets',linestyle='None',ms=2)
+            ax[iog % io_groups_per_page].grid()
+            temp_ax = ax[iog % io_groups_per_page].twinx()
             temp_ax.set_ylabel('io_group = '+str(iog+1))
             temp_ax.tick_params(labelright=False)
             temp_ax.tick_params(axis='y',rotation=180)
 
-        for i in range(0,7,1): ax[i].tick_params(labelbottom=False)
-        ax[7].set_xlabel('packet index',fontsize=10) 
-        ax[3].set_ylabel('packet timestamp',fontsize=10)
-        output.savefig()
-        plt.close()
+            if io_group_count % 8 == 7 or io_group_count == len(io_groups_uniq)-1:
+                for i in range(0,len(ax)-1): ax[i].tick_params(labelbottom=False)
+                ax[len(ax)-1].set_xlabel('packet index',fontsize=10) 
+                ax[len(ax)//2].set_ylabel('packet timestamp',fontsize=10)
+                output.savefig()
+                plt.close()
+            io_group_count += 1
 
         plt.plot(packet_index[data_packet_mask],packets['timestamp'][data_packet_mask],'o',label='data packets',linestyle='None',ms=1)
         plt.plot(packet_index[trig_packet_mask],packets['timestamp'][trig_packet_mask],'o',label='lrs triggers',linestyle='None',ms=1)
@@ -105,12 +114,29 @@ def main(sim_file):
         plt.close()
 
         ### Plot charge vs. time per io_group/tpc
-        for iog in range(1,9,1):
+        io_group_count = 1
+        packets_stack = []
+        weights_stack = []
+        for iog in io_groups_uniq:
             iog_mask = (packets['io_group'] == iog) & data_packet_mask
+            packets_stack.append(packets['timestamp'][iog_mask]%SPILL_PERIOD)
+            weights_stack.append(packets['dataword'][iog_mask])
             plt.hist(packets['timestamp'][iog_mask]%SPILL_PERIOD,weights=packets['dataword'][iog_mask],bins=200,label='io_group '+str(iog),alpha=0.5)
+           
+            # Four io_groups per plot.
+            if io_group_count % 4 == 0 or io_group_count == len(io_groups_uniq):
+                plt.xlabel('timestamp%spill_period')
+                plt.ylabel('charge [ADC]')
+                plt.legend(ncol=2,bbox_to_anchor=(-0.05,1.00),loc='lower left')
+                output.savefig()
+                plt.close()
+
+            io_group_count += 1
+
+        ### Plot charge vs. time
+        plt.hist(packets_stack,weights=weights_stack,stacked=True,bins=200,alpha=0.5)
         plt.xlabel('timestamp%spill_period')
         plt.ylabel('charge [ADC]')
-        plt.legend(ncol=4,bbox_to_anchor=(-0.05,1.00),loc='lower left')
         output.savefig()
         plt.close()
 
@@ -172,9 +198,10 @@ def main(sim_file):
         output.savefig()
         plt.close()     
         
+        if charge_only: sys.exit(0)
         # Now we validate the light simulation:
         # For questions on the light validations below, see DUNE ND Prototype Workshop (May 2023) Coding Tutorial, 
-        # or message Angela White on the DUNE Slack
+        # or message Angela White on the DUNE Slack. Not yet looked at for a full NDLAr geometry.
         
         # Account for the timestamp turnover:
         light_trig = sim_h5['light_trig']
@@ -580,6 +607,7 @@ def main(sim_file):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--sim_file', default=None, type=str,help='''string corresponding to the path of the larnd-sim output simulation file to be considered''')
+    parser.add_argument('--charge_only', action='store_true', help='''boolean to flag that light has not been simualted''')
     args = parser.parse_args()
     main(**vars(args))
 
