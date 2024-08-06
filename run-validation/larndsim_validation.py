@@ -134,7 +134,6 @@ def main(sim_file, charge_only):
            
             # Minus 2 here because we skipped io_group 0.
             if io_group_count % io_groups_per_page == io_groups_per_page-1 or io_group_count == len(io_groups_uniq)-2:
-                print(io_group_count)
                 plt.xlabel('timestamp%(spill_period%reset_period)')
                 plt.ylabel('charge [ADC]')
                 plt.legend(ncol=2,bbox_to_anchor=(-0.05,1.00),loc='lower left')
