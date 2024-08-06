@@ -3,7 +3,9 @@
 # Run me from the root directory of 2x2_sim
 
 # Currently larnd-sim and ndlar_flow are the only things we're installing
-# locally. Everything else comes either from a container or CVMFS.
+# locally. Everything else comes either from a container or CVMFS. If using
+# the ARCUBE_USE_GHEP_POT option, need to install a single executable via
+# install_hadd.sh.
 
 set -o errexit
 
@@ -17,6 +19,10 @@ set -o errexit
 
 # export ARCUBE_DIR=$PWD
 # export ARCUBE_CONTAINER_DIR=$ARCUBE_DIR/admin/containers
+
+pushd run-hadd
+./install_hadd.sh
+popd
 
 # pushd run-spill-build
 # ./install_spill_build.sh
