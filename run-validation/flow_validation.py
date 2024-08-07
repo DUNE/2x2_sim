@@ -13,7 +13,7 @@ rasterize_plots()
 SPILL_PERIOD = 1.2e7 # units = ticks
 RESET_PERIOD = 1.0e7 # units = ticks
 
-def main(flow_file):
+def main(flow_file, charge_only):
 
     flow_h5 = h5py.File(flow_file,'r')
     plt.rcParams["figure.figsize"] = (10,8)
@@ -38,83 +38,84 @@ def main(flow_file):
         hits = flow_h5['/charge/calib_prompt_hits/data']
         final_hits = flow_h5['/charge/calib_final_hits/data']
 
-        ### Event display
-        sipm_hits_data = flow_h5['light/sipm_hits/data']
+        if not charge_only:
+           ### Event display
+           sipm_hits_data = flow_h5['light/sipm_hits/data']
 
-        # Extracting channel IDs and maximum values
-        channel_ids = sipm_hits_data['chan'][:]
-        max_values = sipm_hits_data['max'][:]
-        pos_data = sipm_hits_data['pos'][:]
-        z_coordinates = pos_data[:, 2]
-        x_coordinates = pos_data[:, 0]
-        y_coordinates = pos_data[:, 1]
+           # Extracting channel IDs and maximum values
+           channel_ids = sipm_hits_data['chan'][:]
+           max_values = sipm_hits_data['max'][:]
+           pos_data = sipm_hits_data['pos'][:]
+           z_coordinates = pos_data[:, 2]
+           x_coordinates = pos_data[:, 0]
+           y_coordinates = pos_data[:, 1]
 
-        unique_x, xcounts = np.unique(x_coordinates, return_counts=True)
-        unique_y, ycounts = np.unique(y_coordinates, return_counts=True)
-        unique_z, zcounts = np.unique(z_coordinates, return_counts=True)
+           unique_x, xcounts = np.unique(x_coordinates, return_counts=True)
+           unique_y, ycounts = np.unique(y_coordinates, return_counts=True)
+           unique_z, zcounts = np.unique(z_coordinates, return_counts=True)
 
-        plt.figure(figsize=(10, 6))
-        plt.bar(unique_x, xcounts)
-        plt.xlabel('X-coordinate')
-        plt.ylabel('Counts')
-        plt.title('X-coordinate')
-        plt.grid(True)
-        output.savefig()  
-        plt.close()
+           plt.figure(figsize=(10, 6))
+           plt.bar(unique_x, xcounts)
+           plt.xlabel('X-coordinate')
+           plt.ylabel('Counts')
+           plt.title('X-coordinate')
+           plt.grid(True)
+           output.savefig()  
+           plt.close()
 
-        plt.figure(figsize=(10, 6))
-        plt.bar(unique_y, ycounts)
-        plt.xlabel('Y-coordinate')
-        plt.ylabel('Counts')
-        plt.title('Y-coordinate')
-        plt.grid(True)
-        output.savefig()  
-        plt.close()
+           plt.figure(figsize=(10, 6))
+           plt.bar(unique_y, ycounts)
+           plt.xlabel('Y-coordinate')
+           plt.ylabel('Counts')
+           plt.title('Y-coordinate')
+           plt.grid(True)
+           output.savefig()  
+           plt.close()
  
-        plt.figure(figsize=(10, 6))
-        plt.bar(unique_z, zcounts)
-        plt.xlabel('Z-coordinate')
-        plt.ylabel('Counts')
-        plt.title('Z-coordinate')
-        plt.grid(True)
-        output.savefig()  
-        plt.close()
+           plt.figure(figsize=(10, 6))
+           plt.bar(unique_z, zcounts)
+           plt.xlabel('Z-coordinate')
+           plt.ylabel('Counts')
+           plt.title('Z-coordinate')
+           plt.grid(True)
+           output.savefig()  
+           plt.close()
 
 
-        # Plot scatter plot for channel IDs versus maximum values
-        plt.figure(figsize=(10, 6))
-        plt.scatter(channel_ids, max_values, marker='.', color='blue')
-        plt.xlabel('Channel ID')
-        plt.ylabel('Maximum Value')
-        plt.title('Maximum Values vs. Channel IDs')
-        plt.grid(True)
-        plt.xlim(0, 60)
-        output.savefig()  
-        plt.close()    
+           # Plot scatter plot for channel IDs versus maximum values
+           plt.figure(figsize=(10, 6))
+           plt.scatter(channel_ids, max_values, marker='.', color='blue')
+           plt.xlabel('Channel ID')
+           plt.ylabel('Maximum Value')
+           plt.title('Maximum Values vs. Channel IDs')
+           plt.grid(True)
+           plt.xlim(0, 60)
+           output.savefig()  
+           plt.close()    
 
-        sum_hits_data = flow_h5['light/sum_hits/data']
-        tpc_values = sum_hits_data['tpc'][:]
-        det_values = sum_hits_data['det'][:]
-        unique_tpc, counts_tpc = np.unique(tpc_values, return_counts=True)
-        unique_det, counts_det = np.unique(det_values, return_counts=True)
+           sum_hits_data = flow_h5['light/sum_hits/data']
+           tpc_values = sum_hits_data['tpc'][:]
+           det_values = sum_hits_data['det'][:]
+           unique_tpc, counts_tpc = np.unique(tpc_values, return_counts=True)
+           unique_det, counts_det = np.unique(det_values, return_counts=True)
 
-        plt.figure(figsize=(8, 6))
-        plt.bar(unique_tpc, counts_tpc, color='purple')
-        plt.xlabel('tpc_values')
-        plt.ylabel('Counts')
-        plt.title(f'Histogram of TPC index')
-        plt.grid(True)
-        output.savefig()  
-        plt.close()    
+           plt.figure(figsize=(8, 6))
+           plt.bar(unique_tpc, counts_tpc, color='purple')
+           plt.xlabel('tpc_values')
+           plt.ylabel('Counts')
+           plt.title(f'Histogram of TPC index')
+           plt.grid(True)
+           output.savefig()  
+           plt.close()    
 
-        plt.figure(figsize=(8, 6))
-        plt.bar(unique_det, counts_det, color='purple')
-        plt.xlabel('det_values')
-        plt.ylabel('Counts')
-        plt.title(f'Histogram of detector index')
-        plt.grid(True)
-        output.savefig()  
-        plt.close()   
+           plt.figure(figsize=(8, 6))
+           plt.bar(unique_det, counts_det, color='purple')
+           plt.xlabel('det_values')
+           plt.ylabel('Counts')
+           plt.title(f'Histogram of detector index')
+           plt.grid(True)
+           output.savefig()  
+           plt.close()   
 
 
         # 3D - all spills
@@ -137,6 +138,7 @@ def main(flow_file):
         del ax, fig
         output.savefig()
         plt.close()
+
         # 2D hit projections
         fig = plt.figure(figsize=(10,6))
         gs  = fig.add_gridspec(1,3)
@@ -144,10 +146,12 @@ def main(flow_file):
         ax2 = fig.add_subplot(gs[0,1],aspect=1.0)
         ax3 = fig.add_subplot(gs[0,2],aspect=1.0)
 
-        for iog in range(1,9,1):
+        io_group_count = 1
+        io_groups_uniq = set(hits['io_group'])
+        for iog in io_groups_uniq:
             iog_mask = hits['io_group'] == iog
             iog_hits = hits[iog_mask]      
-            ax1.scatter(iog_hits['z'],iog_hits['y'],s=0.5,alpha=0.1,label='IO Group'+str(iog))
+            ax1.scatter(iog_hits['z'],iog_hits['y'],s=0.5,alpha=0.1,label='IO Group '+str(iog))
             ax1.set_xlabel(r'z [cm]')
             ax1.set_ylabel(r'y [cm]')
 
@@ -159,12 +163,21 @@ def main(flow_file):
             ax3.set_xlabel(r'x [cm]')
             ax3.set_ylabel(r'y [cm]')
 
-        leg = fig.legend(bbox_to_anchor=(0.2, 0.8), loc='lower left', ncols=4, markerscale=10.,fontsize=13)
-        for lh in leg.legend_handles:
-            lh.set_alpha(1)
-        plt.tight_layout()
-        output.savefig()
-        plt.close()
+            if io_group_count % 8 == 0 or io_group_count == len(io_groups_uniq):
+                leg = fig.legend(bbox_to_anchor=(0.2, 0.8), loc='lower left', ncols=4, markerscale=10.,fontsize=13)
+                for lh in leg.legend_handles:
+                    lh.set_alpha(1)
+                plt.tight_layout()
+                output.savefig()
+                plt.close()
+
+                fig = plt.figure(figsize=(10,6))
+                gs  = fig.add_gridspec(1,3)
+                ax1 = fig.add_subplot(gs[0,0],aspect=1.0)
+                ax2 = fig.add_subplot(gs[0,1],aspect=1.0)
+                ax3 = fig.add_subplot(gs[0,2],aspect=1.0)
+                
+            io_group_count += 1
 
         ### Hit level 1D position distributions
         fig = plt.figure(figsize=(10,10),layout="constrained")
@@ -195,51 +208,51 @@ def main(flow_file):
         plt.close()
 
         # 3D - "event" spills
-        fig = plt.figure(figsize=(10,10),layout="constrained")
-        ax = fig.add_subplot(projection='3d')
-        ax.set_facecolor('none')
         n_evts = len(flow_h5['charge/events/ref/charge/calib_final_hits/ref_region'])
-        io_group_contrib = np.zeros(shape=(n_evts,8))
+        io_group_contrib = np.zeros(shape=(n_evts,len(io_groups_uniq)))
         for a in range(n_evts):
+            fig = plt.figure(figsize=(10,10),layout="constrained")
+            ax = fig.add_subplot(projection='3d')
+            ax.set_facecolor('none')
             hit_ref_slice = flow_h5['charge/events/ref/charge/calib_final_hits/ref_region'][a]
             spill_hits = final_hits[hit_ref_slice[0]:hit_ref_slice[1]]
             event_charge = np.sum(spill_hits['Q'])
-            for iog in range(8):
-                iog_mask = spill_hits['io_group'] == (iog+1)
+            if event_charge==0:
+                plt.close()
+                continue
+            for iog in io_groups_uniq:
+                iog_mask = spill_hits['io_group'] == iog
                 iog_hits = spill_hits[iog_mask]
                 iog_evt_charge = 0.
                 if len(iog_hits) > 0:
                     iog_evt_charge = np.sum(iog_hits['Q'])
-                try:
-                    io_group_contrib[a][iog] = float(iog_evt_charge)/float(event_charge)
-                except ZeroDivisionError:
-                    io_group_contrib[a][iog] = 0.
+                io_group_contrib[a][int(iog-1)] = float(iog_evt_charge)/float(event_charge)
             dat = ax.scatter(spill_hits['z'],spill_hits['x'],
                        spill_hits['y'],c=spill_hits['Q'],
                        s=1,cmap='viridis',norm=mlp.colors.LogNorm())
-        ax.set_title(f"Hits in charge events",fontsize=24)
-        ax.set_xlabel('z [cm]',fontsize=16)
-        ax.set_ylabel('x [cm]',fontsize=16)
-        ax.set_zlabel('y [cm]',fontsize=16)
-        ax.set_xlim([-65.,65])
-        ax.set_ylim([-65.,65])
-        ax.set_zlim([-65.,65])
-        output.savefig()
-        plt.close()
+            ax.set_title(f"Hits in charge events",fontsize=24)
+            ax.set_xlabel('z [cm]',fontsize=16)
+            ax.set_ylabel('x [cm]',fontsize=16)
+            ax.set_zlabel('y [cm]',fontsize=16)
+            ##ax.set_xlim([-65.,65])
+            ##ax.set_ylim([-65.,65])
+            ##ax.set_zlim([-65.,65])
+            output.savefig()
+            plt.close()
 
         # io_group contribution for each spill
         fig = plt.figure(figsize=(10,8))
         ax = fig.add_subplot()
         ax.set_facecolor('none')
         bottom = np.zeros(n_evts)
-        for iog in range(8):
-            iog_cont = (io_group_contrib[:,iog:(iog+1)]).flatten()
-            ax.bar(range(n_evts), iog_cont, bottom=bottom, label='IO Group '+str(iog+1), width=1.0)
+        for iog in io_groups_uniq:
+            iog_cont = (io_group_contrib[:,int(iog-1):iog]).flatten()
+            ax.bar(range(n_evts), iog_cont, bottom=bottom, label='IO Group '+str(iog), width=1.0)
             bottom += iog_cont
-        ax.legend(ncols=4,fontsize=13)
+        #ax.legend(ncols=4,fontsize=13)
         ax.set_xlabel('charge event number',fontsize=18)
         ax.set_ylabel('io_group contribution',fontsize=18)
-        ax.set_ylim([-0.1,1.5])
+        #ax.set_ylim([-0.1,1.5])
         del ax, fig
         output.savefig()
         plt.close()
@@ -299,9 +312,9 @@ def main(flow_file):
             ax[a].set_xlabel('z [cm]')
             ax[a].set_ylabel('x [cm]')
             ax[a].set_zlabel('y [cm]')
-            ax[a].set_xlim([-65.,65])
-            ax[a].set_ylim([-65.,65])
-            ax[a].set_zlim([-65.,65])
+            #ax[a].set_xlim([-65.,65])
+            #ax[a].set_ylim([-65.,65])
+            #ax[a].set_zlim([-65.,65])
         output.savefig()
         plt.close()
 
@@ -343,6 +356,7 @@ def main(flow_file):
         other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask)
 
         ### Plot time structure of packets: 
+        plt.clf()
         plt.plot(packets['timestamp'][data_packet_mask],packet_index[data_packet_mask],'o',label='data packets',linestyle='None')
         plt.plot(packets['timestamp'][trig_packet_mask],packet_index[trig_packet_mask],'o',label='lrs triggers',linestyle='None')
         plt.plot(packets['timestamp'][sync_packet_mask],packet_index[sync_packet_mask],'o',label='PPS packets',linestyle='None')
@@ -380,13 +394,17 @@ def main(flow_file):
         plt.close()
 
         ### Plot charge vs. time per io_group/tpc
-        for iog in range(1,9,1):
+        packets_stack = []
+        weights_stack = []
+        for iog in io_groups_uniq:
             iog_mask = (packets['io_group'] == iog) & data_packet_mask
-            plt.hist(packets['timestamp'][iog_mask]%(SPILL_PERIOD%RESET_PERIOD),weights=packets['dataword'][iog_mask],bins=200,label='io_group '+str(iog),alpha=0.5)
+            packets_stack.append(packets['timestamp'][iog_mask]%(SPILL_PERIOD%RESET_PERIOD))
+            weights_stack.append(packets['dataword'][iog_mask])
+        plt.hist(packets_stack, weights=weights_stack, stacked=True, bins=200, label='io_group '+str(iog),alpha=0.5)
         plt.title('/charge/packets/data')
-        plt.xlabel('timestamp%spill_period')
+        plt.xlabel('timestamp%(spill_period%reset_period)')
         plt.ylabel('charge [ADC]')
-        plt.legend(ncol=4,bbox_to_anchor=(-0.05,1.00),loc='lower left')
+        #plt.legend(ncol=4,bbox_to_anchor=(-0.05,1.00),loc='lower left')
         output.savefig()
         plt.close()
 
@@ -440,8 +458,8 @@ def main(flow_file):
         output.savefig()
         plt.close()
         
-        #ax4.hist(f['charge/calib_prompt_hits/data']['ts_pps'],bins=100,alpha=0.5,label='prompt hits')
-        #ax4.hist(f['charge/calib_final_hits/data']['ts_pps'],bins=100,alpha=0.5,label='merged hits')
+        #ax4.hist(flow_h5['charge/calib_prompt_hits/data']['ts_pps'],bins=100,alpha=0.5,label='prompt hits')
+        #ax4.hist(flow_h5['charge/calib_final_hits/data']['ts_pps'],bins=100,alpha=0.5,label='merged hits')
         #ax4.set_xlabel('ts_pps [ticks = 0.1 us]')
         #ax4.set_ylabel('N hits')
         #ax4.legend()
@@ -456,40 +474,38 @@ def main(flow_file):
             # Histograms of io_group in hits and packet datasets
             ax1.set_ylim(0,30000)
             ax1.hist(packets_hits['io_group'], 
-                     label="packets", bins=8, 
+                     label="packets", bins=len(io_groups_uniq), range=(1, len(io_groups_uniq)+1), 
                      alpha=1.0, color='#377eb8', 
                      edgecolor='#377eb8', linestyle='-')
             ax1.hist(hits['io_group'], 
-                     label="calib_prompt_hits", bins=8, 
+                     label="calib_prompt_hits", bins=len(io_groups_uniq), range=(1, len(io_groups_uniq)+1),
                      alpha=1.0, color='#ff7f00', 
                      edgecolor='#ff7f00', linestyle='-', 
                      linewidth=1.5,fill=False)
             ax1.hist(final_hits['io_group'], 
-                     label="calib_final_hits", bins=8, 
+                     label="calib_final_hits", bins=len(io_groups_uniq), range=(1, len(io_groups_uniq)+1),
                      alpha=0.8, color='#4daf4a', 
                      edgecolor='#4daf4a', linestyle='--', 
                      linewidth=1.5,fill=False)
             ax1.set_title("Hits per IO Group Distribution in Different Datasets")
             ax1.set_xlabel("IO Group")
-            ax1.set_xlim(1,8)
             ax1.set_ylabel("Hits / IO Group")
             ax1.legend()
 
-            p_iog, p_iog_bins = np.histogram(hits['io_group'], bins=8)
-            f_iog, f_iog_bins = np.histogram(final_hits['io_group'], bins=8)
+            p_iog, p_iog_bins = np.histogram(hits['io_group'], bins=len(io_groups_uniq), range=(1, len(io_groups_uniq)+1),)
+            f_iog, f_iog_bins = np.histogram(final_hits['io_group'], bins=len(io_groups_uniq), range=(1, len(io_groups_uniq)+1),)
             iog_resid = 100*(p_iog - f_iog)/p_iog
             mean_iog_resid = np.mean(iog_resid)
             final_prompt_resid = 100*(len(hits['io_group']) - len(final_hits['io_group']))/len(hits['io_group'])
 
             ax2.set_ylim(0,np.max(iog_resid)+10)
-            ax2.set_xlim(1,8)
-            ax2.plot(np.arange(80)-5, np.ones(80)*mean_iog_resid, \
+            ax2.plot(np.arange(len(io_groups_uniq)+1)+1, np.ones(len(io_groups_uniq)+1)*mean_iog_resid, \
                      linestyle='--', color='blue', \
                      label="Mean % Decr. over IO Groups ("+str(round(mean_iog_resid, 1))+"%)")
-            ax2.plot(np.arange(80)-5, np.ones(80)*final_prompt_resid, \
+            ax2.plot(np.arange(len(io_groups_uniq)+1)+1, np.ones(len(io_groups_uniq)+1)*final_prompt_resid, \
                      linestyle='--', color='black', \
                      label="Total % Decr. Prompt to Final Hits ("+str(round(final_prompt_resid, 1))+"%)")
-            ax2.hist(np.arange(8)+1.0, weights=iog_resid, bins=8,
+            ax2.hist(np.arange(len(io_groups_uniq))+1, weights=iog_resid, bins=len(io_groups_uniq), range=(1, len(io_groups_uniq)+1),
                     alpha=1.0, color='#f781bf', 
                     edgecolor='#f781bf', linestyle='-', 
                     linewidth=1.5)
@@ -509,19 +525,19 @@ def main(flow_file):
             ax2 = fig.add_subplot(gs[1,0])
 
             # Histograms of io_channel in hits datasets
+            io_channel_uniq = set(packets_hits['io_channel'])
             ax1.set_ylim(0,12000)
-            ax1.set_xlim(1,32)
             ax1.hist(packets_hits['io_channel'], 
-                     label="packets", bins=32, 
+                     label="packets", bins=len(io_channel_uniq), range=(1, len(io_channel_uniq)+1),
                      alpha=1.0, color='#377eb8', 
                      edgecolor='#377eb8', linestyle='-')
             ax1.hist(hits['io_channel'], 
-                     label="calib_prompt_hits", bins=32, 
+                     label="calib_prompt_hits", bins=len(io_channel_uniq), range=(1, len(io_channel_uniq)+1),
                      alpha=1.0, color='#ff7f00', 
                      edgecolor='#ff7f00', linestyle='-', 
                      linewidth=1.5,fill=False)
             ax1.hist(final_hits['io_channel'], 
-                     label="calib_final_hits", bins=32, 
+                     label="calib_final_hits", bins=len(io_channel_uniq), range=(1, len(io_channel_uniq)+1), 
                      alpha=0.8, color='#4daf4a', 
                      edgecolor='#4daf4a', linestyle='--', 
                      linewidth=1.5,fill=False)
@@ -530,20 +546,19 @@ def main(flow_file):
             ax1.set_ylabel("Hits / IO Channel")
             ax1.legend()
 
-            p_io_channel, p_io_channel_bins = np.histogram(hits['io_channel'], bins=32)
-            f_io_channel, f_io_channel_bins = np.histogram(final_hits['io_channel'], bins=32)
+            p_io_channel, p_io_channel_bins = np.histogram(hits['io_channel'], bins=len(io_channel_uniq), range=(1, len(io_channel_uniq)+1))
+            f_io_channel, f_io_channel_bins = np.histogram(final_hits['io_channel'], bins=len(io_channel_uniq), range=(1, len(io_channel_uniq)+1))
             io_channel_resid = 100* (p_io_channel - f_io_channel)/p_io_channel
             mean_io_channel_resid = np.mean(io_channel_resid)
 
             ax2.set_ylim(0,np.max(io_channel_resid)+10)
-            ax2.set_xlim(1,32)
-            ax2.plot(np.arange(80)-5, np.ones(80)*mean_io_channel_resid, \
+            ax2.plot(np.arange(len(io_channel_uniq)+1)+1, np.ones(len(io_channel_uniq)+1)*mean_io_channel_resid, \
                      linestyle='--', color='blue', \
                      label="Mean % Decr. over IO Channels ("+str(round(mean_io_channel_resid, 1))+"%)")
-            ax2.plot(np.arange(80)-5, np.ones(80)*final_prompt_resid, \
+            ax2.plot(np.arange(len(io_channel_uniq)+1)+1, np.ones(len(io_channel_uniq)+1)*final_prompt_resid, \
                      linestyle='--', color='black', \
                      label="Total % Decr. Prompt to Final Hits ("+str(round(final_prompt_resid, 1))+"%)")
-            ax2.hist(np.arange(32)+1.0, weights=io_channel_resid, bins=32,
+            ax2.hist(np.arange(len(io_channel_uniq))+1, weights=io_channel_resid, bins=len(io_channel_uniq), range=(1, len(io_channel_uniq)+1),
                      alpha=1.0, color='#f781bf', 
                      edgecolor='#f781bf', linestyle='-', 
                      linewidth=1.5)
@@ -558,6 +573,7 @@ def main(flow_file):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--flow_file', default=None, type=str,help='''string corresponding to the path of the ndlar_flow output file to be considered''')
+    parser.add_argument('--charge_only', action='store_true', help='''boolean to flag that light has not been simualted''')
     args = parser.parse_args()
     main(**vars(args))
 

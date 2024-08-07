@@ -35,8 +35,27 @@ libpath_remove /opt/generators/edep-sim/install/lib
 [ -z "${ARCUBE_SPILL_PERIOD}" ] && export ARCUBE_SPILL_PERIOD=1.2
 
 if [[ "$ARCUBE_USE_GHEP_POT" == "1" ]]; then
-  read -r ARCUBE_NU_POT < "$nuInDir"/POT/"$nuName".pot
-  read -r ARCUBE_ROCK_POT < "$rockInDir"/POT/"$rockName".pot
+  # Covering the case that we want to use the GHEP POT but build only
+  # fiducial or only rock spills. For example, to build fiducial 
+  # only spills, ARCUBE_ROCK_POT is set to zero. 
+  if [[ "$ARCUBE_NU_POT" != "0" && -n "$ARCUBE_NU_POT" ]]; then
+    echo "Setting ARCUBE_NU_POT to a non-zero value while also using GHEP POT via"
+    echo "ARCUBE_USE_GHEP_POT is inconsistent. Please refactor..."
+    exit
+  elif [[ "$ARCUBE_NU_POT" == "0" ]]; then
+    echo "ARCUBE_NU_POT is set to zero - spills will be rock only."
+  else
+    read -r ARCUBE_NU_POT < "$nuInDir"/POT/$subDir/"$nuName".pot
+  fi
+  if [[ "$ARCUBE_ROCK_POT" != "0" && -n "$ARCUBE_ROCK_POT" ]]; then
+    echo "Setting ARCUBE_ROCK_POT to a non-zero value while also using GHEP POT via"
+    echo "ARCUBE_USE_GHEP_POT is inconsistent. Please refactor..."
+    exit
+  elif [[ "$ARCUBE_ROCK_POT" == "0" ]]; then
+    echo "ARCUBE_NU_ROCK is set to zero - spills will be fiducial only."
+  else
+    read -r ARCUBE_ROCK_POT < "$rockInDir"/POT/$subDir/"$rockName".pot
+  fi
 fi
 
 # run root -l -b -q \

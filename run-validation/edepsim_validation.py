@@ -113,6 +113,23 @@ def main(sim_file, input_type, det_complex):
         output.savefig()
         plt.close()
 
+        ### Plot number of hit segments per event id
+        event_ids = np.unique(segments['event_id'])
+        n_segments = np.zeros(event_ids.size)
+        current_evt = 0
+        current_id = segments['event_id'][0]
+        for segment in segments:
+            if segment['event_id'] != current_id:
+                current_id = segment['event_id']
+                current_evt += 1
+            n_segments[current_evt] += 1
+
+        plt.hist(n_segments, bins=100)
+        plt.xlabel(r'N segments')
+        plt.ylabel('Spills')
+        output.savefig()
+        plt.close()
+
         ### Plot dEdx for each segment
         plt.hist(segments['dEdx'], bins=100, range=[0, 100])
         plt.title('dEdx')
