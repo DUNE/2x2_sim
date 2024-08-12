@@ -243,6 +243,12 @@ void overlaySinglesIntoSpillsSorted(std::string inFileName1,
         //v->Position.T() = event_time;
         old_event_time = v->Position.T();
         v->Position.SetT(event_time);
+        // TMS reco wants the InteractionNumber to be the entry number of the
+        // vertex in DetSimPassThru/gRooTracker. Since, by construction, our
+        // EDepSimEvents and gRooTracker trees are aligned one-to-one, we just
+        // trivially set InteractionNumber to be the current entry number.
+        // https://github.com/DUNE/2x2_sim/issues/54
+        v->InteractionNumber = evt_it_1 + evt_it_2;
       }
 
       // ... trajectories
