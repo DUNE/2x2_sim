@@ -39,6 +39,7 @@ def main():
     ap.add_argument('--ghep-nu-name', required=False)
     ap.add_argument('--ghep-rock-name', required=False)
     ap.add_argument('--mlreco-name', required=True)
+    ap.add_argument('--tmsreco-name', required=False)
     ap.add_argument('--minerva-name', required=False)
     ap.add_argument('--caf-path', required=True)
     ap.add_argument('--cfg-file', required=True)
@@ -76,6 +77,10 @@ def main():
                                     'DST', 'root', args.file_id)
             outf.write(f'nd_cafmaker.CAFMakerSettings.MINERVARecoFile: "{minerva_path}"\n')
 
+        if args.tmsreco_name:
+            tmsreco_path = get_path(args.base_dir, 'run-tms-reco', args.tmsreco_name,
+                                    'TMSRECO', 'root', args.file_id)
+            outf.write(f'nd_cafmaker.CAFMakerSettings.TMSRecoFile: "{tmsreco_path}"\n')
 
 if __name__ == '__main__':
     main()
