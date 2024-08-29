@@ -22,11 +22,11 @@ args_gen_cafmaker_cfg=( \
     --file-id "$ARCUBE_INDEX" \
     )
 
-[ -n "${ARCUBE_GHEP_NU_NAME}" ] && args_gevgen_fnal+=( --ghep-nu-name "$ARCUBE_GHEP_NU_NAME" )
-[ -n "${ARCUBE_GHEP_ROCK_NAME}" ] && args_gevgen_fnal+=( --ghep-rock-name "$ARCUBE_GHEP_ROCK_NAME" )
-[ -n "${ARCUBE_MINERVA_NAME}" ] && args_gevgen_fnal+=( --minerva-name "$ARCUBE_MINERVA_NAME" )
-[ -n "${ARCUBE_TMSRECO_NAME}" ] && args_gevgen_fnal+=( --tmsreco-name "$ARCUBE_TMSRECO_NAME" )
-[ -n "${ARCUBE_HADD_FACTOR}" ] && args_gevgen_fnal+=( --hadd-factor "$ARCUBE_HADD_FACTOR" )
+[ -n "${ARCUBE_GHEP_NU_NAME}" ] && args_gen_cafmaker_cfg+=( --ghep-nu-name "$ARCUBE_GHEP_NU_NAME" )
+[ -n "${ARCUBE_GHEP_ROCK_NAME}" ] && args_gen_cafmaker_cfg+=( --ghep-rock-name "$ARCUBE_GHEP_ROCK_NAME" )
+[ -n "${ARCUBE_MINERVA_NAME}" ] && args_gen_cafmaker_cfg+=( --minerva-name "$ARCUBE_MINERVA_NAME" )
+[ -n "${ARCUBE_TMSRECO_NAME}" ] && args_gen_cafmaker_cfg+=( --tmsreco-name "$ARCUBE_TMSRECO_NAME" )
+[ -n "${ARCUBE_HADD_FACTOR}" ] && args_gen_cafmaker_cfg+=( --hadd-factor "$ARCUBE_HADD_FACTOR" )
 
 ./gen_cafmaker_cfg.py "${args_gen_cafmaker_cfg[@]}"
 
