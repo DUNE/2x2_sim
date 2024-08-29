@@ -5,10 +5,12 @@ source ../util/init.inc.sh
 
 source load_mlreco.inc.sh
 
+[ -z "$ARCUBE_MLRECO_ANALYSIS_CONFIG" ] && export ARCUBE_MLRECO_ANALYSIS_CONFIG="ana_240403.cfg"
+
 outFile=${tmpOutDir}/${outName}.MLRECO_ANA.hdf5
 inName=${ARCUBE_IN_NAME}.${globalIdx}
 inFile=${ARCUBE_OUTDIR_BASE}/run-mlreco/${ARCUBE_IN_NAME}/MLRECO_INF/${subDir}/${inName}.MLRECO_INF.hdf5
-config=ana_240403.cfg
+config=$ARCUBE_MLRECO_ANALYSIS_CONFIG
 
 tmpDir=$(mktemp -d)
 mkdir "${tmpDir}/log_trash"
