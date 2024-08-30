@@ -61,7 +61,7 @@ cd edep2supera
 pip install .
 cd ..
 
-git clone https://github.com/YifanC/larpix_readout_parser.git
+git clone -b nd-production-v01.00 https://github.com/alexbooth92/larpix_readout_parser.git
 cd larpix_readout_parser
 pip install .
 cd ..
@@ -72,7 +72,7 @@ pip install .
 cd ..
 
 
-git clone -b v3.0.1 https://github.com/DeepLearnPhysics/flow2supera.git
+git clone -b nd-production-v01.00 https://github.com/alexbooth92/flow2supera.git
 ## Don't pip install because e.g. config files are expected to live near
 ## __file__
 # cd flow2supera
