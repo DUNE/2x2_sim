@@ -164,41 +164,9 @@ def main(sim_file, charge_only):
 
         ### Plot hits per event
         segments = sim_h5['segments']
-        def get_eventIDs(event_packets, mc_packets_assn):
-            """Takes as input the packets and mc_packets_assn fields, and
-            returns the eventIDs that deposited that energy"""
-    
-            event_IDs = []
-            eventID = segments['event_id'] # eventIDs associated to each segment
-            segment_id_assn = mc_packets_assn['segment_ids'] # segment indices corresponding to each packet
-
-            # Loop over each packet
-            for ip, packet in enumerate(event_packets):
-
-                if packet['packet_type'] != 0:
-                    continue
-                    
-                # For packet ip, get segment indices that contributed to hit
-                packet_segment_ids = segment_id_assn[ip]
-                packet_segment_ids = packet_segment_ids[packet_segment_ids != -1]
-                
-                # For segment indices, get the corresponding eventID
-                packet_event_IDs = eventID[packet_segment_ids]
-                
-                # Make sure that there's only one eventID corresponding to hit.
-                # In principle, a hit could come from two events. But I'll deal
-                # with that when it happens.
-                unique_packet_event_ID = np.unique(packet_event_IDs)
-                assert(len(unique_packet_event_ID == 1))
-                
-                packet_event_ID = unique_packet_event_ID[0]
-                
-                event_IDs.append(packet_event_ID)
-
-            return np.array(event_IDs)
-
         mc_packets_assn = sim_h5['mc_packets_assn']
-        event_IDs = get_eventIDs(packets, mc_packets_assn)
+        data_mask = packets['packet_type'] == 0
+        event_IDs = mc_packets_assn[data_mask]['event_ids'].reshape(-1)
         unique_event_IDs, hit_counts = np.unique(event_IDs, return_counts = True)
         plt.hist(hit_counts, bins = 50)
         plt.title("Pixels hit per event")
