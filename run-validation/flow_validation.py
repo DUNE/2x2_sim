@@ -266,6 +266,14 @@ def main(flow_file, charge_only):
         hits_bt = flow_h5['mc_truth/calib_final_hit_backtrack/data']
         segments = flow_h5['mc_truth/segments/data']
 
+        # Construct a lookup array from segment ID to segment index :`(
+        min_segment_id = np.min(segments['segment_id'])
+        max_segment_id = np.max(segments['segment_id'])
+        n_segment_ids = max_segment_id - min_segment_id + 1
+        segment_indices = np.array([-1]*n_segment_ids, dtype=np.int32)
+        for i, seg_id in enumerate(segments['segment_id']):
+            segment_indices[seg_id - min_segment_id] = i
+
         true_ids = []
         reco_ids = []
         for c_evt in flow_evts['id']:
@@ -276,8 +284,8 @@ def main(flow_file, charge_only):
             for h in hts_bt:
                 for cont in range(len(h['fraction'])):
                     if abs(h['fraction'][cont]) > 0.0001:
-                        seg_id = h['segment_id'][cont]
-                        seg = segments[seg_id]
+                        seg_id = h['segment_ids'][cont]
+                        seg = segments[segment_indices[seg_id - min_segment_id]]
                         if not seg['segment_id'] == seg_id:
                             print('WARNING: segment id not the same as segment index!')
                         sid = seg['event_id']
