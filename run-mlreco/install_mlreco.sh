@@ -92,7 +92,7 @@ cd ..
 # git clone -b jw_dune_nd_lar https://github.com/chenel/lartpc_mlreco3d.git
 
 #git clone -b v2.9.5 https://github.com/DeepLearnPhysics/lartpc_mlreco3d.git
-git clone https://github.com/DeepLearnPhysics/spine.git
+git clone -b v0.1.0 https://github.com/DeepLearnPhysics/spine.git
 
 # git clone https://github.com/chenel/dune-nd-lar-reco.git
 # the old yaml.load API has been removed
