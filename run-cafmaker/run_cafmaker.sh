@@ -34,6 +34,7 @@ args_gen_cafmaker_cfg=( \
 
 echo ===================
 cat "$cfgFile"
+echo ""
 echo ===================
 
 run makeCAF "--fcl=$cfgFile"
