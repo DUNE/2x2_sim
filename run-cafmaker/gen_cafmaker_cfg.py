@@ -43,7 +43,7 @@ def main():
     ap.add_argument('--spine-name', required=True)
     ap.add_argument('--tmsreco-name', required=False)
     ap.add_argument('--minerva-name', required=False)
-    ap.add_argument('--edepsim-name', required=True)
+    ap.add_argument('--edepsim-name', required=False)
     ap.add_argument('--caf-path', required=True)
     ap.add_argument('--cfg-file', required=True)
     ap.add_argument('--file-id', required=True, type=int)
@@ -86,13 +86,15 @@ def main():
                                     'TMSRECO', 'root', args.file_id)
             outf.write(f'nd_cafmaker.CAFMakerSettings.TMSRecoFile: "{tmsreco_path}"\n')
 
-        edepsim_path = get_path(args.base_dir, 'run-spill-build', args.edepsim_name,
-                                'EDEPSIM_SPILLS','root',args.file_id) 
-        outf.write(f'nd_cafmaker.CAFMakerSettings.EdepsimFile: "{edepsim_path}"\n')
+        if args.edepsim_name:
+            edepsim_path = get_path(args.base_dir, 'run-spill-build', args.edepsim_name,
+                                    'EDEPSIM_SPILLS','root',args.file_id) 
+            outf.write(f'nd_cafmaker.CAFMakerSettings.EdepsimFile: "{edepsim_path}"\n')
 
         if args.extra_lines:
             for extra_line in args.extra_lines.split(";"): 
                 outf.write(f'{extra_line}')
+                outf.write("\n")
 
 if __name__ == '__main__':
     main()
