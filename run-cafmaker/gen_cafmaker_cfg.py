@@ -91,8 +91,8 @@ def main():
         outf.write(f'nd_cafmaker.CAFMakerSettings.EdepsimFile: "{edepsim_path}"\n')
 
         if args.extra_lines:
-            for extra_line in args.extra_lines: 
-                outf.write(f'{extra_line}\n')
+            for extra_line in args.extra_lines.split(";"): 
+                outf.write(f'{extra_line}')
 
 if __name__ == '__main__':
     main()
