@@ -48,6 +48,7 @@ def main():
     ap.add_argument('--cfg-file', required=True)
     ap.add_argument('--file-id', required=True, type=int)
     ap.add_argument('--hadd-factor', required=False, default=10, type=int)
+    ap.add_argument('--extra-lines', required=False, nargs='*')
     args = ap.parse_args()
 
     if not args.ghep_nu_name and not args.ghep_rock_name:
@@ -72,7 +73,7 @@ def main():
         outf.write(f'nd_cafmaker.CAFMakerSettings.OutputFile: "{caf_path}"\n')
 
         spine_path = get_path(args.base_dir, 'run-spine', args.spine_name,
-                               'MLRECO_ANALYSIS', 'hdf5', args.file_id)
+                               'MLRECO_SPINE', 'hdf5', args.file_id)
         outf.write(f'nd_cafmaker.CAFMakerSettings.NDLArRecoFile: "{spine_path}"\n')
 
         if args.minerva_name:
@@ -88,6 +89,10 @@ def main():
         edepsim_path = get_path(args.base_dir, 'run-spill-build', args.edepsim_name,
                                 'EDEPSIM_SPILLS','root',args.file_id) 
         outf.write(f'nd_cafmaker.CAFMakerSettings.EdepsimFile: "{edepsim_path}"\n')
+
+        if args.extra_lines:
+            for extra_line in args.extra_lines: 
+                outf.write(f'{extra_line}\n')
 
 if __name__ == '__main__':
     main()
