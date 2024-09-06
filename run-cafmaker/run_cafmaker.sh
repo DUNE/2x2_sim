@@ -17,7 +17,6 @@ cfgFile=$(mktemp --suffix .cfg)
 args_gen_cafmaker_cfg=( \
     --base-dir "$ARCUBE_OUTDIR_BASE" \
     --spine-name "$ARCUBE_SPINE_NAME" \
-    --minerva-name "$ARCUBE_MINERVA_NAME" \
     --edepsim-name "$ARCUBE_SPILL_NAME" \
     --caf-path "$outFile" \
     --cfg-file "$cfgFile" \
@@ -29,6 +28,7 @@ args_gen_cafmaker_cfg=( \
 [ -n "${ARCUBE_MINERVA_NAME}" ] && args_gen_cafmaker_cfg+=( --minerva-name "$ARCUBE_MINERVA_NAME" )
 [ -n "${ARCUBE_TMSRECO_NAME}" ] && args_gen_cafmaker_cfg+=( --tmsreco-name "$ARCUBE_TMSRECO_NAME" )
 [ -n "${ARCUBE_HADD_FACTOR}" ] && args_gen_cafmaker_cfg+=( --hadd-factor "$ARCUBE_HADD_FACTOR" )
+[ -n "${ARCUBE_EXTRA_LINES}" ] && args_gen_cafmaker_cfg+=( --extra-lines "$ARCUBE_EXTRA_LINES" )
 
 ./gen_cafmaker_cfg.py "${args_gen_cafmaker_cfg[@]}"
 

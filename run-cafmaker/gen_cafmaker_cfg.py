@@ -43,12 +43,12 @@ def main():
     ap.add_argument('--spine-name', required=True)
     ap.add_argument('--tmsreco-name', required=False)
     ap.add_argument('--minerva-name', required=False)
-    ap.add_argument('--edepsim-name', required=False)
+    ap.add_argument('--edepsim-name', required=True)
     ap.add_argument('--caf-path', required=True)
     ap.add_argument('--cfg-file', required=True)
     ap.add_argument('--file-id', required=True, type=int)
     ap.add_argument('--hadd-factor', required=False, default=10, type=int)
-    ap.add_argument('--extra-lines', required=False, nargs='*')
+    ap.add_argument('--extra-lines', required=False, type=str, help="A semi-colon seperated list of arbitrary extra line to be appended to the fhicl.")
     args = ap.parse_args()
 
     if not args.ghep_nu_name and not args.ghep_rock_name:
@@ -72,7 +72,7 @@ def main():
         caf_path = args.caf_path
         outf.write(f'nd_cafmaker.CAFMakerSettings.OutputFile: "{caf_path}"\n')
 
-        spine_path = get_path(args.base_dir, 'run-spine', args.spine_name,
+        spine_path = get_path(args.base_dir, 'run-mlreco', args.spine_name,
                                'MLRECO_SPINE', 'hdf5', args.file_id)
         outf.write(f'nd_cafmaker.CAFMakerSettings.NDLArRecoFile: "{spine_path}"\n')
 
