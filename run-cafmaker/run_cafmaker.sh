@@ -17,8 +17,9 @@ cfgFile=$(mktemp --suffix .cfg)
     --base-dir "$ARCUBE_OUTDIR_BASE" \
     --ghep-nu-name "$ARCUBE_GHEP_NU_NAME" \
     --ghep-rock-name "$ARCUBE_GHEP_ROCK_NAME" \
-    --mlreco-name "$ARCUBE_MLRECO_NAME" \
+    --spine-name "$ARCUBE_SPINE_NAME" \
     --minerva-name "$ARCUBE_MINERVA_NAME" \
+    --edepsim-name "$ARCUBE_SPILL_NAME" \
     --caf-path "$outFile" \
     --cfg-file "$cfgFile" \
     --file-id "$ARCUBE_INDEX"

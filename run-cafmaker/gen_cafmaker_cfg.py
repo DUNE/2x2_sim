@@ -18,7 +18,9 @@ def get_path(base_dir, step, name, ftype, ext, file_id: int):
     subdir = file_id // 1000 * 1000
     subdir = f'{subdir:07d}'
     # Temporary special case for Minerva
-    ftype2 = 'dst' if ftype == 'DST' else ftype
+    ftype2 = ftype
+    ftype2 = 'dst' if ftype == 'DST' else ftype2 
+    ftype2 = 'SPINE' if ftype == 'MLRECO_ANALYSIS' else ftype2 
     path = (f'{base_dir}/{step}/{name}/{ftype}/{subdir}' +
             f'/{name}.{file_id:07d}.{ftype2}.{ext}')
     if not os.path.exists(path):
@@ -40,8 +42,9 @@ def main():
     ap.add_argument('--base-dir', required=True)
     ap.add_argument('--ghep-nu-name', required=True)
     ap.add_argument('--ghep-rock-name', required=True)
-    ap.add_argument('--mlreco-name', required=True)
+    ap.add_argument('--spine-name', required=True)
     ap.add_argument('--minerva-name', required=True)
+    ap.add_argument('--edepsim-name', required=False)
     ap.add_argument('--caf-path', required=True)
     ap.add_argument('--cfg-file', required=True)
     ap.add_argument('--file-id', required=True, type=int)
@@ -63,14 +66,17 @@ def main():
         caf_path = args.caf_path
         outf.write(f'nd_cafmaker.CAFMakerSettings.OutputFile: "{caf_path}"\n')
 
-        mlreco_path = get_path(args.base_dir, 'run-mlreco', args.mlreco_name,
-                               'MLRECO_ANA', 'hdf5', args.file_id)
-        outf.write(f'nd_cafmaker.CAFMakerSettings.NDLArRecoFile: "{mlreco_path}"\n')
+        spine_path = get_path(args.base_dir, 'run-spine', args.spine_name,
+                               'MLRECO_ANALYSIS', 'hdf5', args.file_id)
+        outf.write(f'nd_cafmaker.CAFMakerSettings.NDLArRecoFile: "{spine_path}"\n')
 
         minerva_path = get_path(args.base_dir, 'run-minerva', args.minerva_name,
                                 'DST', 'root', args.file_id)
         outf.write(f'nd_cafmaker.CAFMakerSettings.MINERVARecoFile: "{minerva_path}"\n')
-
+        print("edepsim path" ,args.base_dir, args.edepsim_name)
+        edepsim_path = get_path(args.base_dir, 'run-spill-build', args.edepsim_name,
+                                'EDEPSIM_SPILLS','root',args.file_id) 
+        outf.write(f'nd_cafmaker.CAFMakerSettings.EdepsimFile: "{edepsim_path}"\n')
 
 if __name__ == '__main__':
     main()
