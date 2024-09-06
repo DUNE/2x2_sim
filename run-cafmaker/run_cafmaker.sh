@@ -16,7 +16,9 @@ cfgFile=$(mktemp --suffix .cfg)
 # Compulsory arguments.
 args_gen_cafmaker_cfg=( \
     --base-dir "$ARCUBE_OUTDIR_BASE" \
-    --mlreco-name "$ARCUBE_MLRECO_NAME" \
+    --spine-name "$ARCUBE_SPINE_NAME" \
+    --minerva-name "$ARCUBE_MINERVA_NAME" \
+    --edepsim-name "$ARCUBE_SPILL_NAME" \
     --caf-path "$outFile" \
     --cfg-file "$cfgFile" \
     --file-id "$ARCUBE_INDEX" \
