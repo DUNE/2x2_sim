@@ -35,17 +35,27 @@ run_in() {
 # If ARCUBE_PLOT_TYPE isn't set, run everything.
 
 if [[ -z "$ARCUBE_PLOT_TYPE" || "$ARCUBE_PLOT_TYPE" == "EDEPSIM_DUMPTREE" ]]; then
-    run_in EDEPSIM_DUMPTREE "$codeDir"/edepsim_validation.py --sim_file "$edepFile" --input_type edep
+    if [[ -n "$ARCUBE_EDEP_NAME" ]]; then
+        run_in EDEPSIM_DUMPTREE "$codeDir"/edepsim_validation.py --sim_file "$edepFile" --input_type edep
+    fi
 fi
 if [[ -z "$ARCUBE_PLOT_TYPE" || "$ARCUBE_PLOT_TYPE" == "LARNDSIM_EDEPTRUTH" ]]; then
-    run_in LARNDSIM_EDEPTRUTH "$codeDir"/edepsim_validation.py --sim_file "$larndFile" --input_type larnd
+    if [[ -n "$ARCUBE_LARND_NAME" ]]; then
+        run_in LARNDSIM_EDEPTRUTH "$codeDir"/edepsim_validation.py --sim_file "$larndFile" --input_type larnd
+    fi
 fi
 if [[ -z "$ARCUBE_PLOT_TYPE" || "$ARCUBE_PLOT_TYPE" == "LARNDSIM" ]]; then
-    run_in LARNDSIM "$codeDir"/larndsim_validation.py --sim_file "$larndFile"
+    if [[ -n "$ARCUBE_LARND_NAME" ]]; then
+        run_in LARNDSIM "$codeDir"/larndsim_validation.py --sim_file "$larndFile"
+    fi
 fi
 if [[ -z "$ARCUBE_PLOT_TYPE" || "$ARCUBE_PLOT_TYPE" == "FLOW" ]]; then
-    run_in FLOW "$codeDir"/flow_validation.py --flow_file "$flowFile"
+    if [[ -n "$ARCUBE_FLOW_NAME" ]]; then
+        run_in FLOW "$codeDir"/flow_validation.py --flow_file "$flowFile"
+    fi
 fi
 if [[ -z "$ARCUBE_PLOT_TYPE" || "$ARCUBE_PLOT_TYPE" == "FLOW_CPM" ]]; then
-    run_in FLOW_CPM "$codeDir"/CPM_validation.py --flow_file "$flowFile"
+    if [[ -n "$ARCUBE_FLOW_NAME" ]]; then
+        run_in FLOW_CPM "$codeDir"/CPM_validation.py --flow_file "$flowFile"
+    fi
 fi
