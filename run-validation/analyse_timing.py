@@ -35,8 +35,10 @@ def get_commands(production_step, n_timing_files):
         return {'h5flow' : [-1.0]*n_timing_files}
     if production_step == 'flow2supera':
         return {'install/flow2supera/bin/run_flow2supera.py' : [-1.0]*n_timing_files}
-    if production_step == 'mlreco_inference' or production_step == 'mlreco_analysis':
+    if production_step == 'mlreco_inference' or production_step == 'mlreco_analysis' or production_step == 'mlreco_spine':
         return {'python3' : [-1.0]*n_timing_files}
+    if production_step == 'cafmaker':
+        return {'makeCAF' : [-1.0]*n_timing_files}
     if production_step == 'tmsreco':
         return {'ConvertToTMSTree' : [-1.0]*n_timing_files}
 
@@ -77,7 +79,7 @@ def main(timing_directory, production_step, sample_type, out_dir, remove_fail_on
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--timing_directory', default=None, required=True, type=str, help='''string corresponding to the directory path containing .time files to be analysed.''')
-    parser.add_argument('--production_step', default='edep', choices=['edep', 'hadd', 'spill', 'convert2h5', 'larndsim', 'flow', 'tmsreco', 'flow2supera', 'mlreco_inference', 'mlreco_analysis'], type=str, help='''string corresponding to the directory path containing .time files to be analysed.''')
+    parser.add_argument('--production_step', default='edep', choices=['edep', 'hadd', 'spill', 'convert2h5', 'larndsim', 'flow', 'tmsreco', 'flow2supera', 'mlreco_inference', 'mlreco_analysis', 'mlreco_spine', 'cafmaker'], type=str, help='''string corresponding to the directory path containing .time files to be analysed.''')
     parser.add_argument('--sample_type', default='spill', choices=['fiducial', 'rock', 'spill'], type=str, help='''string corresponding to the sample type. For output naming purposes only.''')
     parser.add_argument('--out_dir', default="", required=True, type=str, help='''string corresponding to the directory path to write output pdf.''')
     parser.add_argument('--remove_fail_on_startup', default=True, type=bool, help='''dont show processes which fail in the first 1 minute.''')
