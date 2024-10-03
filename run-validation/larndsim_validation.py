@@ -179,10 +179,11 @@ def main(sim_file, charge_only):
         fractions = mc_packets_assn['fraction']
         summed_fractions = fractions.sum(axis=-1)
         fig, ax = plt.subplots(constrained_layout = True)
-        ax.hist(summed_fractions, bins = np.arange(0.895,1.1,0.01), density = True)
+        ax.hist(summed_fractions, bins= np.arange(-0.05, summed_fractions.max(), 0.1))
         ax.set_title("Sum of packet fractions in each event")
+        ax.set_yscale('log')
         ax.set_xlabel("Sum")
-        ax.set_ylabel("PDF")
+        ax.set_ylabel("Count")
         output.savefig()
         plt.close() 
         
