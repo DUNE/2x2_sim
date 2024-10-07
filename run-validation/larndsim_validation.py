@@ -174,6 +174,18 @@ def main(sim_file, charge_only):
         plt.ylabel("Counts")
         output.savefig()
         plt.close()     
+
+        # Check the sums of the fraction field for charge deposition. They should add to 1.
+        fractions = mc_packets_assn['fraction']
+        summed_fractions = fractions.sum(axis=-1)
+        fig, ax = plt.subplots(constrained_layout = True)
+        ax.hist(summed_fractions, bins= np.arange(-0.05, summed_fractions.max(), 0.1))
+        ax.set_title("Sum of packet fractions in each event")
+        ax.set_yscale('log')
+        ax.set_xlabel("Sum")
+        ax.set_ylabel("Count")
+        output.savefig()
+        plt.close() 
         
         if charge_only: sys.exit(0)
         # Now we validate the light simulation:
