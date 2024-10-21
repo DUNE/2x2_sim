@@ -41,25 +41,19 @@ pip install --upgrade pip setuptools==69 wheel
 # pip install scikit-learn # for flow2supera
 # pip install --upgrade torch_geometric # for mlreco
 
-git clone -b v2_2_6 https://github.com/DeepLearnPhysics/larcv2.git
+git clone -b v2_3_0 https://github.com/DeepLearnPhysics/larcv2.git
 cd larcv2
 source configure.sh
 make -j16
 cd ..
 
-git clone -b v1.6.0 https://github.com/DeepLearnPhysics/SuperaAtomic.git
+git clone -b v1.8.0 https://github.com/DeepLearnPhysics/SuperaAtomic.git
 
 cd SuperaAtomic
 git submodule update --init     # pybind11
 pip install .
 cd ..
 
-git clone -b v1.3.1 https://github.com/DeepLearnPhysics/edep2supera.git
-
-
-cd edep2supera
-pip install .
-cd ..
 
 git clone https://github.com/YifanC/larpix_readout_parser.git
 cd larpix_readout_parser
@@ -72,7 +66,7 @@ pip install .
 cd ..
 
 
-git clone -b v3.0.1 https://github.com/DeepLearnPhysics/flow2supera.git
+git clone -b v4.1.1 https://github.com/DeepLearnPhysics/flow2supera.git
 ## Don't pip install because e.g. config files are expected to live near
 ## __file__
 # cd flow2supera
