@@ -79,7 +79,13 @@ cd SparseConvNet
 # They lead to `nvcc' being sought in the wrong place`
 unset CUDATOOLKIT_HOME
 unset CUDA_HOME
-pip install .
+# The setup.py for SparseConvNet tries to do a torch.matmul as a way of
+# detecting an outdated CUDA version. But this can fail on a login node if the
+# GPU is in use. So we hide the GPUs in order to bypass this check.
+(
+    export CUDA_VISIBLE_DEVICES=
+    pip install .
+)
 cd ..
 
 # commit 8103996
