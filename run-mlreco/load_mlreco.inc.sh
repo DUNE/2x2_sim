@@ -11,3 +11,5 @@ popd
 export PYTHONPATH=$PWD/install/flow2supera/src:$PYTHONPATH
 
 export PYTHONPATH=$PWD/install/lartpc_mlreco3d:$PYTHONPATH
+
+export PYTHONPATH=$PWD/../run-larnd-sim/larnd-sim:$PYTHONPATH

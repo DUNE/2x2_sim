@@ -80,3 +80,6 @@ libpath_remove() {
   LD_LIBRARY_PATH=${LD_LIBRARY_PATH//"::"/":"}
   LD_LIBRARY_PATH=${LD_LIBRARY_PATH#:}; LD_LIBRARY_PATH=${LD_LIBRARY_PATH%:}
 }
+
+# Tell the HDF5 library not to lock files, since that sometimes fails on Perlmutter
+export HDF5_USE_FILE_LOCKING=FALSE

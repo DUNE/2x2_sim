@@ -16,7 +16,7 @@ unset which
 
 mkdir weights
 cd weights
-wget https://portal.nersc.gov/project/dune/data/2x2/simulation/mlreco_data/weights/snapshot-249.ckpt
+wget https://portal.nersc.gov/project/dune/data/2x2/simulation/mlreco_weights/2x2_240819_snapshot.ckpt
 cd ..
 
 mkdir install
@@ -31,7 +31,9 @@ rm virtualenv.pyz
 
 # python3 -m venv --system-site-packages mlreco.venv
 source mlreco.venv/bin/activate
-pip install --upgrade pip setuptools wheel
+# setuptools 70 doesn't like SparseConvNet
+# (pkg_resources.packaging is the culprit)
+pip install --upgrade pip setuptools==69 wheel
 # pip install 'ruamel.yaml<0.18.0' # for deprecated load()
 
 ## Need the following?
@@ -39,19 +41,22 @@ pip install --upgrade pip setuptools wheel
 # pip install scikit-learn # for flow2supera
 # pip install --upgrade torch_geometric # for mlreco
 
-git clone -b v2_2_0 https://github.com/DeepLearnPhysics/larcv2.git
+git clone -b v2_2_6 https://github.com/DeepLearnPhysics/larcv2.git
 cd larcv2
 source configure.sh
 make -j16
 cd ..
 
-git clone -b v1.5.0 https://github.com/DeepLearnPhysics/SuperaAtomic.git
+git clone -b v1.6.0 https://github.com/DeepLearnPhysics/SuperaAtomic.git
+
 cd SuperaAtomic
 git submodule update --init     # pybind11
 pip install .
 cd ..
 
-git clone -b v1.2.0 https://github.com/DeepLearnPhysics/edep2supera.git
+git clone -b v1.3.1 https://github.com/DeepLearnPhysics/edep2supera.git
+
+
 cd edep2supera
 pip install .
 cd ..
@@ -66,7 +71,8 @@ cd h5flow
 pip install .
 cd ..
 
-git clone -b v1.1.1 https://github.com/sindhu-ku/flow2supera.git
+
+git clone -b v3.0.1 https://github.com/DeepLearnPhysics/flow2supera.git
 ## Don't pip install because e.g. config files are expected to live near
 ## __file__
 # cd flow2supera
@@ -79,12 +85,20 @@ cd SparseConvNet
 # They lead to `nvcc' being sought in the wrong place`
 unset CUDATOOLKIT_HOME
 unset CUDA_HOME
-pip install .
+# The setup.py for SparseConvNet tries to do a torch.matmul as a way of
+# detecting an outdated CUDA version. But this can fail on a login node if the
+# GPU is in use. So we hide the GPUs in order to bypass this check.
+(
+    export CUDA_VISIBLE_DEVICES=
+    pip install .
+)
 cd ..
 
 # commit 8103996
 # git clone -b jw_dune_nd_lar https://github.com/chenel/lartpc_mlreco3d.git
-git clone -b v2.9.2.4 https://github.com/DeepLearnPhysics/lartpc_mlreco3d.git
+
+#git clone -b v2.9.5 https://github.com/DeepLearnPhysics/lartpc_mlreco3d.git
+git clone -b v0.1.0 https://github.com/DeepLearnPhysics/spine.git
 
 # git clone https://github.com/chenel/dune-nd-lar-reco.git
 # the old yaml.load API has been removed

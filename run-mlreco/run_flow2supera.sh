@@ -5,10 +5,12 @@ source ../util/init.inc.sh
 
 source load_mlreco.inc.sh
 
+[ -z "$ARCUBE_FLOW2SUPERA_CONFIG" ] && export ARCUBE_FLOW2SUPERA_CONFIG="2x2"
+
 outFile=${tmpOutDir}/${outName}.LARCV.root
 inName=${ARCUBE_IN_NAME}.${globalIdx}
 inFile=${ARCUBE_OUTDIR_BASE}/run-ndlar-flow/${ARCUBE_IN_NAME}/FLOW/${subDir}/${inName}.FLOW.hdf5
-config=2x2
+config=$ARCUBE_FLOW2SUPERA_CONFIG
 
 rm -f "$outFile"
 

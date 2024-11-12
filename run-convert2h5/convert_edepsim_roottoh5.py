@@ -41,7 +41,7 @@ vertices_dtype = np.dtype([("event_id","u4"), ("vertex_id","u8"),
                            ("x_vert","f4"), ("y_vert","f4"), ("z_vert","f4"),
                            ("t_vert","f8"), ("t_event","f8")], align=True)
 
-genie_stack_dtype = np.dtype([("event_id", "u4"), ("vertex_id", "u8"), ("traj_id", "i4"),
+genie_stack_dtype = np.dtype([("event_id", "u4"), ("vertex_id", "u8"), ("traj_id", "i4"), ("file_traj_id", "i4"),
                               ("part_4mom", "f4", (4,)), ("part_pdg", "i4"),
                               ("part_status", "i4")], align=True)
 
@@ -160,7 +160,8 @@ def printSegmentContainer(depth, containerName, hitSegments):
 # If no match is found, return default value of -999
 def matchTrackID(traj_list, part_4mom, part_pdg):
 
-    trackID = -999
+    traj_id = -999
+    file_traj_id = -999
     for traj in traj_list:
         if traj["parent_id"] != -1:
             continue
@@ -173,10 +174,11 @@ def matchTrackID(traj_list, part_4mom, part_pdg):
         traj_4mom = np.array([p[0], p[1], p[2], E])
 
         if np.allclose(traj_4mom, part_4mom):
-            trackID = traj["traj_id"]
+            traj_id = traj["traj_id"]
+            file_traj_id = traj["file_traj_id"]
             break
 
-    return trackID
+    return traj_id, file_traj_id
 
 #Map from GENIE reaction to number to match CAFs
 #Derived from the enum defition and genie::ScatteringType::AsString() fuction from here:
@@ -564,7 +566,9 @@ def dump(input_file, output_file, keep_all_dets=False):
 
                     genie_stack[genie_idx]["event_id"] = spill_it
                     genie_stack[genie_idx]["vertex_id"] = globalVertexID
-                    genie_stack[genie_idx]["traj_id"] = matchTrackID(trajectories_list[-1], part_4mom, part_pdg)
+                    traj_id, file_traj_id = matchTrackID(trajectories_list[-1], part_4mom, part_pdg)
+                    genie_stack[genie_idx]["traj_id"] = traj_id
+                    genie_stack[genie_idx]["file_traj_id"] = file_traj_id
                     genie_stack[genie_idx]["part_4mom"] = part_4mom
                     genie_stack[genie_idx]["part_pdg"] = part_pdg
                     genie_stack[genie_idx]["part_status"] = genieTree.StdHepStatus[p]

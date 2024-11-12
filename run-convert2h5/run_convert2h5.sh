@@ -10,10 +10,6 @@ if [[ "$ARCUBE_RUNTIME" == "NONE" ]]; then
     source convert.venv/bin/activate
 fi
 
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    export HDF5_USE_FILE_LOCKING=FALSE
-fi
-
 if [[ -n "$ARCUBE_SPILL_NAME" ]]; then
     inName=$ARCUBE_SPILL_NAME.$globalIdx
     inFile=$ARCUBE_OUTDIR_BASE/run-spill-build/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/$subDir/${inName}.EDEPSIM_SPILLS.root

@@ -9,14 +9,16 @@ import numpy as np
 import awkward as ak
 import h5py
 import argparse
+import sys
 from matplotlib.backends.backend_pdf import PdfPages
 
 from validation_utils import rasterize_plots
 rasterize_plots()
 
 SPILL_PERIOD = 1.2e7 # units = ticks
+RESET_PERIOD = 1.0e7 # units = ticks
 
-def main(sim_file):
+def main(sim_file, charge_only):
 
     sim_h5 = h5py.File(sim_file,'r')
     print('\n----------------- File content -----------------')
@@ -40,37 +42,49 @@ def main(sim_file):
         timestamp_packet_mask = packets['packet_type'] == 4
         sync_packet_mask = (packets['packet_type'] == 6) & (packets['trigger_type'] == 83)
         other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask | timestamp_packet_mask)
+        io_groups_uniq = set(packets['io_group'])
 
         ### Plot time structure of packets: 
-        fig = plt.figure(figsize=(10,10))
-        gs = fig.add_gridspec(ncols=1,nrows=8)
-        fig.subplots_adjust(left=0.075,bottom=0.075,wspace=None, hspace=0.)
-        ax = []
-        for iog in range(8):
-            if iog==0: ax.append(fig.add_subplot(gs[iog,0]))
-            else: ax.append(fig.add_subplot(gs[iog,0],sharex=ax[0]))
-            iog_mask = packets['io_group'] == iog+1
+        io_group_count = 0
+        io_groups_per_page = 8
+        for iog in io_groups_uniq:
+            # Skip io_group 0.
+            if iog == 0: continue
+            
+            if io_group_count % io_groups_per_page == 0:
+                fig = plt.figure(figsize=(10,10))
+                gs = fig.add_gridspec(ncols=1,nrows=io_groups_per_page)
+                fig.subplots_adjust(left=0.075,bottom=0.075,wspace=None, hspace=0.)
+                ax = []
+                ax.append(fig.add_subplot(gs[io_group_count % io_groups_per_page,0]))
+            else: ax.append(fig.add_subplot(gs[io_group_count % io_groups_per_page,0],sharex=ax[0]))
+
+            iog_mask = packets['io_group'] == iog
             temp_mask = np.logical_and(iog_mask,data_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='data packets',linestyle='None',ms=2)
+            ax[io_group_count % io_groups_per_page].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='data packets',linestyle='None',ms=2)
             temp_mask = np.logical_and(iog_mask,trig_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='lrs triggers',linestyle='None',ms=2)
+            ax[io_group_count % io_groups_per_page].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='lrs triggers',linestyle='None',ms=2)
             temp_mask = np.logical_and(iog_mask,sync_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='PPS packets',linestyle='None',ms=2)
+            ax[io_group_count % io_groups_per_page].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='PPS packets',linestyle='None',ms=2)
             temp_mask = np.logical_and(iog_mask,other_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='other',linestyle='None',ms=2)
+            ax[io_group_count % io_groups_per_page].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='other',linestyle='None',ms=2)
             temp_mask = np.logical_and(iog_mask,timestamp_packet_mask)
-            ax[iog].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='timestamp packets',linestyle='None',ms=2)
-            ax[iog].grid()
-            temp_ax = ax[iog].twinx()
-            temp_ax.set_ylabel('io_group = '+str(iog+1))
+            ax[io_group_count % io_groups_per_page].plot(packet_index[temp_mask],packets['timestamp'][temp_mask],'o',label='timestamp packets',linestyle='None',ms=2)
+            ax[io_group_count % io_groups_per_page].grid()
+            temp_ax = ax[io_group_count % io_groups_per_page].twinx()
+            temp_ax.set_ylabel('io_group = '+str(iog))
             temp_ax.tick_params(labelright=False)
             temp_ax.tick_params(axis='y',rotation=180)
 
-        for i in range(0,7,1): ax[i].tick_params(labelbottom=False)
-        ax[7].set_xlabel('packet index',fontsize=10) 
-        ax[3].set_ylabel('packet timestamp',fontsize=10)
-        output.savefig()
-        plt.close()
+            # Minus 2 here because we skipped io_group 0.
+            if io_group_count % io_groups_per_page == io_groups_per_page-1 or io_group_count == len(io_groups_uniq)-2:
+                for i in range(0,len(ax)-1): ax[i].tick_params(labelbottom=False)
+                #for i in range(0,len(ax)-1): ax[i].set_xlim(0, 1e6)
+                ax[len(ax)-1].set_xlabel('packet index',fontsize=10) 
+                ax[len(ax)//2].set_ylabel('packet timestamp',fontsize=10)
+                output.savefig()
+                plt.close()
+            io_group_count += 1
 
         plt.plot(packet_index[data_packet_mask],packets['timestamp'][data_packet_mask],'o',label='data packets',linestyle='None',ms=1)
         plt.plot(packet_index[trig_packet_mask],packets['timestamp'][trig_packet_mask],'o',label='lrs triggers',linestyle='None',ms=1)
@@ -105,12 +119,33 @@ def main(sim_file):
         plt.close()
 
         ### Plot charge vs. time per io_group/tpc
-        for iog in range(1,9,1):
+        packets_stack = []
+        weights_stack = []
+        io_group_count = 0
+        io_groups_per_page = 4
+        for iog in io_groups_uniq:
+            # Skip io_group 0.
+            if iog == 0: continue
+
             iog_mask = (packets['io_group'] == iog) & data_packet_mask
-            plt.hist(packets['timestamp'][iog_mask]%SPILL_PERIOD,weights=packets['dataword'][iog_mask],bins=200,label='io_group '+str(iog),alpha=0.5)
-        plt.xlabel('timestamp%spill_period')
+            packets_stack.append(packets['timestamp'][iog_mask]%(SPILL_PERIOD%RESET_PERIOD))
+            weights_stack.append(packets['dataword'][iog_mask])
+            plt.hist(packets['timestamp'][iog_mask]%(SPILL_PERIOD%RESET_PERIOD),weights=packets['dataword'][iog_mask],bins=200,label='io_group '+str(iog),alpha=0.5)
+           
+            # Minus 2 here because we skipped io_group 0.
+            if io_group_count % io_groups_per_page == io_groups_per_page-1 or io_group_count == len(io_groups_uniq)-2:
+                plt.xlabel('timestamp%(spill_period%reset_period)')
+                plt.ylabel('charge [ADC]')
+                plt.legend(ncol=2,bbox_to_anchor=(-0.05,1.00),loc='lower left')
+                output.savefig()
+                plt.close()
+
+            io_group_count += 1
+
+        ### Plot charge vs. time
+        plt.hist(packets_stack,weights=weights_stack,stacked=True,bins=200,alpha=0.5)
+        plt.xlabel('timestamp%(spill_period%reset_period)')
         plt.ylabel('charge [ADC]')
-        plt.legend(ncol=4,bbox_to_anchor=(-0.05,1.00),loc='lower left')
         output.savefig()
         plt.close()
 
@@ -129,41 +164,9 @@ def main(sim_file):
 
         ### Plot hits per event
         segments = sim_h5['segments']
-        def get_eventIDs(event_packets, mc_packets_assn):
-            """Takes as input the packets and mc_packets_assn fields, and
-            returns the eventIDs that deposited that energy"""
-    
-            event_IDs = []
-            eventID = segments['event_id'] # eventIDs associated to each segment
-            segment_id_assn = mc_packets_assn['segment_ids'] # segment indices corresponding to each packet
-
-            # Loop over each packet
-            for ip, packet in enumerate(event_packets):
-
-                if packet['packet_type'] != 0:
-                    continue
-                    
-                # For packet ip, get segment indices that contributed to hit
-                packet_segment_ids = segment_id_assn[ip]
-                packet_segment_ids = packet_segment_ids[packet_segment_ids != -1]
-                
-                # For segment indices, get the corresponding eventID
-                packet_event_IDs = eventID[packet_segment_ids]
-                
-                # Make sure that there's only one eventID corresponding to hit.
-                # In principle, a hit could come from two events. But I'll deal
-                # with that when it happens.
-                unique_packet_event_ID = np.unique(packet_event_IDs)
-                assert(len(unique_packet_event_ID == 1))
-                
-                packet_event_ID = unique_packet_event_ID[0]
-                
-                event_IDs.append(packet_event_ID)
-
-            return np.array(event_IDs)
-
         mc_packets_assn = sim_h5['mc_packets_assn']
-        event_IDs = get_eventIDs(packets, mc_packets_assn)
+        data_mask = packets['packet_type'] == 0
+        event_IDs = mc_packets_assn[data_mask]['event_ids'].reshape(-1)
         unique_event_IDs, hit_counts = np.unique(event_IDs, return_counts = True)
         plt.hist(hit_counts, bins = 50)
         plt.title("Pixels hit per event")
@@ -171,10 +174,23 @@ def main(sim_file):
         plt.ylabel("Counts")
         output.savefig()
         plt.close()     
+
+        # Check the sums of the fraction field for charge deposition. They should add to 1.
+        fractions = mc_packets_assn['fraction']
+        summed_fractions = fractions.sum(axis=-1)
+        fig, ax = plt.subplots(constrained_layout = True)
+        ax.hist(summed_fractions, bins= np.arange(-0.05, summed_fractions.max(), 0.1))
+        ax.set_title("Sum of packet fractions in each event")
+        ax.set_yscale('log')
+        ax.set_xlabel("Sum")
+        ax.set_ylabel("Count")
+        output.savefig()
+        plt.close() 
         
+        if charge_only: sys.exit(0)
         # Now we validate the light simulation:
         # For questions on the light validations below, see DUNE ND Prototype Workshop (May 2023) Coding Tutorial, 
-        # or message Angela White on the DUNE Slack
+        # or message Angela White on the DUNE Slack. Not yet looked at for a full NDLAr geometry.
         
         # Account for the timestamp turnover:
         light_trig = sim_h5['light_trig']
@@ -255,38 +271,27 @@ def main(sim_file):
         acl_wvfms = ak.flatten(acl_events, axis=1)
         
         def noise_datasets(no_ped_adc,CUTOFF):
-            adc_signal_indices=[]
-            for i in range(len(no_ped_adc)):
-                if max(abs(no_ped_adc[i]))>THRESHOLD:
-                    adc_signal_indices.append(i)
-                else:
-                    pass
-            adc_normal_pretrig = []
-            for i in adc_signal_indices:
-                waveform = no_ped_adc[i][0:PRE_NOISE]
-                adc_normal_pretrig.append(np.array(waveform))
-                if len(adc_normal_pretrig)>3000:
-                    break
+            max_abs_values=np.max(np.abs(no_ped_adc), axis=1)
+            mask = max_abs_values > THRESHOLD
+            adc_signal_indices= np.flatnonzero(mask)
+            adc_normal_pretrig=no_ped_adc[adc_signal_indices,0:PRE_NOISE]
             adc_normal_pretrig = np.array(adc_normal_pretrig[0:3000])
-            ns_wvfms = []
-            for wave in adc_normal_pretrig:
-                norm = max(abs(wave))
-                ns_wvfms.append(wave/norm)
+            norms=np.max(np.abs(adc_normal_pretrig), axis=1)
+            norms_big=np.expand_dims(norms, axis=1)
+            ns_wvfms=np.divide(adc_normal_pretrig,norms_big)
             # Calculate power spectra using FFT
             freqs = np.fft.fftfreq(PRE_NOISE, 1/SAMPLE_RATE)
             freqs = freqs[:PRE_NOISE//2] # keep only positive frequencies
             freq_matrix = np.tile(np.array(freqs), (len(adc_normal_pretrig),1))
             frequencies = np.ndarray.flatten(np.array(freq_matrix))
-            psds = []
-            for wave in ns_wvfms:
-                spectrum = np.fft.fft(wave)
-                psd = np.abs(spectrum[:PRE_NOISE//2])**2 / (PRE_NOISE * SAMPLE_RATE)
-                psd[1:] *= 2 # double the power except for the DC component
-                psds.append(psd)
+            spectrum_arr=np.fft.fft(ns_wvfms, axis=1)
+            psds= np.abs(spectrum_arr[:,:PRE_NOISE//2])**2 / (PRE_NOISE * SAMPLE_RATE)
+            psds[:,1:] *=2 #Double the power except for the DC component
             ref = 1 #(everything is in integers?)
             power = np.ndarray.flatten(np.array(psds))
             p_dbfs = 20 * np.log10(power/ref)
             return adc_signal_indices, frequencies, adc_normal_pretrig, p_dbfs
+
         
         def power_hist_maxes(adc_dataset):
             adc_freq = adc_dataset[1]
@@ -580,6 +585,7 @@ def main(sim_file):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--sim_file', default=None, type=str,help='''string corresponding to the path of the larnd-sim output simulation file to be considered''')
+    parser.add_argument('--charge_only', action='store_true', help='''boolean to flag that light has not been simualted''')
     args = parser.parse_args()
     main(**vars(args))
 

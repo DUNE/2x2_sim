@@ -41,9 +41,14 @@ pip install -e .
 cd ..
 
 # install ndlar_flow
-git clone -b develop https://github.com/larpix/ndlar_flow.git
+git clone -b MiniRun6-v1 https://github.com/larpix/ndlar_flow.git
 cd ndlar_flow
 pip install -e .
 cd scripts/proto_nd_scripts
 ./get_proto_nd_input.sh
+# AB August 6th 2024: ../ndlar_scripts only exists in development branch at the moment.
+if [ -d ../ndlar_scripts ]; then
+  cd ../ndlar_scripts
+  ./get_ndlar_input.sh
+fi
 cd ../../..

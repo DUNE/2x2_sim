@@ -3,7 +3,7 @@
 source ../util/reload_in_container.inc.sh
 source ../util/init.inc.sh
 
-dk2nuAll=("$ARCUBE_DK2NU_DIR"/*.dk2nu)
+dk2nuAll=("$ARCUBE_DK2NU_DIR"/*.dk2nu*)
 dk2nuCount=${#dk2nuAll[@]}
 dk2nuIdx=$((ARCUBE_INDEX % dk2nuCount))
 dk2nuFile=${dk2nuAll[$dk2nuIdx]}
