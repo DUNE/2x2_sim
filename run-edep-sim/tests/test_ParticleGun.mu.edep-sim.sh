@@ -7,14 +7,14 @@ export ARCUBE_LOGDIR_BASE='/pscratch/sd/t/tta20/Muon_Gun_test/logs'
 export ARCUBE_OUTDIR_BASE='/pscratch/sd/t/tta20/Muon_Gun_test/output'
 export ARCUBE_RUNTIME='SHIFTER'
 export ARCUBE_BEAM_TYPE='particle_gun'
-export ARCUBE_EXPOSURE='1E4'
+export ARCUBE_EXPOSURE='1E2'
 export ARCUBE_PARTICLE_TYPE='mu-'
 export ARCUBE_ENERGY_MINIMUM='300 MeV'
 export ARCUBE_ENERGY_MAXIMUM='3 GeV'
 export ARCUBE_OUT_NAME='Muon_Gun_Test.edep.nu'
 
-for i in $(seq 10); do
-    ARCUBE_INDEX=$i ./run_edep_sim.sh &
-done
+#for i in $(seq 10); do
+ARCUBE_INDEX=$i ./run_edep_sim.sh &
+#done
 
 wait
