@@ -9,4 +9,4 @@
 #SBATCH --gpus-per-task=1
 #SBATCH --cpus-per-task=32
 
-srun ./elifetime_slurm_task.py fake_edepsim_inputs_OVERFLOW.txt
+srun ./elifetime_ndlarflow_slurm_task.py fake_edepsim_inputs.txt 
