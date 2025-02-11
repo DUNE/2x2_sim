@@ -7,7 +7,7 @@
 # the ARCUBE_USE_GHEP_POT option, need to install a single executable via
 # install_hadd.sh.
 
-set -o errexit
+# set -o errexit
 
 # This is the "default" container. It can be overridden by exporting
 # ARCUBE_CONTAINER before running e.g. run_edep_sim.sh

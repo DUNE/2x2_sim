@@ -271,6 +271,8 @@ def dump(input_file, output_file, keep_all_dets=False, gps=False):
         output_file (str): name of the h5 output file to which the information should
             be written
     """
+    if(gps):
+        print("Running with general particle source, therefore we omit mc_hrd and mc_stack branches...")
 
     # Prep output file
     initHDF5File(output_file,gps)
