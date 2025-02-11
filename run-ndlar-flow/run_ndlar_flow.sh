@@ -17,9 +17,11 @@ else
     fi
 fi
 
-inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/$ARCUBE_IN_NAME
-inName=$ARCUBE_IN_NAME.$globalIdx
-inFile=$(realpath $inDir/LARNDSIM/$subDir/${inName}.LARNDSIM.hdf5)
+#inDir=${ARCUBE_OUTDIR_BASE}/run-larnd-sim/$ARCUBE_IN_NAME
+#inName=$ARCUBE_IN_NAME.$globalIdx
+#inFile=$(realpath $inDir/LARNDSIM/$subDir/${inName}.LARNDSIM.hdf5)
+# temporarily introduce external larndsim files
+inFile=~/$ARCUBE_IN_NAME
 
 outFile=$tmpOutDir/${outName}.FLOW.hdf5
 rm -f "$outFile"
@@ -28,24 +30,33 @@ rm -f "$outFile"
 workflow1='yamls/proto_nd_flow/workflows/charge/charge_event_building_mc.yaml'
 workflow2='yamls/proto_nd_flow/workflows/charge/charge_event_reconstruction_mc.yaml'
 workflow3='yamls/proto_nd_flow/workflows/combined/combined_reconstruction_mc.yaml'
-workflow4='yamls/proto_nd_flow/workflows/charge/prompt_calibration_mc.yaml'
-workflow5='yamls/proto_nd_flow/workflows/charge/final_calibration_mc.yaml'
+#workflow4='yamls/proto_nd_flow/workflows/charge/prompt_calibration_mc.yaml'
+#workflow5='yamls/proto_nd_flow/workflows/charge/final_calibration_mc.yaml'
+
+# Data workflow options
+#workflow1='yamls/proto_nd_flow/workflows/charge/charge_event_building_data.yaml'
+#workflow2='yamls/proto_nd_flow/workflows/charge/charge_event_reconstruction_data.yaml'
+#workflow3='yamls/proto_nd_flow/workflows/combined/combined_reconstruction_data.yaml'
+workflow4='yamls/proto_nd_flow/workflows/charge/prompt_calibration_data.yaml'
+workflow5='yamls/proto_nd_flow/workflows/charge/final_calibration_data.yaml'
 
 # light workflows
 workflow6='yamls/proto_nd_flow/workflows/light/light_event_building_mc.yaml'
-workflow7='yamls/proto_nd_flow/workflows/light/light_event_reconstruction_mc.yaml'
+#workflow7='yamls/proto_nd_flow/workflows/light/light_event_reconstruction_mc.yaml'
+
+# Temporarily change workflows from mc to data
+#workflow6='yamls/proto_nd_flow/workflows/light/light_event_building_data.yaml'
+workflow7='yamls/proto_nd_flow/workflows/light/light_event_reconstruction_data.yaml'
+workflow8='yamls/proto_nd_flow/workflows/charge/charge_light_assoc_data.yaml'
 
 # charge-light trigger matching
-workflow8='yamls/proto_nd_flow/workflows/charge/charge_light_assoc_mc.yaml'
+#workflow8='yamls/proto_nd_flow/workflows/charge/charge_light_assoc_mc.yaml'
 
 cd "$ARCUBE_INSTALL_DIR"/ndlar_flow
 
 # Ensure that the second h5flow doesn't run if the first one crashes. This also
 # ensures that we properly report the failure to the production system.
 set -o errexit
-
-#run h5flow -c $workflow1 $workflow2 $workflow3 $workflow4 $workflow5\
-#    -i "$inFile" -o "$outFile"
 
 run h5flow -c $workflow1 $workflow2 $workflow3 $workflow4 $workflow5\
     -i "$inFile" -o "$outFile"
