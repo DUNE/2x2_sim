@@ -13,6 +13,9 @@ fi
 if [[ -n "$ARCUBE_SPILL_NAME" ]]; then
     inName=$ARCUBE_SPILL_NAME.$globalIdx
     inFile=$ARCUBE_OUTDIR_BASE/run-spill-build/${ARCUBE_SPILL_NAME}/EDEPSIM_SPILLS/$subDir/${inName}.EDEPSIM_SPILLS.root
+elif [[ -n "$EDEP_FILE_NAME" ]]; then
+    inName=$EDEP_FILE_NAME
+    inFile=~/${inName}.root
 else
     inName=$ARCUBE_SINGLE_NAME.$globalIdx
     inFile=$ARCUBE_OUTDIR_BASE/run-edep-sim/${ARCUBE_SINGLE_NAME}/EDEPSIM/$subDir/${inName}.EDEPSIM.root
