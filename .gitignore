@@ -12,4 +12,9 @@ slurm-*.out
 *.h5
 *.hdf5
 *.root
+*.log
+*.time
+*.status
+*.pdf
+*.csv
 tmp_bin

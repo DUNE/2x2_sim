@@ -25,6 +25,9 @@ inDir=${ARCUBE_OUTDIR_BASE}/run-convert2h5/$ARCUBE_CONVERT2H5_NAME
 inName=$ARCUBE_CONVERT2H5_NAME.$globalIdx
 inFile=$(realpath $inDir/EDEPSIM_H5/$subDir/${inName}.EDEPSIM.hdf5)
 
+# alternative inFile name
+#inFile=~/$ARCUBE_INNAME
+
 outFile=$tmpOutDir/${outName}.LARNDSIM.hdf5
 rm -f "$outFile"
 
@@ -51,8 +54,10 @@ else
         --light_lut_filename  "$ARCUBE_LARNDSIM_LUT_FILENAME" \
         --light_det_noise_filename "$ARCUBE_LARNDSIM_LIGHT_DET_NOISE_FILENAME" \
         --rand_seed $seed \
-        --simulation_properties "$ARCUBE_LARNDSIM_SIMULATION_PROPERTIES"
+        --simulation_properties "$ARCUBE_LARNDSIM_SIMULATION_PROPERTIES" \
+        --n_events 400
+        # change number of events
 fi
-
+ 
 mkdir -p "$outDir/LARNDSIM/$subDir"
 mv "$outFile" "$outDir/LARNDSIM/$subDir"

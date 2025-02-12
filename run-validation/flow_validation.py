@@ -125,8 +125,10 @@ def main(flow_file, charge_only):
         fig.tight_layout()        
         dat = ax.scatter(hits['z'],hits['x'],
                    hits['y'],c=hits['Q'],
-                   s=1,cmap='viridis',norm=mlp.colors.LogNorm())
+                   #s=1,cmap='viridis',norm=mlp.colors.LogNorm())
+                   s=1,cmap='viridis')
                    #norm=mpl.colors.LogNorm())#, cmap='Greys')
+        print(hits['Q'])
         fig.colorbar(dat,ax=ax,label="detected charge",shrink=0.5)
         ax.set_title("charge hits",fontsize=20)
         ax.set_xlabel('z [cm]')

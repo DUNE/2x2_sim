@@ -14,6 +14,8 @@ config=$ARCUBE_FLOW2SUPERA_CONFIG
 
 rm -f "$outFile"
 
+# skip over first few events
+
 run install/flow2supera/bin/run_flow2supera.py -o "$outFile" -c "$config" "$inFile"
 
 larcvOutDir=$outDir/LARCV/$subDir
