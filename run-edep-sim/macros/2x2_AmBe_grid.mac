@@ -1,0 +1,50 @@
+## Particle Gun Macro for edep-sim
+
+## Physics changes
+
+## Not everything is LAr
+/edep/phys/ionizationModel 0
+
+
+# Comment this if you want a fixed seed
+/edep/random/timeRandomSeed
+
+# This ensures that each hit segment in the LAr is only associated with one
+# trajectory. It must be run BEFORE /edep/update.
+/edep/hitSeparation volTPCActive -1 mm
+
+/edep/db/set/neutronThreshold 0 MeV
+/edep/db/set/gammaThreshold 0 MeV
+
+/edep/update
+
+# print commands
+/gps/verbose 1
+
+# generate particles
+/gps/particle neutron
+
+
+# neutron-gun like 
+# /gps/direction -1.0 0.0 0.0 
+
+# next, we generate a flat distribution with each muon between $ARCUBE_ENERGY_MINIMUM and $ARCUBE_ENERGY_MAXIMUM (Gradient of 0 means flat and )
+/gps/ene/type Lin
+/gps/ene/min 2 MeV
+/gps/ene/max 4 MeV
+/gps/ene/gradient 0
+/gps/ene/intercept 1 
+
+# Specify the volume where we want the muons to be produced in. THIS MAY NEED TO BE CHANGED WHEN GDML CHANGES TOO!
+
+/gps/pos/type Volume
+/gps/pos/shape Sphere
+/gps/pos/radius 3 cm 
+#/gps/pos/centre 1.05 -0.2 0.3 m
+/gps/pos/centre 0.2 -0.2 0.3 m
+
+# Isotropic neutron dist 
+/gps/ang/type iso 
+
+
+/edep/db/set/requireEventsWithHits true
