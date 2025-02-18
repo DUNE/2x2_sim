@@ -24,4 +24,4 @@ export MAC_FILE="${SCRATCH}/cache/2x2_AmBe_grid.mac "
 
 echo "The following edep-sim command will be executed..."
 echo "edep-sim -g ${ARCUBE_GEOM} -o ${OUT_FILE} -p ${PS_LIST} -u -e ${NEVENTS} ${MAC_FILE}"
-edep-sim -g "$ARCUBE_GEOM" -o "$OUT_FILE" -p "$PS_LIST" -u -e "$NEVENTS" "$MAC_FILE"
+edep-sim -C -g "$ARCUBE_GEOM" -o "$OUT_FILE" -p "$PS_LIST" -e "$NEVENTS" "$MAC_FILE"
