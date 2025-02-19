@@ -5,13 +5,13 @@ source ../util/init.inc.sh
 
 # e.g. hadd'ed file 123 comes from genie files 1230 -> 1239
 # so the input (GENIE) subdir is 0001200
-inSubDir=$(printf "%07d" $((ARCUBE_INDEX / 100 * 1000)))
-inDir=${ARCUBE_OUTDIR_BASE}/run-edep-sim/$ARCUBE_IN_NAME/EDEPSIM/$inSubDir
 tmpfile=$(mktemp)
 tmpfileghep=$(mktemp)
 
 for i in $(seq 0 $((ARCUBE_HADD_FACTOR - 1))); do
     inIdx=$((ARCUBE_INDEX*ARCUBE_HADD_FACTOR + i))
+    inSubDir=$(printf "%07d" $((inIdx / 1000 * 1000)))
+    inDir=${ARCUBE_OUTDIR_BASE}/run-edep-sim/$ARCUBE_IN_NAME/EDEPSIM/$inSubDir
     inName=$ARCUBE_IN_NAME.$(printf "%07d" "$inIdx")
     inFile="$inDir"/"$inName".EDEPSIM.root
     if [[ "$ARCUBE_USE_GHEP_POT" == "1" ]]; then
