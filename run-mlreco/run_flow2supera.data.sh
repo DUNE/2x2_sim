@@ -11,7 +11,7 @@ outName=$(basename "$ARCUBE_CHARGE_FILE" .h5).LARCV.root
 outFile=${tmpOutDir}/${outName}
 
 inName=$(basename "$ARCUBE_CHARGE_FILE" .h5).FLOW.hdf5
-inFile=${ARCUBE_FLOWDIR_BASE}/${relDir}/${inName}
+inFile=${ARCUBE_FLOW_DIR_BASE}/${relDir}/${inName}
 
 config=$ARCUBE_FLOW2SUPERA_CONFIG
 
