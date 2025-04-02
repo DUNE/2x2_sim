@@ -104,6 +104,7 @@ python3 -m venv pandora.venv
 source pandora.venv/bin/activate
 cd h5flow
 pip3 install .
+pip3 install uproot
 deactivate
 
 # Convert GDML geometry file to ROOT for LArRecoND (using cm length units)
