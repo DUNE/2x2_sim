@@ -12,6 +12,9 @@ source $ARCUBE_DIR/run-pandora/setup_pandora.sh
 # Set other environment variables: globalIdx, ARCUBE_OUTDIR_BASE, tmpOutDir, outDir, outName, subDir
 source $ARCUBE_DIR/util/init.data.inc.sh
 
+# Prevent excessive memory use
+export OMP_NUM_THREADS=1
+
 outName=$(basename "$ARCUBE_CHARGE_FILE" .h5).FLOW.hdf5_hits.root
 outFile=${tmpOutDir}/${outName}
 
