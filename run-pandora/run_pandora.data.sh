@@ -45,14 +45,6 @@ tmpEvtHierOut=${tmpRunDir}/EventHierarchy.root
 
 anaOutDir=${outDir}/LAR_RECO_ND/${subDir}
 anaOutFile=${anaOutDir}/${outName}.LAR_RECO_ND.root
-mcHierOutDir=${outDir}/MC_HIER/${subDir}
-mcHierOutFile=${mcHierOutDir}/${outName}.MC_HIER.root
-evtHierOutDir=${outDir}/EVT_HIER/${subDir}
-evtHierOutFile=${evtHierOutDir}/${outName}.EVT_HIER.root
 
 mkdir -p ${anaOutDir}
 mv "${tmpAnaOut}" "${anaOutFile}"
-mkdir -p ${mcHierOutDir}
-mv "${tmpMCHierOut}" "${mcHierOutFile}"
-mkdir -p ${evtHierOutDir}
-mv "${tmpEvtHierOut}" "${evtHierOutFile}"

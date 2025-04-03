@@ -25,7 +25,7 @@ isFinal=1
 
 source $ARCUBE_PANDORA_INSTALL/pandora.venv/bin/activate
 run python3 $ARCUBE_PANDORA_INSTALL/LArRecoND/ndlarflow/h5_to_root_ndlarflow.py $inFile $isData $isFinal ${outFile}.firstStep.root
-root -l -q $ARCUBE_PANDORA_INSTALL/LArRecoND/ndlarflow/rootToRootConversion.C++\(true,\"${outFile}.firstStep.root\",\"${outFile}\"\)
+run root -l -q $ARCUBE_PANDORA_INSTALL/LArRecoND/ndlarflow/rootToRootConversion.C++\(true,\"${outFile}.firstStep.root\",\"${outFile}\"\)
 rm ${outFile}.firstStep.root
 deactivate
 
