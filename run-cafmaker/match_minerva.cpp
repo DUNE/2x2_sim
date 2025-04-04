@@ -61,7 +61,7 @@ void split_mnv(TChain *minerva_tree, int start, int end, std::string tmpdir)
     double * entry_val = minerva_tree->GetVal(0);
 
 
-    TFile * my_file = TFile::Open(Form("%s/minerva_%d_%d.root",tmpdir,start,end),
+    TFile * my_file = TFile::Open(Form("%s/minerva_%d_%d.root",tmpdir.c_str(),start,end),
                                   "RECREATE");
     TTree * new_tree = minerva_tree->CloneTree(0);
     for (int entry_val2 =  0; entry_val2 < n_val2; entry_val2++)
