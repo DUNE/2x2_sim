@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include <TChain.h>
+#include <TFile.h>
 #include <TString.h>
 
 std::string extractTimestampFromFilename(const std::string& filename) {
