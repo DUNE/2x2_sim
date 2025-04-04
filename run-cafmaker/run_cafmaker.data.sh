@@ -14,7 +14,7 @@ cd ../..
 source ../util/init.data.inc.sh
 # Prevent excessive memory use
 export OMP_NUM_THREADS=1
-
+outName=$(basename "$ARCUBE_CHARGE_FILE" .h5)
 outFile=${tmpOutDir}/${outName}.CAF.root
 flatOutFile=${tmpOutDir}/${outName}.CAF.flat.root
 
