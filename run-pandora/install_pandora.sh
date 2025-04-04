@@ -109,3 +109,7 @@ deactivate
 
 # Convert GDML geometry file to ROOT for LArRecoND (using cm length units)
 root -l -b -q -e "TGeoManager::LockDefaultUnits(kFALSE); TGeoManager::SetDefaultUnits(TGeoManager::kRootUnits); TGeoManager::Import(\"${ARCUBE_GEOM}\"); gGeoManager->Export(\"${ARCUBE_PANDORA_GEOM}\");"
+
+# Pre-compile the conversion macro
+cd $ARCUBE_PANDORA_BASEDIR
+root -l -b -q -e ".L $ARCUBE_PANDORA_INSTALL/LArRecoND/ndlarflow/rootToRootConversion.C+"
