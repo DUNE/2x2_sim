@@ -10,20 +10,6 @@
 #include <TFile.h>
 #include <TString.h>
 
-std::string extractTimestampFromFilename(const std::string& filename) {
-    size_t start = filename.find("packet-") + 7;
-    size_t end = filename.find(".FLOW.hdf5");
-    return filename.substr(start, end - start);
-}
-
-// Convert timestamp format "YYYY_MM_DD_HH_MM_SS_TZ" to Unix time (approximate, no TZ handling)
-time_t convertToUnixTime(const std::string& timestamp) {
-    struct tm tm = {};
-    std::istringstream ss(timestamp);
-    ss >> std::get_time(&tm, "%Y_%m_%d_%H_%M_%S");
-    return mktime(&tm);
-}
-
 void queryDatabase(sqlite3* db, const std::string filename, TChain* minerva_tree, int &start_time_unix, int &end_time_unix ) {
 
     std::string sql = "SELECT run, subrun, start_time_unix, end_time_unix FROM CRS_summary WHERE filename ='" +
@@ -68,14 +54,15 @@ void queryDatabase(sqlite3* db, const std::string filename, TChain* minerva_tree
 }
 
 
-void split_mnv(TChain *minerva_tree, int start, int end)
+void split_mnv(TChain *minerva_tree, int start, int end, std::string tmpdir)
 {
     TString selection = Form("ev_gps_time_sec  >=%d && ev_gps_time_sec  <=%d",start, end);
     int n_val2 = minerva_tree->Draw("Entry$",selection);
     double * entry_val = minerva_tree->GetVal(0);
 
 
-    TFile * my_file = TFile::Open(Form("minerva_%d_%d.root",start,end),"RECREATE");
+    TFile * my_file = TFile::Open(Form("%s/minerva_%d_%d.root",tmpdir,start,end),
+                                  "RECREATE");
     TTree * new_tree = minerva_tree->CloneTree(0);
     for (int entry_val2 =  0; entry_val2 < n_val2; entry_val2++)
     {
@@ -86,7 +73,7 @@ void split_mnv(TChain *minerva_tree, int start, int end)
     new_tree->Write();
 }
 
-int match_minerva(std::string filename) {
+int match_minerva(std::string filename, std::string tmpdir) {
     sqlite3* db;
     if (sqlite3_open("mx2x2runs_v0.2.sqlite", &db)) {
         std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
@@ -100,7 +87,7 @@ int match_minerva(std::string filename) {
     
     sqlite3_close(db);
 
-    split_mnv(minerva_tree, start_time_unix, end_time_unix);
+    split_mnv(minerva_tree, start_time_unix, end_time_unix, tmpdir);
 
 
 

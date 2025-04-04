@@ -19,7 +19,6 @@ source $ARCUBE_DIR/run-pandora/setup_pandora.sh
 
 export ARCUBE_PANDORA_INPUT_FORMAT=SP
 
-# Set other environment variables: globalIdx, ARCUBE_OUTDIR_BASE, subDir, tmpOutDir, outDir
 source $ARCUBE_DIR/util/init.data.inc.sh
 
 # Input HDF5-to-ROOT file
@@ -43,7 +42,7 @@ tmpAnaOut=${tmpRunDir}/LArRecoND.root
 tmpMCHierOut=${tmpRunDir}/MCHierarchy.root
 tmpEvtHierOut=${tmpRunDir}/EventHierarchy.root
 
-anaOutDir=${outDir}/LAR_RECO_ND/${subDir}
+anaOutDir=${outDir}/LAR_RECO_ND
 anaOutFile=${anaOutDir}/${outName}.LAR_RECO_ND.root
 
 mkdir -p ${anaOutDir}
