@@ -6,6 +6,9 @@
 #include <iomanip>
 #include <sstream>
 
+#include <TChain.h>
+#include <TString.h>
+
 std::string extractTimestampFromFilename(const std::string& filename) {
     size_t start = filename.find("packet-") + 7;
     size_t end = filename.find(".FLOW.hdf5");

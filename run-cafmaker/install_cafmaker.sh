@@ -23,6 +23,7 @@ make -j8
 cd ../..
 
 # Pre-compile
+export ROOT_INCLUDE_PATH=$SQLITE_INC:$ROOT_INCLUDE_PATH
 root -l -b -q -e ".L match_minerva.cpp+"
 
 # Needed for match_minerva.cpp
