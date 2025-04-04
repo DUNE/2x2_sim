@@ -38,7 +38,7 @@ if [[ -n "$ARCUBE_MINERVA_FILES" ]]; then
     # whereas ARCUBE_CHARGE_FILE is the packet file
     binaryChargeFile=$(basename $ARCUBE_CHARGE_FILE | sed 's/^packet-/binary-/')
     run root -l -q "match_minerva.cpp+(\"$binaryChargeFile\", \"$tmpDir\")"
-    minervaPath=$tmpDir/minerva_*.root
+    minervaPath="$tmpDir/minerva_*.root"
     if [[ ! -e "$minervaPath" ]]; then
         echo "Ay caramba! Problem in building the matched Minerva file"
         rm -rf "$tmpDir"
