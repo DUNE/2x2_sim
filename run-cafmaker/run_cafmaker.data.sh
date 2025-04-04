@@ -36,7 +36,7 @@ args_gen_cafmaker_cfg=( \
 if [[ -n "$ARCUBE_MINERVA_FILES" ]]; then
     # The runs DB (used by match_minerva.cpp) uses the original binary filename
     # whereas ARCUBE_CHARGE_FILE is the packet file
-    binaryChargeFile=$(basename $ARCUBE_CHARGE_FILE | sed 's/^packet-/binary-')
+    binaryChargeFile=$(basename $ARCUBE_CHARGE_FILE | sed 's/^packet-/binary-/')
     run root -l -q "match_minerva.cpp+(\"$binaryChargeFile\", \"$tmpDir\")"
     minervaPath=$tmpDir/minerva_*.root
     if [[ ! -e "$minervaPath" ]]; then
