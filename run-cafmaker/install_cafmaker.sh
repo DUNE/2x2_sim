@@ -19,3 +19,11 @@ cd ND_CAFMaker
 ./build.sh
 source ndcaf_setup.sh
 make -j8
+
+cd ../..
+
+# Pre-compile
+root -l -b -q -e ".L match_minerva.cpp+"
+
+# Needed for match_minerva.cpp
+wget https://portal.nersc.gov/project/dune/data/2x2/DB/RunsDB/releases/mx2x2runs_v0.2.sqlite
