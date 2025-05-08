@@ -16,7 +16,7 @@ source load_mlreco.inc.sh
 [ -n "$ARCUBE_SPINE_OPENBLAS_NUM_THREADS" ] && export OPENBLAS_NUM_THREADS=$ARCUBE_SPINE_OPENBLAS_NUM_THREADS
 
 outName=$(basename "$ARCUBE_CHARGE_FILE" .h5).MLRECO_SPINE.hdf5
-outFile=${tmpOutDir}/${outName}
+# outFile=${tmpOutDir}/${outName}
 inName=$(basename "$ARCUBE_CHARGE_FILE" .h5).LARCV.root
 inFile=${ARCUBE_SUPERA_DIR_BASE}/${relDir}/${inName}
 
@@ -31,10 +31,12 @@ run python3 install/spine/bin/run.py \
     --config "${tmpDir}/${config}" \
     --log_dir "$logDir" \
     --source "$inFile" \
-    --output "$outFile"
+    --output "${tmpDir}/hack"
 
-mv "${outFile}" "${outDir}"
+# mv "${outFile}" "${outDir}/${outName}"
+
+mv "${tmpDir}/*.h5" "${outDir}/${outName}"
 
 rm -rf "$tmpDir"
 
-echo "Written to $(realpath "${outDir}/$(basename "$outFile")")"
+echo "Written to $(realpath "${outDir}/${outName}")"
