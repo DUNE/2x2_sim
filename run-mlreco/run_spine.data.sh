@@ -35,7 +35,7 @@ run python3 install/spine/bin/run.py \
 
 # mv "${outFile}" "${outDir}/${outName}"
 
-mv "${tmpDir}/*.h5" "${outDir}/${outName}"
+mv ${tmpDir}/*.h5 "${outDir}/${outName}"
 
 rm -rf "$tmpDir"
 
