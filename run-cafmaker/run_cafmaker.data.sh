@@ -33,6 +33,10 @@ args_gen_cafmaker_cfg=( \
     --pandora-path "$pandoraPath" \
     )
 
+if [[ "$ARCUBE_CAFMAKER_DISABLE_IFBEAM" == "1" ]]; then
+    args_gen_cafmaker_cfg+=( --disable-ifbeam )
+fi
+
 if [[ -n "$ARCUBE_MINERVA_FILES" ]]; then
     # The runs DB (used by match_minerva.cpp) uses the original binary filename
     # whereas ARCUBE_CHARGE_FILE is the packet file

@@ -19,6 +19,7 @@ def main():
     ap.add_argument('--minerva-path', required=False)
     ap.add_argument('--caf-path', required=True)
     ap.add_argument('--cfg-file', required=True)
+    ap.add_argument('--disable-ifbeam', action='store_true')
     args = ap.parse_args()
 
     with open(args.cfg_file, 'w') as outf:
@@ -35,6 +36,9 @@ def main():
 
         if args.minerva_path:
             outf.write(f'nd_cafmaker.CAFMakerSettings.MINERVARecoFile: "{args.minerva_path}"\n')
+
+        if args.disable_ifbeam:
+            outf.write('nd_cafmaker.CAFMakerSettings.ForceDisableIFBeam: true\n')
 
 
 if __name__ == '__main__':
