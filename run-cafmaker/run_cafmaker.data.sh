@@ -51,10 +51,10 @@ if [[ -n "$ARCUBE_MINERVA_FILES" ]]; then
     args_gen_cafmaker_cfg+=( --minerva-path "$minervaPath" )
 fi
 
-./gen_cafmaker_cfg.data.py "${args_gen_cafmaker_cfg[@]}"
+run ./gen_cafmaker_cfg.data.py "${args_gen_cafmaker_cfg[@]}"
 
 echo ===================
-cat "$cfgFile"
+run cat "$cfgFile"
 echo ""
 echo ===================
 
