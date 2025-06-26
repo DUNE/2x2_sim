@@ -40,6 +40,8 @@ def main():
         if args.disable_ifbeam:
             outf.write('nd_cafmaker.CAFMakerSettings.ForceDisableIFBeam: true\n')
 
+        outf.write('nd_cafmaker.CAFMakerSettings.TriggerMatchDeltaT: 5000000\n')
+
 
 if __name__ == '__main__':
     main()
