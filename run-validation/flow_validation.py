@@ -38,6 +38,7 @@ def main(flow_file, charge_only):
         hits = flow_h5['/charge/calib_prompt_hits/data']
         final_hits = flow_h5['/charge/calib_final_hits/data']
 
+        print("Making light plots")
         if not charge_only:
            ### Event display
            sipm_hits_data = flow_h5['light/sipm_hits/data']
@@ -118,6 +119,7 @@ def main(flow_file, charge_only):
            plt.close()   
 
 
+        print("Making a 3D plot of all spills")
         # 3D - all spills
         fig = plt.figure(figsize=(10,10))
         ax = fig.add_subplot(projection='3d')
@@ -139,6 +141,7 @@ def main(flow_file, charge_only):
         output.savefig()
         plt.close()
 
+        print("Making 2D plots of all spills")
         # 2D hit projections
         fig = plt.figure(figsize=(10,6))
         gs  = fig.add_gridspec(1,3)
@@ -179,6 +182,7 @@ def main(flow_file, charge_only):
                 
             io_group_count += 1
 
+        print("Making 1D hit distributions plots")
         ### Hit level 1D position distributions
         fig = plt.figure(figsize=(10,10),layout="constrained")
         gs = fig.add_gridspec(2,2)
@@ -207,6 +211,7 @@ def main(flow_file, charge_only):
         output.savefig()
         plt.close()
 
+        print("Making 3D plot for each event")
         # 3D - "event" spills
         n_evts = len(flow_h5['charge/events/ref/charge/calib_final_hits/ref_region'])
         io_group_contrib = np.zeros(shape=(n_evts,len(io_groups_uniq)))
@@ -240,6 +245,7 @@ def main(flow_file, charge_only):
             output.savefig()
             plt.close()
 
+        print("Making plot of io_group contributions from each spill")
         # io_group contribution for each spill
         fig = plt.figure(figsize=(10,8))
         ax = fig.add_subplot()
@@ -257,6 +263,7 @@ def main(flow_file, charge_only):
         output.savefig()
         plt.close()
 
+        print("Making plot comparing reco event ID vs true event ID")
         # true spill ID vs. reconstructed charge event
         fig = plt.figure(figsize=(10,8))
         ax = fig.add_subplot()
@@ -301,7 +308,7 @@ def main(flow_file, charge_only):
         output.savefig()
         plt.close()
 
-
+        print("Making 3D plot of selected spills")
         # 3D - several individual spills
         fig = plt.figure(figsize=(10,10),layout="constrained")
         gs = fig.add_gridspec(3,3)
@@ -327,6 +334,7 @@ def main(flow_file, charge_only):
         plt.close()
 
 
+        print("Making event timing and nhits plot")
         ### charge/event information
         fig = plt.figure(figsize=(10,6))
         gs  = fig.add_gridspec(3,1)
@@ -363,6 +371,7 @@ def main(flow_file, charge_only):
         sync_packet_mask = packets['packet_type'] == 4
         other_packet_mask= ~(data_packet_mask | trig_packet_mask | sync_packet_mask)
 
+        print ("Plotting time structure of packets")
         ### Plot time structure of packets: 
         plt.clf()
         plt.plot(packets['timestamp'][data_packet_mask],packet_index[data_packet_mask],'o',label='data packets',linestyle='None')
@@ -416,6 +425,7 @@ def main(flow_file, charge_only):
         output.savefig()
         plt.close()
 
+        print("Plotting comparisons of prompt vs final hits")
         # comparisons of prompt hits and final hits
         # currently correspondes to comparisons before and after merging multi-hits
         fig = plt.figure(figsize=(10,8),layout='constrained')
@@ -580,6 +590,7 @@ def main(flow_file, charge_only):
 
         # Check the sums of the fraction field for charge deposition. They should add to 1.
         if 'mc_truth' in flow_h5.keys():
+            print("Plotting packet fractions sum for each event")
             fractions = flow_h5['mc_truth/packet_fraction/data']['fraction']
             summed_fractions = fractions.sum(axis=-1)
             fig, ax = plt.subplots(constrained_layout = True)
@@ -591,6 +602,34 @@ def main(flow_file, charge_only):
 
             output.savefig()
             plt.close() 
+
+            print("Plotting comparison of true segment position vs hit position")
+            segs = flow_h5['/mc_truth/segments/data']
+            bt = flow_h5['/mc_truth/calib_prompt_hit_backtrack/data']
+
+            bt_ids = bt['segment_ids'][:,0]
+            bt_mask = bt_ids != -1
+            hits = hits[bt_mask]
+            bt = bt[bt_mask]
+            bt_ids = bt_ids[bt_mask]
+
+            seg_ids = segs['segment_id']
+            min_seg_id = seg_ids.min()
+            nkeys = seg_ids.max() - min_seg_id + 1
+            seg_id2idx = np.full(nkeys, -1)
+            for idx, seg_id in enumerate(seg_ids):
+                seg_id2idx[seg_id - min_seg_id] = idx 
+
+            for field in ['x', 'y', 'z']:
+                fig, ax = plt.subplots(constrained_layout = True)
+                x_true = segs[field][seg_id2idx[bt_ids - min_seg_id]]
+                x_hits = hits[field]
+                ax.hist(x_true - x_hits, bins=100)
+                ax.set_yscale('linear')
+                ax.set_xlabel(f'$\Delta${field} [cm]')
+                ax.set_title("True backtracked segment position - Reco hit position: {}".format(field))
+                output.savefig()
+                plt.close()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
