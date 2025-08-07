@@ -211,14 +211,11 @@ def main(flow_file, charge_only):
         output.savefig()
         plt.close()
 
-        print("Making 3D plot for each event")
-        # 3D - "event" spills
+        print("Making plot of io_group contributions from each spill")
+        # io_group contribution for each spill
         n_evts = len(flow_h5['charge/events/ref/charge/calib_final_hits/ref_region'])
         io_group_contrib = np.zeros(shape=(n_evts,len(io_groups_uniq)))
         for a in range(n_evts):
-            fig = plt.figure(figsize=(10,10),layout="constrained")
-            ax = fig.add_subplot(projection='3d')
-            ax.set_facecolor('none')
             hit_ref_slice = flow_h5['charge/events/ref/charge/calib_final_hits/ref_region'][a]
             spill_hits = final_hits[hit_ref_slice[0]:hit_ref_slice[1]]
             event_charge = np.sum(spill_hits['Q'])
@@ -232,21 +229,7 @@ def main(flow_file, charge_only):
                 if len(iog_hits) > 0:
                     iog_evt_charge = np.sum(iog_hits['Q'])
                 io_group_contrib[a][int(iog-1)] = float(iog_evt_charge)/float(event_charge)
-            dat = ax.scatter(spill_hits['z'],spill_hits['x'],
-                       spill_hits['y'],c=spill_hits['Q'],
-                       s=1,cmap='viridis',norm=mlp.colors.LogNorm())
-            ax.set_title(f"Hits in charge events",fontsize=24)
-            ax.set_xlabel('z [cm]',fontsize=16)
-            ax.set_ylabel('x [cm]',fontsize=16)
-            ax.set_zlabel('y [cm]',fontsize=16)
-            ##ax.set_xlim([-65.,65])
-            ##ax.set_ylim([-65.,65])
-            ##ax.set_zlim([-65.,65])
-            output.savefig()
-            plt.close()
 
-        print("Making plot of io_group contributions from each spill")
-        # io_group contribution for each spill
         fig = plt.figure(figsize=(10,8))
         ax = fig.add_subplot()
         ax.set_facecolor('none')
@@ -310,28 +293,31 @@ def main(flow_file, charge_only):
 
         print("Making 3D plot of selected spills")
         # 3D - several individual spills
-        fig = plt.figure(figsize=(10,10),layout="constrained")
-        gs = fig.add_gridspec(3,3)
-        ax = []
-        for a in range(9):
-            hit_ref_slice = flow_h5['charge/events/ref/charge/calib_final_hits/ref_region'][a]
-            spill_hits = final_hits[hit_ref_slice[0]:hit_ref_slice[1]]
-            ax.append(fig.add_subplot(gs[a//3,a%3],projection='3d'))
-            dat = ax[a].scatter(spill_hits['z'],spill_hits['x'],
-                       spill_hits['y'],c=spill_hits['Q'],
-                       s=1,cmap='viridis',norm=mlp.colors.LogNorm())
-            #cb = fig.colorbar(dat, ax=ax[a], label="detected charge",
-            #                  shrink=0.5, location='left', pad = 0.)
-            #cb.ax.yaxis.set_ticks([matplotlib.ticker.FixedLocator([])])
-            ax[a].set_title(f"spill {a+1}",fontsize=12)
-            ax[a].set_xlabel('z [cm]')
-            ax[a].set_ylabel('x [cm]')
-            ax[a].set_zlabel('y [cm]')
-            #ax[a].set_xlim([-65.,65])
-            #ax[a].set_ylim([-65.,65])
-            #ax[a].set_zlim([-65.,65])
-        output.savefig()
-        plt.close()
+        for i in range(int(np.ceil(n_evts/9))):
+            fig = plt.figure(figsize=(10,10),layout="constrained")
+            gs = fig.add_gridspec(3,3)
+            ax = []
+            for a in range(9):
+                if 9*i + a >= n_evts:
+                    break
+                hit_ref_slice = flow_h5['charge/events/ref/charge/calib_final_hits/ref_region'][9*i + a]
+                spill_hits = final_hits[hit_ref_slice[0]:hit_ref_slice[1]]
+                ax.append(fig.add_subplot(gs[a//3,a%3],projection='3d'))
+                dat = ax[a].scatter(spill_hits['z'],spill_hits['x'],
+                           spill_hits['y'],c=spill_hits['Q'],
+                           s=1,cmap='viridis',norm=mlp.colors.LogNorm())
+                #cb = fig.colorbar(dat, ax=ax[a], label="detected charge",
+                #                  shrink=0.5, location='left', pad = 0.)
+                #cb.ax.yaxis.set_ticks([matplotlib.ticker.FixedLocator([])])
+                ax[a].set_title(f"spill {9*i + a + 1}",fontsize=12)
+                ax[a].set_xlabel('z [cm]')
+                ax[a].set_ylabel('x [cm]')
+                ax[a].set_zlabel('y [cm]')
+                #ax[a].set_xlim([-65.,65])
+                #ax[a].set_ylim([-65.,65])
+                #ax[a].set_zlim([-65.,65])
+            output.savefig()
+            plt.close()
 
 
         print("Making event timing and nhits plot")
